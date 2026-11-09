@@ -211,6 +211,7 @@ pre.spice code { font: inherit; background: none; border: 0; padding: 0; color: 
 .toc-head a.toc-title { font-family: var(--serif); font-size: 19px; font-weight: 700; color: var(--ink); }
 .toc-head a.toc-title:hover { color: var(--accent); }
 .toc-desc { margin: 6px 0 8px 3.6em; color: var(--ink-soft); font-size: 14.5px; }
+.toc-extra { font-size: 12.5px; color: var(--blue); white-space: nowrap; border-bottom: 1px dotted currentColor; }
 .toc-points { margin: 0 0 0 3.6em; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
 .toc-points li { margin: 0; font-size: 12.5px; color: var(--ink-soft); background: var(--paper-2); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 8px; }
 .toc-points li.empty { color: var(--ink-faint); font-style: italic; }

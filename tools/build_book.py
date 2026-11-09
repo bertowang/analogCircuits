@@ -1413,6 +1413,19 @@ R2 out 0 1k
            "<a href='../index.html#resources'>参考资源清单</a>"]),
 ]
 
+# ==================== 正文补写与扩展资源合并 ====================
+import sys
+sys.path.insert(0, str(ROOT / "tools"))
+from book_expansion import EXTRA_SECTIONS  # noqa: E402
+from book_resources import links_for_point, chapter_links_html, all_resources_html  # noqa: E402
+
+for _ch in CHAPTERS:
+    if _ch["id"] in EXTRA_SECTIONS:
+        _ch["sections"] = _ch["sections"] + EXTRA_SECTIONS[_ch["id"]]
+        _ch["status"] = "done"
+    if _ch["id"] == "A":
+        _ch["sections"].append(("A.7", "扩展学习链接总表", all_resources_html()))
+
 # ============================ 渲染与生成 ============================
 STATUS_LABEL = {"done": "已完稿", "skeleton": "框架待补", "todo": "待建"}
 
@@ -1488,10 +1501,14 @@ def render(ch):
                    '并按 <a href="' + root + 'index.html#contribute">总目录的维护约定</a>补充内容。</p></div>')
 
     out.append('<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>')
-    out.append('<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>')
+    out.append('<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；'
+               '本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>')
+    out.append('<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th>'
+               '<th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>')
     for i, p in enumerate(ch["points"], 1):
         state = "正文已覆盖" if ch["status"] == "done" else "待展开为小节"
-        out.append("<tr><td>" + str(i) + "</td><td>" + esc(p) + "</td><td>" + state + "</td></tr>")
+        out.append("<tr><td>" + str(i) + "</td><td>" + esc(p) + "</td><td>" +
+                   links_for_point(ch["id"], p) + "</td><td>" + state + "</td></tr>")
     out.append("</tbody></table></section>")
 
     for num, title, body in ch["sections"]:
@@ -1521,6 +1538,9 @@ def render(ch):
     if ch["exercises"]:
         out.append('<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol>' +
                    li([esc(x) for x in ch["exercises"]]) + "</ol></section>")
+    out.append('<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>')
+    out.append(chapter_links_html(ch["id"], root))
+    out.append("</section>")
     if ch["further"]:
         out.append('<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul>' +
                    li(ch["further"]) + "</ul></section>")

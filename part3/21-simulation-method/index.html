@@ -30,13 +30,14 @@
 <li>知道仿真与实测必然存在的差异清单</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>五类分析的选择</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>测试台与激励设计</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>.meas 断言</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>模型可信度</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>收敛问题排查</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>仿真 ≠ 实测 清单</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>五类分析的选择</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://pyltspice.readthedocs.io/en/latest/" target="_blank" rel="noopener">PyLTSpice 文档</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>测试台与激励设计</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://pyltspice.readthedocs.io/en/latest/" target="_blank" rel="noopener">PyLTSpice 文档</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.meas 断言</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>模型可信度</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://pyltspice.readthedocs.io/en/latest/" target="_blank" rel="noopener">PyLTSpice 文档</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>收敛问题排查</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://pyltspice.readthedocs.io/en/latest/" target="_blank" rel="noopener">PyLTSpice 文档</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>仿真 ≠ 实测 清单</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://pyltspice.readthedocs.io/en/latest/" target="_blank" rel="noopener">PyLTSpice 文档</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s21-1"><h2><span class="sec-num">§21.1</span>先问问题，再选分析</h2>
 <table><thead><tr><th>我想知道</th><th>用</th><th>别误用</th></tr></thead><tbody>
@@ -117,6 +118,13 @@ C1 out 0 100n
 <li>把仿真结论写成无条件事实，没有标注模型与假设。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>给实验 21-1 增加 .meas 测过冲，并解释为何 RC 电路没有过冲。</li>
 <li>把实验 21-2 的 .tran 时长改成 2m，比较 THD 数值的稳定性。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>PyLTSpice · GitHub</strong>（工具 / 自动化）：用 Python 批量改网表、跑仿真、解析 .raw/.log，含蒙特卡洛工具箱<br><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a></li>
+<li><strong>PyLTSpice 文档</strong>（工具 / 文档）：SpiceEditor / SimRunner / RawRead 的官方用法<br><a href="https://pyltspice.readthedocs.io/en/latest/" target="_blank" rel="noopener">PyLTSpice 文档</a></li>
+<li><strong>ADI EngineerZone</strong>（厂商 / 社区）：收敛问题、模型导入与实际器件应用的厂商问答社区<br><a href="https://ez.analog.com/" target="_blank" rel="noopener">ADI EngineerZone</a></li>
+<li><strong>ngspice · GitHub</strong>（工具 / 引擎）：开源 SPICE 引擎，可对照哪些是通用语法、哪些是 LTspice 扩展<br><a href="https://github.com/ngspice/ngspice" target="_blank" rel="noopener">ngspice · GitHub</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=ltspice+simulation+method+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=ltspice+simulation+method&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part0/02-spice-netlist/index.html'>第 2 章 SPICE 网表语法与仿真指令</a></li>
 <li><a href='../20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li>
 <li><a href='../22-robustness/index.html'>第 22 章 鲁棒性：PVT 与蒙特卡洛</a></li>

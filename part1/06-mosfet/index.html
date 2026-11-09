@@ -30,13 +30,14 @@
 <li>知道 Level-1 SPICE 模型各参数的物理含义</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>截止 / 线性 / 饱和</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>阈值电压与体效应</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>gm / ro / 本征增益</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>小信号等效电路</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>.model NMOS 参数</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>输出特性曲线族</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>截止 / 线性 / 饱和</td><td><a href="https://en.wikipedia.org/wiki/MOSFET" target="_blank" rel="noopener">MOSFET（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>阈值电压与体效应</td><td><a href="https://en.wikipedia.org/wiki/MOSFET" target="_blank" rel="noopener">MOSFET（英）</a> · <a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>gm / ro / 本征增益</td><td><a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a> · <a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>小信号等效电路</td><td><a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a> · <a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>.model NMOS 参数</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/ngspice/ngspice" target="_blank" rel="noopener">ngspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>输出特性曲线族</td><td><a href="https://en.wikipedia.org/wiki/MOSFET" target="_blank" rel="noopener">MOSFET（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s6-1"><h2><span class="sec-num">§6.1</span>三个工作区与判据</h2>
 <p>以增强型 NMOS 为例（源极接地、体接地），令过驱动电压 <em>V</em><sub>ov</sub> = <em>V</em><sub>GS</sub> − <em>V</em><sub>to</sub>：</p>
@@ -121,6 +122,13 @@ M1 out in 0 0 NM1 W=10u L=1u
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>在实验 6-2 中加 500 Ω 源极退化电阻，先手算增益再仿真（提示：增益约 −RD/(RS+1/gm)）。</li>
 <li>把 L 从 1u 改成 2u，解释 Id、gm、ro 各自怎么变。</li>
 <li>用 .op 输出确认 M1 处于饱和区，并写出验证所用的两个电压值。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>MOSFET（英）</strong>（百科 / 器件）：结构、工作区与模型<br><a href="https://en.wikipedia.org/wiki/MOSFET" target="_blank" rel="noopener">MOSFET（英）</a></li>
+<li><strong>Transconductance（英）</strong>（百科 / 器件）：跨导定义与公式<br><a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a></li>
+<li><strong>Small-signal model（英）</strong>（百科 / 放大）：线性化的数学依据<br><a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a></li>
+<li><strong>Common source（英）</strong>（百科 / 放大）：共源级增益与阻抗<br><a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a></li>
+<li><strong>razavi_cmos_analog · GitHub</strong>（笔记 / 进阶）：Razavi 模拟 CMOS 教材章节笔记与问答<br><a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=mosfet+common+source+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=mosfet+common+source&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../07-bjt/index.html'>第 7 章 BJT 与三种基本组态（对照记忆）</a></li>
 <li><a href='../../part2/09-single-stage/index.html'>第 9 章 单级放大器</a></li>
 <li><a href='../../part3/19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路</a></li></ul></section>

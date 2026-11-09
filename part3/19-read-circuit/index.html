@@ -30,15 +30,16 @@
 <li>能写出一份可交付的电路阅读笔记</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>先找电源与地</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>模块识别词汇表</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>直流 / 交流两条通路</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>反馈环的正负判断</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>标注法与节点命名</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>数量级估算</td><td>正文已覆盖</td></tr>
-<tr><td>7</td><td>用 .op 反查假设</td><td>正文已覆盖</td></tr>
-<tr><td>8</td><td>完整案例解剖</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>先找电源与地</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>模块识别词汇表</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>直流 / 交流两条通路</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>反馈环的正负判断</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>标注法与节点命名</td><td><a href="https://en.wikipedia.org/wiki/Nodal_analysis" target="_blank" rel="noopener">Nodal analysis（英）</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>数量级估算</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>7</td><td>用 .op 反查假设</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>8</td><td>完整案例解剖</td><td><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a> · <a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s19-1"><h2><span class="sec-num">§19.1</span>为什么“看懂”这么难</h2>
 <p>一张模拟电路图上，至少叠了四层信息，而它们共用同一批线条：</p>
@@ -161,6 +162,13 @@ VIN inp 0 DC 0 AC 0.1 SINE(0 0.1 1k)
 <li>删掉 VFB（把 dp 与 inn 断开并给 inn 接固定 2 V），说明电路变成什么、输出会怎样。</li>
 <li>把 MT 的 W 改成 40u，预测尾电流、gm 与开环增益的变化。</li>
 <li>找一张数据手册里的框图（如运放、LDO），用十步法写一份不超过一页的阅读笔记。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>LTspice_Ecircuit · GitHub</strong>（案例 / 读图）：37 类按主题归档的电路，适合逐张练习读图<br><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></li>
+<li><strong>Electronic-simulations-with-LTspice · GitHub</strong>（案例 / 读图）：按主题归档的 .asc 原理图合集，练习打开别人的图先读懂<br><a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></li>
+<li><strong>Circuits-LTSpice · GitHub</strong>（案例 / 代码）：大量 LTspice 电路案例合集，含配套说明站点<br><a href="https://github.com/mick001/Circuits-LTSpice" target="_blank" rel="noopener">Circuits-LTSpice · GitHub</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=analog+circuit+reading+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=analog+circuit+reading&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../index.html#toc'>第二篇全部模块章节（词汇表来源）</a></li>
 <li><a href='../20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li>
 <li><a href='https://github.com/JesseHardingMurillo/LTspice_Ecircuit' target='_blank' rel='noopener'>GitHub：LTspice_Ecircuit（37 类现成电路，练读图用）</a></li>

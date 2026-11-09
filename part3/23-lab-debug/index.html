@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 23 章</span>从仿真到实物：PCB、仪器与调试</h1>
 <p class="lede">仿真里没有焊点、探头和走线。这一章把“纸面正确”过渡到“上电也正确”。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>会按分模块上电、先直流后信号的顺序调试</li>
 <li>能把实测差异映射回仿真模型</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>接地与回流路径</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>去耦与旁路</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>探头 10× 与负载</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>测量带宽与噪声</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>分模块上电调试</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>故障树</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>接地与回流路径</td><td><a href="https://en.wikipedia.org/wiki/Printed_circuit_board" target="_blank" rel="noopener">Printed circuit board（英）</a> · <a href="https://en.wikipedia.org/wiki/Decoupling_capacitor" target="_blank" rel="noopener">Decoupling capacitor（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>去耦与旁路</td><td><a href="https://en.wikipedia.org/wiki/Decoupling_capacitor" target="_blank" rel="noopener">Decoupling capacitor（英）</a> · <a href="https://en.wikipedia.org/wiki/Printed_circuit_board" target="_blank" rel="noopener">Printed circuit board（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>探头 10× 与负载</td><td><a href="https://en.wikipedia.org/wiki/Test_probe" target="_blank" rel="noopener">Test probe（英）</a> · <a href="https://en.wikipedia.org/wiki/Decoupling_capacitor" target="_blank" rel="noopener">Decoupling capacitor（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>测量带宽与噪声</td><td><a href="https://en.wikipedia.org/wiki/Test_probe" target="_blank" rel="noopener">Test probe（英）</a> · <a href="https://en.wikipedia.org/wiki/Electronic_noise" target="_blank" rel="noopener">Electronic noise（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>分模块上电调试</td><td><a href="https://en.wikipedia.org/wiki/Printed_circuit_board" target="_blank" rel="noopener">Printed circuit board（英）</a> · <a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>故障树</td><td><a href="https://en.wikipedia.org/wiki/Printed_circuit_board" target="_blank" rel="noopener">Printed circuit board（英）</a> · <a href="https://ez.analog.com/" target="_blank" rel="noopener">ADI EngineerZone</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s23-1"><h2><span class="sec-num">§23.1</span>核心概念速览</h2>
 <ul>
@@ -45,6 +45,34 @@
 <li>示波器 10× 探头约 10 MΩ ∥ 10～15 pF：在 1 MHz 时容抗仅约 10 kΩ，足以改变高阻节点的频响（见下方实验）。</li>
 <li>调试顺序：目视/连通性 → 上电前测短路 → 限流上电 → 只查电源电压 → 查每级静态工作点 → 注入小信号逐级跟波形。</li>
 <li>实测与仿真不符时，先补寄生与仪器模型，再怀疑原理图，最后才怀疑器件损坏。</li></ul>
+</section>
+<section id="s23-2"><h2><span class="sec-num">§23.2</span>接地、回流路径与去耦</h2>
+<p>电流总是走<strong>闭合回路</strong>，信号线上的电流必然有一条对应的回流路径。「地」不是无限大的吸收池，而是有阻抗的导体：</p>
+<ul><li>低频时回流倾向于走电阻最小的路径，高频时倾向于紧贴信号线正下方（电感最小）；把地平面切开，等于强迫回流绕远路，形成环路天线。</li>
+<li>模拟地与数字地不必盲目分割，关键是把<strong>各自的高频回流限制在各自区域</strong>，只在一点汇合。</li>
+<li>去耦电容为器件提供本地瞬态电流，<strong>摆放位置比容量更重要</strong>；容量越大往往自谐振频率越低，因此常见大小电容并联，分别覆盖低频与高频。</li>
+<li>电源入口的 bulk 电容负责低频能量，芯片脚边的 100 nF / 1 nF 负责高频，布局时先画回流路径再摆件。</li></ul>
+<p>把一段走线电感（约 1 nH/mm）、地平面阻抗、去耦 ESR/ESL 加进仿真，很多「仿真正常、上电振荡」的现象就能复现。</p>
+</section>
+<section id="s23-3"><h2><span class="sec-num">§23.3</span>测量链路：探头也是一种元件</h2>
+<p>实验 23-1 说明的核心事实：<strong>测量仪器会改变被测电路</strong>。</p>
+<table><thead><tr><th>仪器 / 探头</th><th>等效模型</th><th>容易踩的坑</th></tr></thead><tbody>
+<tr><td>示波器 10× 探头</td><td>约 10 MΩ ∥ 10～15 pF</td><td>1 MHz 时容抗仅约 10 kΩ，会拉低高阻节点带宽</td></tr>
+<tr><td>1× 探头 / 同轴直连</td><td>约 1 MΩ ∥ 100 pF 以上</td><td>电容更大，高频几乎必然失真</td></tr>
+<tr><td>万用表</td><td>约 10 MΩ（电压档）</td><td>测高阻分压点会改变分压比</td></tr>
+<tr><td>信号源</td><td>50 Ω 内阻</td><td>未端接时实际幅度可能是设定值的两倍</td></tr>
+</tbody></table>
+<p>长接地线会引入额外电感，与探头电容构成谐振，测高速边沿时出现「明明没有的振铃」。正确做法是用短接地弹簧、在带宽允许时开启 20 MHz 带宽限制、并把探头模型放进仿真测试台（<a href="../21-simulation-method/index.html">第 21 章</a>）。</p>
+</section>
+<section id="s23-4"><h2><span class="sec-num">§23.4</span>上电调试流程与故障树</h2>
+<ol><li>断电目视：极性元件、短路、虚焊、芯片方向。</li>
+<li>万用表测电源到地是否短路；用<strong>限流电源</strong>上电，把电流限到预期的 1.2 倍。</li>
+<li>先只测各电源电压是否正确、纹波是否异常，不接信号。</li>
+<li>逐级测直流工作点，与 <code>.op</code> 结果对照；某一级不对就先停在这一级。</li>
+<li>从输入端注入小信号，用示波器逐级跟踪波形，定位失真/衰减/振荡发生在哪一级。</li>
+<li>最后才做全链路指标测试。</li></ol>
+<p>故障树示例：输出无信号 → 电源正常？→ 本级静态点正常？→ 输入信号到达本级？→ 反馈环是否接反？→ 是否自激（关掉输入看输出有无振荡）？→ 负载是否过重？每步只排除一种可能，比「整板重焊」快得多。</p>
+<div class="card tip"><p style="margin-bottom:0">实测与仿真不符时的排查顺序：<strong>先补寄生与仪器模型，再核对原理图与元件值，最后才怀疑器件损坏</strong>。绝大多数差异来自前两项。</p></div>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 23-1：探头电容如何改变被测电路</h3>
@@ -66,6 +94,13 @@ CPROBE out 0 {Cprobe}
 <li>一次性焊完整板上电，故障时无法定位。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 R1 降到 1k，重跑实验 23-1，解释为何探头影响变小。</li>
 <li>列出一份分模块上电调试的检查表。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Decoupling capacitor（英）</strong>（百科 / 实测）：去耦电容的作用与布局<br><a href="https://en.wikipedia.org/wiki/Decoupling_capacitor" target="_blank" rel="noopener">Decoupling capacitor（英）</a></li>
+<li><strong>Test probe（英）</strong>（百科 / 实测）：示波器探头与负载效应<br><a href="https://en.wikipedia.org/wiki/Test_probe" target="_blank" rel="noopener">Test probe（英）</a></li>
+<li><strong>Printed circuit board（英）</strong>（百科 / 实测）：叠层、走线与寄生<br><a href="https://en.wikipedia.org/wiki/Printed_circuit_board" target="_blank" rel="noopener">Printed circuit board（英）</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li>
+<li><strong>ADI EngineerZone</strong>（厂商 / 社区）：收敛问题、模型导入与实际器件应用的厂商问答社区<br><a href="https://ez.analog.com/" target="_blank" rel="noopener">ADI EngineerZone</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=pcb+decoupling+probe+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=pcb+decoupling+probe&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../21-simulation-method/index.html'>第 21 章 仿真 ≠ 实测 清单</a></li>
 <li><a href='https://www.ti.com/' target='_blank' rel='noopener'>TI 应用笔记（去耦、接地与测量）</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

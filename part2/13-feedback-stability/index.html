@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 13 章</span>反馈与稳定性</h1>
 <p class="lede">负反馈用增益换线性、带宽与可控性；但反馈太深或相位滞后太多，负反馈会变成正反馈。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 4 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>会用主极点/密勒补偿改善稳定性</li>
 <li>能从阶跃响应判断振铃与相位裕度</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>四种反馈拓扑</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>环路增益与返回比</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>增益/相位裕度</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>主极点补偿</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>密勒补偿</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>稳定性判据</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>四种反馈拓扑</td><td><a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>环路增益与返回比</td><td><a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a> · <a href="https://en.wikipedia.org/wiki/Nyquist_stability_criterion" target="_blank" rel="noopener">Nyquist stability criterion（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>增益/相位裕度</td><td><a href="https://en.wikipedia.org/wiki/Phase_margin" target="_blank" rel="noopener">Phase margin（英）</a> · <a href="https://en.wikipedia.org/wiki/Nyquist_stability_criterion" target="_blank" rel="noopener">Nyquist stability criterion（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>主极点补偿</td><td><a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a> · <a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>密勒补偿</td><td><a href="https://en.wikipedia.org/wiki/Miller_effect" target="_blank" rel="noopener">Miller effect（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>稳定性判据</td><td><a href="https://en.wikipedia.org/wiki/Nyquist_stability_criterion" target="_blank" rel="noopener">Nyquist stability criterion（英）</a> · <a href="https://en.wikipedia.org/wiki/Phase_margin" target="_blank" rel="noopener">Phase margin（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s13-1"><h2><span class="sec-num">§13.1</span>核心概念速览</h2>
 <ul>
@@ -45,6 +45,34 @@
 <li><strong>稳定性判据</strong>：在环路增益 |Aβ| = 1 的频率处，相位滞后必须小于 180°；差值就是<strong>相位裕度</strong>，工程上一般留 45°～60°。</li>
 <li>两级放大器有两个低频极点，容易裕度不足；<strong>密勒补偿</strong>把主极点推低、次极点推高（极点分裂），用带宽换稳定。</li>
 <li>时域征兆：阶跃响应过冲大、长时间振铃 ≈ 相位裕度不足；持续等幅振荡 ≈ 已失稳。</li></ul>
+</section>
+<section id="s13-2"><h2><span class="sec-num">§13.2</span>四种反馈拓扑与闭环增益</h2>
+<table><thead><tr><th>拓扑</th><th>输出采样</th><th>输入混合</th><th>典型电路</th><th>对阻抗的影响</th></tr></thead><tbody>
+<tr><td>电压串联</td><td>电压</td><td>串联</td><td>同相放大器</td><td>R<sub>in</sub>↑、R<sub>out</sub>↓</td></tr>
+<tr><td>电压并联</td><td>电压</td><td>并联</td><td>反相放大器</td><td>R<sub>in</sub>↓、R<sub>out</sub>↓</td></tr>
+<tr><td>电流串联</td><td>电流</td><td>串联</td><td>跨导级</td><td>R<sub>in</sub>↑、R<sub>out</sub>↑</td></tr>
+<tr><td>电流并联</td><td>电流</td><td>并联</td><td>电流放大器</td><td>R<sub>in</sub>↓、R<sub>out</sub>↑</td></tr>
+</tbody></table>
+<span class="eq">A<sub>cl</sub> = A/(1+Aβ)，　Aβ ≫ 1 时　A<sub>cl</sub> ≈ 1/β</span>
+<p>「串联混合提高输入阻抗、并联混合降低输入阻抗；电压采样降低输出阻抗、电流采样提高输出阻抗」——记住这四句，就能从反馈类型反推电路适合驱动什么、被什么驱动。这也是<a href="../09-single-stage/index.html">第 9 章</a>三种组态阻抗差异的统一解释。</p>
+</section>
+<section id="s13-3"><h2><span class="sec-num">§13.3</span>环路增益、相位裕度与判据</h2>
+<p>稳定性看的不是开环增益 A，而是<strong>环路增益 T = Aβ</strong>。在 <code>|T| = 1</code>（0 dB 交越频率）处：</p>
+<span class="eq">PM = 180° + ∠T(ω<sub>c</sub>)　（工程上取 45°～60°）</span>
+<ul><li>两个及更多低频极点各贡献最多 −90°，两级放大器合计可接近 −180°，很容易裕度不足；</li>
+<li>PM 越小，闭环阶跃响应过冲越大、振铃越久；PM ≤ 0 时负反馈在该频率变成正反馈，电路自激；</li>
+<li>严格判据是 <a href="../../appendix/index.html">Nyquist 判据</a>：对含右半平面极点或复杂环路的系统，光看 PM 不够。</li></ul>
+<p>仿真里怎么测环路增益？在反馈环上断开一点，注入小信号 AC 源，测返回信号的比值和相位（返回比分析），或用 <code>.step</code> 扫补偿电容观察阶跃响应趋势——实验 13-1 采用后者，更直观且不易接错。</p>
+</section>
+<section id="s13-4"><h2><span class="sec-num">§13.4</span>补偿技术与阶跃响应诊断</h2>
+<p>补偿的本质是<strong>重新安排极点的位置</strong>，用带宽换稳定：</p>
+<table><thead><tr><th>方法</th><th>做法</th><th>代价</th></tr></thead><tbody>
+<tr><td>主极点补偿</td><td>在最低极点节点加电容，把它推得更低</td><td>带宽大幅下降</td></tr>
+<tr><td>密勒补偿</td><td>电容跨接两级之间，利用极点分裂</td><td>需处理右半平面零点</td></tr>
+<tr><td>调零电阻</td><td>与补偿电容串联，移动零点位置</td><td>多一个元件与版图面积</td></tr>
+<tr><td>前馈 / 增益分配</td><td>调整各级增益与电流，改变次极点</td><td>功耗与噪声预算变化</td></tr>
+</tbody></table>
+<p>从 <code>.tran</code> 阶跃波形反推稳定性：无过冲且单调 ≈ 裕度充足；一次过冲后迅速收敛 ≈ 60° 左右；多次等幅衰减振铃 ≈ 30° 以下；持续振荡 ≈ 已失稳。<strong>看到振铃先怀疑相位裕度，再怀疑电源去耦与寄生</strong>（后者见<a href="../../part3/23-lab-debug/index.html">第 23 章</a>）。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 13-1：补偿电容与阶跃振铃</h3>
@@ -69,6 +97,13 @@ C2 out 0 {CC}
 <li>补偿电容越大越好：它同时牺牲带宽与压摆率。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 CC 设为 1n 并把反馈系数改成 1/100，观察是否出现持续振荡。</li>
 <li>在 C2 上串一个小电阻引入零点，观察振铃是否改善。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Negative feedback（英）</strong>（百科 / 反馈）：反馈的一般理论<br><a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a></li>
+<li><strong>Phase margin（英）</strong>（百科 / 稳定性）：相位裕度与阶跃响应<br><a href="https://en.wikipedia.org/wiki/Phase_margin" target="_blank" rel="noopener">Phase margin（英）</a></li>
+<li><strong>Nyquist stability criterion（英）</strong>（百科 / 稳定性）：严格稳定性判据<br><a href="https://en.wikipedia.org/wiki/Nyquist_stability_criterion" target="_blank" rel="noopener">Nyquist stability criterion（英）</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=feedback+phase+margin+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=feedback+phase+margin&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../12-frequency-response/index.html'>第 12 章 频率响应与极点</a></li>
 <li><a href='../14-opamp-design/index.html'>第 14 章 运算放大器设计</a></li>
 <li><a href='../../part3/20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li></ul></section>

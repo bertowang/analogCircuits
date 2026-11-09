@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 15 章</span>有源滤波器</h1>
 <p class="lede">不用电感也能做二阶选频：让运放与 RC 网络共同实现一个指定的传递函数。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>知道 Butterworth / Bessel / Chebyshev 的选择依据</li>
 <li>理解运放带宽对滤波器实际响应的限制</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>低通/高通/带通</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>Q 值与极点</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>Sallen-Key</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>多反馈拓扑</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>运放带宽限制</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>.ac 验证</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>低通/高通/带通</td><td><a href="https://en.wikipedia.org/wiki/Electronic_filter" target="_blank" rel="noopener">Electronic filter（英）</a> · <a href="https://en.wikipedia.org/wiki/RC_circuit" target="_blank" rel="noopener">RC circuit（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>Q 值与极点</td><td><a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a> · <a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>Sallen-Key</td><td><a href="https://en.wikipedia.org/wiki/Electronic_filter" target="_blank" rel="noopener">Electronic filter（英）</a> · <a href="https://en.wikipedia.org/wiki/Butterworth_filter" target="_blank" rel="noopener">Butterworth filter（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>多反馈拓扑</td><td><a href="https://en.wikipedia.org/wiki/Electronic_filter" target="_blank" rel="noopener">Electronic filter（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>运放带宽限制</td><td><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a> · <a href="https://en.wikipedia.org/wiki/Electronic_filter" target="_blank" rel="noopener">Electronic filter（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.ac 验证</td><td><a href="https://en.wikipedia.org/wiki/Electronic_filter" target="_blank" rel="noopener">Electronic filter（英）</a> · <a href="https://en.wikipedia.org/wiki/Butterworth_filter" target="_blank" rel="noopener">Butterworth filter（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s15-1"><h2><span class="sec-num">§15.1</span>核心概念速览</h2>
 <ul>
@@ -44,6 +44,33 @@
 <li>Butterworth（Q = 0.707）通带最平坦；Bessel 相位线性、阶跃过冲小；Chebyshev 过渡带最陡但通带有纹波。</li>
 <li><strong>Sallen-Key</strong>：正反馈型、元件少、对运放带宽敏感；<strong>多反馈（MFB）</strong>：反相型、高频特性更好。</li>
 <li>fc 附近运放开环增益必须远大于噪声增益，否则实际 Q 与 fc 都会偏移——这是“仿真用理想运放、实测不对”的常见原因。</li></ul>
+</section>
+<section id="s15-2"><h2><span class="sec-num">§15.2</span>二阶传递函数与逼近函数</h2>
+<span class="eq">H(s) = H<sub>0</sub> ω<sub>0</sub>² / ( s² + (ω<sub>0</sub>/Q)s + ω<sub>0</sub>² )</span>
+<p>同一个分母，Q 取不同值给出不同「性格」：</p>
+<table><thead><tr><th>逼近</th><th>Q（二阶节）</th><th>通带</th><th>阶跃 / 相位</th><th>适合</th></tr></thead><tbody>
+<tr><td>Bessel</td><td>≈ 0.58</td><td>滚降最缓</td><td>近似线性相位，几乎无过冲</td><td>脉冲、音频瞬态</td></tr>
+<tr><td>Butterworth</td><td>≈ 0.707</td><td>最平坦</td><td>轻微过冲</td><td>通用测量、抗混叠</td></tr>
+<tr><td>Chebyshev</td><td>大于 0.707</td><td>有纹波</td><td>过冲较大</td><td>需要陡峭过渡带</td></tr>
+</tbody></table>
+<p>高阶滤波器由若干二阶节（biquad）级联实现，每节有自己的 ω<sub>0</sub> 与 Q；阶数越高过渡带越陡，但对元件公差与运放带宽越敏感。</p>
+</section>
+<section id="s15-3"><h2><span class="sec-num">§15.3</span>Sallen-Key 设计步骤</h2>
+<p>实验 15-1 用单位增益（电压跟随器型）Sallen-Key，取 R<sub>1</sub> = R<sub>2</sub> = R：</p>
+<span class="eq">f<sub>c</sub> = 1/(2πRC)，　Q = √(C<sub>1</sub>C<sub>2</sub>) / [ C<sub>2</sub> + C<sub>1</sub>(1−K) ]（K 为运放闭环增益）</span>
+<p>设计顺序：</p>
+<ol><li>由目标 f<sub>c</sub> 先选一个方便的标准电容 C（如 100 nF 用于低频、100 pF 用于高频）。</li>
+<li>算 <code>R = 1/(2πf<sub>c</sub>C)</code>，检查 R 不要太小（加重运放负载）也不要太大（噪声与寄生敏感）。</li>
+<li>由目标 Q 选 K 或调整 C<sub>1</sub>/C<sub>2</sub> 比值；单位增益 K = 1 时，等 R 等 C 得到 <code>Q = 1/3</code>（无峰、过阻尼），想要 Butterworth 需 K = 1.586。</li>
+<li>确认运放 GBW 至少是 <code>K·f<sub>c</sub></code> 的 20～50 倍，否则实际 Q 与 f<sub>c</sub> 都会偏移。</li>
+<li>用 <code>.ac</code> 验证 −3 dB 点、高频斜率（二阶为 −40 dB/dec）与峰值。</li></ol>
+</section>
+<section id="s15-4"><h2><span class="sec-num">§15.4</span>运放非理想带来的偏差</h2>
+<ul><li><strong>有限带宽</strong>：f<sub>c</sub> 附近开环增益不足，跟随器不再「理想」，Q 被抬高或压低，甚至出现意外峰值。</li>
+<li><strong>输出阻抗与压摆率</strong>：大信号时滤波器不再是线性系统，阶跃响应被 SR 限制。</li>
+<li><strong>输入偏置电流与失调</strong>：高阻 RC 网络上的直流误差，经增益放大后可能吃掉后级动态范围。</li>
+<li><strong>元件公差</strong>：Q 对电阻电容比值很敏感，1% 电阻 + 5% 电容足以让精密滤波器的通带纹波明显变化（<a href="../../part3/22-robustness/index.html">第 22 章</a>）。</li></ul>
+<p>仿真时把理想 VCVS 换成带主极点的自建模型（<a href="../../part1/08-opamp-basics/index.html">第 8 章</a>）再跑一遍 <code>.ac</code>，是检验设计是否「只在理想世界里成立」的最快方法。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 15-1：Sallen-Key 二阶低通</h3>
@@ -68,6 +95,13 @@ Ro oa out 100
 <li>电容取太小，运放输入电容与 PCB 寄生成为误差主项。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 C1 改成 200n，预测 Q 与峰值变化。</li>
 <li>把 E1 的增益降到 100，观察 fc 附近的偏差。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Electronic filter（英）</strong>（百科 / 滤波）：滤波器分类与术语<br><a href="https://en.wikipedia.org/wiki/Electronic_filter" target="_blank" rel="noopener">Electronic filter（英）</a></li>
+<li><strong>Butterworth filter（英）</strong>（百科 / 滤波）：最平坦响应与极点位置<br><a href="https://en.wikipedia.org/wiki/Butterworth_filter" target="_blank" rel="noopener">Butterworth filter（英）</a></li>
+<li><strong>Q factor（英）</strong>（百科 / 频域）：品质因数的定义与含义<br><a href="https://en.wikipedia.org/wiki/Q_factor" target="_blank" rel="noopener">Q factor（英）</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=sallen+key+active+filter+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=sallen+key+active+filter&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/04-passive-dynamics/index.html'>第 4 章 暂态与频域</a></li>
 <li><a href='../../part1/08-opamp-basics/index.html'>第 8 章 理想运放与负反馈</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

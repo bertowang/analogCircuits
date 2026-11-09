@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 09 章</span>单级放大器</h1>
 <p class="lede">把一只晶体管变成一个有增益、有阻抗、有摆幅边界的模块：三种组态其实是同一模型的三种接法。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>理解源极退化如何用线性度换增益</li>
 <li>会用 .op 检查所有管子是否在饱和区</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>增益与 gm·R</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>输入/输出阻抗</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>偏置点与摆幅</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>源极退化</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>有源负载</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>.op 查工作点</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>增益与 gm·R</td><td><a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a> · <a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>输入/输出阻抗</td><td><a href="https://en.wikipedia.org/wiki/Electrical_impedance" target="_blank" rel="noopener">Electrical impedance（英）</a> · <a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>偏置点与摆幅</td><td><a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a> · <a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>源极退化</td><td><a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a> · <a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>有源负载</td><td><a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a> · <a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.op 查工作点</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s9-1"><h2><span class="sec-num">§9.1</span>核心概念速览</h2>
 <ul>
@@ -46,6 +46,34 @@
 <li><strong>源极 / 发射极退化</strong>：加一个电阻引入局部负反馈，增益变成约 <code>−R<sub>D</sub>/(R<sub>S</sub>+1/g<sub>m</sub>)</code>，对器件参数不敏感、线性度变好。</li>
 <li>设计顺序恒为：定偏置电流 → 定过驱动电压 → 算 W/L 或电阻 → <strong>校核摆幅与饱和区</strong>。</li></ul>
 <div class="card stub"><span class="card-label">待补写</span><p style="margin-bottom:0">后续将展开：三种组态的完整推导、有源负载共源级、大信号摆幅边界、以及一组“给定增益和功耗反推尺寸”的例题。当前可先按下方实验体会源极退化。</p></div>
+</section>
+<section id="s9-2"><h2><span class="sec-num">§9.2</span>三种组态的定量推导</h2>
+<p>把小信号模型代入，三种组态的差别可以一页写完（忽略 r<sub>o</sub>）：</p>
+<table><thead><tr><th>组态</th><th>电压增益</th><th>输入电阻</th><th>输出电阻</th></tr></thead><tbody>
+<tr><td>共源 / 共射</td><td><code>−g<sub>m</sub>(R<sub>D</sub> ∥ R<sub>L</sub>)</code></td><td>∞（MOS）/ r<sub>π</sub>（BJT）</td><td><code>R<sub>D</sub> ∥ r<sub>o</sub></code></td></tr>
+<tr><td>共漏 / 共集</td><td><code>g<sub>m</sub>R<sub>S</sub>/(1+g<sub>m</sub>R<sub>S</sub>) ≈ 1</code></td><td>∞（MOS）</td><td><code>(1/g<sub>m</sub>) ∥ R<sub>S</sub></code></td></tr>
+<tr><td>共栅 / 共基</td><td><code>+g<sub>m</sub>(R<sub>D</sub> ∥ R<sub>L</sub>)</code></td><td><code>≈ 1/g<sub>m</sub></code></td><td>高（cascode 后更高）</td></tr>
+</tbody></table>
+<p>推导只需两步：在输入回路写 KVL 得到控制电压（如 <code>v<sub>gs</sub></code>），在输出节点写 KCL 得到 <code>g<sub>m</sub>v<sub>gs</sub></code> 与负载的关系。任何陌生单级电路都可以这样拆，参见<a href="../../part3/19-read-circuit/index.html">第 19 章</a>。</p>
+</section>
+<section id="s9-3"><h2><span class="sec-num">§9.3</span>偏置设计与摆幅预算</h2>
+<p>增益算得再漂亮，静态点不对也白搭。设计一只共源级的固定顺序：</p>
+<ol><li>由功耗预算定 <code>I<sub>D</sub></code>；由线性度与面积定过驱动 <code>V<sub>ov</sub></code>（常取 0.1～0.3 V）。</li>
+<li>由 <code>I<sub>D</sub> = ½K<sub>p</sub>(W/L)V<sub>ov</sub>²</code> 求 W/L，由 <code>g<sub>m</sub> = 2I<sub>D</sub>/V<sub>ov</sub></code> 得到跨导。</li>
+<li>由目标增益定 <code>R<sub>D</sub></code>，检查直流压降：<code>V(out) = V<sub>DD</sub> − I<sub>D</sub>R<sub>D</sub></code>。</li>
+<li><strong>摆幅校核</strong>：输出最低不能低于 <code>V<sub>ov</sub></code>（否则管子进线性区），最高不能超过 <code>V<sub>DD</sub></code>；把静态点放在两者中间可得到最大对称摆幅。</li>
+<li>输入共模电平必须让管子导通，并给信号留够余量。</li></ol>
+<div class="card warn"><p style="margin-bottom:0">最常见的失败：为了高增益把 R<sub>D</sub> 取得太大，静态 V(out) 被压到 <code>V<sub>ov</sub></code> 以下，管子掉进线性区，增益公式整个失效。先跑一次 <code>.op</code> 再谈增益。</p></div>
+</section>
+<section id="s9-4"><h2><span class="sec-num">§9.4</span>源极退化：用增益换线性与确定性</h2>
+<p>源极串 <code>R<sub>S</sub></code> 后，栅压变化不会全部落到 <code>v<sub>gs</sub></code> 上：</p>
+<span class="eq">A<sub>v</sub> ≈ − R<sub>D</sub> / ( R<sub>S</sub> + 1/g<sub>m</sub> )　（g<sub>m</sub>R<sub>S</sub> ≫ 1 时 ≈ −R<sub>D</sub>/R<sub>S</sub>）</span>
+<p>这是<strong>局部负反馈</strong>：输出电流增大 → R<sub>S</sub> 上压降增大 → v<sub>gs</sub> 减小 → 抑制电流。收益是增益几乎只由两个电阻的比决定，对器件参数、温度、工艺不敏感，线性度明显改善；代价是增益下降、噪声略增、消耗一部分电压余量。</p>
+<p>把 <code>R<sub>S</sub></code> 换成电容或分段旁路，就能在直流稳定与交流增益之间分别取舍——这种「直流负反馈、交流旁路」的手法在<a href="../14-opamp-design/index.html">第 14 章</a>与<a href="../17-power-supply/index.html">第 17 章</a>会反复出现。</p>
+</section>
+<section id="s9-5"><h2><span class="sec-num">§9.5</span>有源负载：把电阻换成电流源</h2>
+<p>增益 <code>−g<sub>m</sub>R<sub>out</sub></code> 想做大，要么加电流（费功耗、降摆幅），要么提高 <code>R<sub>out</sub></code>。用<a href="../10-current-mirror/index.html">电流镜</a>作负载可得到 <code>R<sub>out</sub> = r<sub>on</sub> ∥ r<sub>op</sub></code>，通常比电阻大一个数量级，于是单级增益可达几十到上百。</p>
+<p>代价有三：需要额外的偏置支路、输出摆幅受两管饱和电压挤压、带宽因高阻节点而变窄（该节点的极点变低，见<a href="../12-frequency-response/index.html">第 12 章</a>）。<strong>单级高增益必然伴随高阻节点</strong>，这是模拟设计中最基本的取舍之一。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 9-1：源极退化如何把增益交给电阻比</h3>
@@ -68,6 +96,13 @@ RS src 0 500
 <li>忽略 RD 上的直流压降，输出静态点过高或过低导致摆幅不对称。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 RS 依次改为 0 / 250 / 1k，记录增益与失真趋势。</li>
 <li>给 RD 并联一个电流源负载，预测增益提高多少。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Common source（英）</strong>（百科 / 放大）：共源级增益与阻抗<br><a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a></li>
+<li><strong>Common emitter（英）</strong>（百科 / 放大）：共射放大器分析<br><a href="https://en.wikipedia.org/wiki/Common_emitter" target="_blank" rel="noopener">Common emitter（英）</a></li>
+<li><strong>Transconductance（英）</strong>（百科 / 器件）：跨导定义与公式<br><a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a></li>
+<li><strong>razavi_cmos_analog · GitHub</strong>（笔记 / 进阶）：Razavi 模拟 CMOS 教材章节笔记与问答<br><a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=single+stage+amplifier+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=single+stage+amplifier&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/06-mosfet/index.html'>第 6 章 MOSFET 与两级模型</a></li>
 <li><a href='../../part3/20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

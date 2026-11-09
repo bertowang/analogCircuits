@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 11 章</span>差分放大器</h1>
 <p class="lede">几乎所有运放的输入级。学会把任意输入拆成差模 + 共模，再用半电路法把它化简成单管问题。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>能定义并计算 CMRR</li>
 <li>知道输入共模范围与失调的来源</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>差模 / 共模</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>半电路等效</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>共模抑制比</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>电流镜负载</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>失调与共模范围</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>.dc 传输曲线</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>差模 / 共模</td><td><a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a> · <a href="https://en.wikipedia.org/wiki/Common-mode_rejection_ratio" target="_blank" rel="noopener">Common-mode rejection ratio（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>半电路等效</td><td><a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a> · <a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>共模抑制比</td><td><a href="https://en.wikipedia.org/wiki/Common-mode_rejection_ratio" target="_blank" rel="noopener">Common-mode rejection ratio（英）</a> · <a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>电流镜负载</td><td><a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a> · <a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>失调与共模范围</td><td><a href="https://en.wikipedia.org/wiki/Common-mode_rejection_ratio" target="_blank" rel="noopener">Common-mode rejection ratio（英）</a> · <a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.dc 传输曲线</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s11-1"><h2><span class="sec-num">§11.1</span>核心概念速览</h2>
 <ul>
@@ -45,6 +45,27 @@
 <li><code>CMRR = |A<sub>d</sub>/A<sub>c</sub>|</code>，主要由尾电流源输出阻抗与器件失配决定；提高尾电流源 r<sub>o</sub> 是首要手段。</li>
 <li>用<strong>电流镜作有源负载</strong>可把双端输出合并成单端，同时把差模增益翻倍——这正是第 19 章案例的结构。</li>
 <li>输入共模范围：下限由尾电流管饱和决定，上限由输入管/负载管饱和决定，是数据手册必查参数。</li></ul>
+</section>
+<section id="s11-2"><h2><span class="sec-num">§11.2</span>大信号传输特性</h2>
+<p>实验 11-1 的 S 形曲线可以直接从平方律推出来。设尾电流为 I<sub>SS</sub>、过驱动为 V<sub>ov</sub>，则两支路电流差为：</p>
+<span class="eq">ΔI = I<sub>SS</sub> · (v<sub>id</sub>/V<sub>ov</sub>) · √( 1 − (v<sub>id</sub>/(2V<sub>ov</sub>))² )　（|v<sub>id</sub>| ≤ √2 V<sub>ov</sub>）</span>
+<p>结论比公式重要：</p>
+<ul><li>在 <code>|v<sub>id</sub>| ≪ V<sub>ov</sub></code> 时近似线性，差分增益 ≈ <code>g<sub>m</sub>R<sub>D</sub></code>；</li>
+<li><code>|v<sub>id</sub>| ≥ √2 V<sub>ov</sub></code> 时电流全部流向一侧，输出饱和——这段正是<strong>比较器</strong>与限幅放大器的工作区（<a href="../16-comparator-oscillator/index.html">第 16 章</a>）；</li>
+<li>增大 V<sub>ov</sub>（或减小 W/L）可扩大线性输入范围，但会牺牲 gm 与增益。</li></ul>
+</section>
+<section id="s11-3"><h2><span class="sec-num">§11.3</span>半电路法：把差分化成单管问题</h2>
+<p>对称电路可以在对称面切开，这是本章最有用的技巧：</p>
+<table><thead><tr><th>激励</th><th>对称面</th><th>等效半电路</th><th>结论</th></tr></thead><tbody>
+<tr><td>差模 v<sub>id</sub></td><td>交流地（虚地）</td><td>普通共源级，源极接地</td><td><code>A<sub>d</sub> = −g<sub>m</sub>(R<sub>D</sub> ∥ r<sub>o</sub>)</code></td></tr>
+<tr><td>共模 v<sub>ic</sub></td><td>开路（无电流跨过）</td><td>带源极电阻 2R<sub>SS</sub> 的共源级</td><td><code>A<sub>c</sub> ≈ −R<sub>D</sub>/(2R<sub>SS</sub>)</code></td></tr>
+</tbody></table>
+<p>于是 <code>CMRR = |A<sub>d</sub>/A<sub>c</sub>| ≈ 2g<sub>m</sub>R<sub>SS</sub></code>：<strong>尾电流源的输出阻抗越大，共模抑制越好</strong>。这解释了为什么高性能运放要用 cascode 尾电流源，也解释了理想电流源（R<sub>SS</sub> → ∞）下共模增益为零。</p>
+</section>
+<section id="s11-4"><h2><span class="sec-num">§11.4</span>有源负载、失调与共模范围</h2>
+<p>把两个漏极电阻换成 PMOS 电流镜（<a href="../10-current-mirror/index.html">第 10 章</a>），双端输出自动合并为单端：一侧电流增加、另一侧减少，经镜像相减后<strong>差模增益翻倍</strong>，同时共模增益进一步被抑制。这个结构就是<a href="../../part3/19-read-circuit/index.html">第 19 章</a>解剖的五管 OTA。</p>
+<p>实际 CMRR 往往不由理论增益限制，而被<strong>失配</strong>限制：两管 V<sub>to</sub>、W/L、两个负载电阻的微小差异都会把共模泄漏成差模输出，并表现为输入失调电压 <code>V<sub>OS</sub></code>。增大输入管面积、采用共质心版图、加修调（trim）是常见对策。</p>
+<p>输入共模范围（ICMR）：下限由尾电流管离开饱和区决定，上限由输入管或负载管离开饱和区决定。它和电源轨、摆幅一起构成运放数据手册的三项必查边界。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 11-1：差分传输曲线与线性范围</h3>
@@ -68,6 +89,13 @@ VINP inp 0 DC 2
 <li>输入共模电压超出范围，仿真却“还能放大”（模型未体现全部边界）。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 ISS 改成 400 µA，观察线性输入范围如何变化。</li>
 <li>给 R1 加 5% 失配，重新计算输出失调。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Differential amplifier（英）</strong>（百科 / 模块）：差模/共模与半电路法<br><a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a></li>
+<li><strong>Common-mode rejection ratio（英）</strong>（百科 / 模块）：CMRR 定义与测量<br><a href="https://en.wikipedia.org/wiki/Common-mode_rejection_ratio" target="_blank" rel="noopener">Common-mode rejection ratio（英）</a></li>
+<li><strong>Small-signal model（英）</strong>（百科 / 放大）：线性化的数学依据<br><a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a></li>
+<li><strong>razavi_cmos_analog · GitHub</strong>（笔记 / 进阶）：Razavi 模拟 CMOS 教材章节笔记与问答<br><a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=differential+amplifier+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=differential+amplifier&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../10-current-mirror/index.html'>第 10 章 电流源、电流镜与基准</a></li>
 <li><a href='../../part3/19-read-circuit/index.html'>第 19 章 五管 OTA 解剖案例</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

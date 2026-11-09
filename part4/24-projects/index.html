@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 24 章</span>综合实验与课程设计课题</h1>
 <p class="lede">把全书知识串成一条信号链。三个课题都给出规格、模块划分、验收方法与可运行的测试台。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 8～12 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -27,14 +27,14 @@
 <li>会为每个模块定规格并写验收断言</li>
 <li>能完成从手算、仿真到设计文档的完整流程</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>传感器信号链</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>音频功率放大器</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>带隙基准与 LDO</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>规格与验收表</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>报告模板</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>传感器信号链</td><td><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a> · <a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>音频功率放大器</td><td><a href="https://en.wikipedia.org/wiki/Class-D_amplifier" target="_blank" rel="noopener">Class-D amplifier（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>带隙基准与 LDO</td><td><a href="https://en.wikipedia.org/wiki/Bandgap_voltage_reference" target="_blank" rel="noopener">Bandgap voltage reference（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>规格与验收表</td><td><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a> · <a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>报告模板</td><td><a href="https://github.com/TongenShen/electronics-learning" target="_blank" rel="noopener">electronics-learning · GitHub</a> · <a href="https://ocw.mit.edu/" target="_blank" rel="noopener">MIT OpenCourseWare</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s24-1"><h2><span class="sec-num">§24.1</span>三个课程设计课题</h2>
 <table><thead><tr><th>课题</th><th>规格示例</th><th>用到的章节</th><th>验收方式</th></tr></thead><tbody>
@@ -43,6 +43,37 @@
 <tr><td><strong>C. 基准与 LDO</strong></td><td>输出 3.3 V，负载 0～100 mA，电源抑制 ≥ 40 dB</td><td>5、10、13、17、22</td><td>.dc 扫描输入/负载；温度扫描；蒙特卡洛</td></tr>
 </tbody></table>
 <p>下方测试台是课题 A 的最小可运行版本：传感器等效源 → RC 抗混叠滤波 → 同相放大（增益 10）。按<a href="../../part3/20-design-circuit/index.html">第 20 章</a>的文档模板补齐规格、手算、验收表与公差分析，就是一个完整的大作业。</p>
+</section>
+<section id="s24-2"><h2><span class="sec-num">§24.2</span>课题 A：传感器信号链（完整拆解）</h2>
+<p><strong>规格</strong>：桥式传感器差分输出 ±10 mV、共模 1.25 V、源阻抗 1 kΩ；输出 0～2 V 单端；带宽 100 Hz；共模抑制 ≥ 60 dB；电源 3.3 V；总误差 ≤ 2%。</p>
+<table><thead><tr><th>模块</th><th>选型</th><th>指标分配</th><th>对应章节</th></tr></thead><tbody>
+<tr><td>前置放大</td><td>仪表放大器 / 三运放结构</td><td>增益 100，输入噪声 < 20 nV/√Hz</td><td><a href="../../part2/11-diff-amp/index.html">11</a>、<a href="../../part2/18-noise-distortion/index.html">18</a></td></tr>
+<tr><td>电平搬移</td><td>参考电压 + 差分/同相级</td><td>把双极性信号移到 ADC 中点</td><td><a href="../../part1/08-opamp-basics/index.html">8</a></td></tr>
+<tr><td>抗混叠滤波</td><td>二阶 Butterworth 低通</td><td>f<sub>c</sub> = 100 Hz，−40 dB/dec</td><td><a href="../../part2/15-active-filters/index.html">15</a></td></tr>
+<tr><td>参考与电源</td><td>基准 + LDO + 去耦</td><td>PSRR 与纹波预算</td><td><a href="../../part2/10-current-mirror/index.html">10</a>、<a href="../../part2/17-power-supply/index.html">17</a></td></tr>
+</tbody></table>
+<p>验收：用 <code>.ac</code> 测通带增益与 −3 dB 点；用 <code>.tran</code> 测阶跃建立；注入共模信号测 CMRR；用 <code>.noise</code> 积分得到输出噪声；最后按<a href="../../part3/20-design-circuit/index.html">第 20 章</a>写规格—实测评审表，并按<a href="../../part3/22-robustness/index.html">第 22 章</a>补公差分析。实验 24-1 是这条链的最小可运行版本。</p>
+</section>
+<section id="s24-3"><h2><span class="sec-num">§24.3</span>课题 B / C 的关键难点</h2>
+<p><strong>课题 B · 音频放大器</strong>（8 Ω、1 W、20 Hz～20 kHz、THD ≤ 1%）：</p>
+<ul><li>输出功率换算：<code>V<sub>rms</sub> = √(PR) = 2.83 V</code>，峰值 4 V，需检查电源与输出级摆幅；</li>
+<li>难点在交越失真与热：AB 类输出级偏置、负反馈降低 THD、<code>.four</code> 验收、功耗与散热估算；</li>
+<li>稳定性：容性负载（扬声器线缆）与输出级易自激，需做相位裕度检查。</li></ul>
+<p><strong>课题 C · 基准与 LDO</strong>（3.3 V、0～100 mA、PSRR ≥ 40 dB）：</p>
+<ul><li>难点在启动电路与温度系数：用 <code>.dc</code> 扫温度、<code>.step</code> 扫电源与负载；</li>
+<li>瞬态：负载阶跃的下冲幅度与恢复时间分别由输出电容和环路带宽决定，要分开优化；</li>
+<li>蒙特卡洛：带隙基准的失配直接决定输出电压分布，是本题最值得做的统计实验。</li></ul>
+</section>
+<section id="s24-4"><h2><span class="sec-num">§24.4</span>报告模板与验收清单</h2>
+<ol><li><strong>规格表</strong>：每条指标写清数值与测量方法。</li>
+<li><strong>指标分解树与选型理由</strong>：选了什么拓扑、放弃了什么、为什么。</li>
+<li><strong>手算过程</strong>：关键公式、参数、数量级校核。</li>
+<li><strong>原理图 / 网表</strong>：节点命名、模块标注、测试台与被测电路分开。</li>
+<li><strong>仿真验收表</strong>：目标值 / 实测值 / 通过与否 / 使用的分析指令。</li>
+<li><strong>公差与最坏情况</strong>：PVT、蒙特卡洛、裕量结论。</li>
+<li><strong>波形与判读</strong>：每张图配一句结论，不要只贴截图。</li>
+<li><strong>遗留风险与实测计划</strong>：哪些非理想尚未建模、上电时先测什么。</li></ol>
+<p>自测清单：所有 <code>.cir</code> 能直接 Run？<code>.op</code> 工作点合理？<code>.meas</code> 断言齐全？改一个参数后结论是否仍成立？把<a href="../../part3/19-read-circuit/index.html">第 19 章</a>十步法反过来用在自己的设计上，能独立讲清每一块的作用，就达到了本科课程设计的要求。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 24-1：传感器信号链最小系统</h3>
@@ -68,6 +99,13 @@ R3 minus 0 1k
 <li>忽略模块之间的阻抗与电平匹配。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 CF 改成使 −3 dB 恰好落在 100 Hz，并写 .meas 验证。</li>
 <li>为课题 B 写一份规格表与验收点清单。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>electronics-learning · GitHub</strong>（教程 / 中文）：中文 LTspice 教程，强调先算、再仿真、改参数看趋势<br><a href="https://github.com/TongenShen/electronics-learning" target="_blank" rel="noopener">electronics-learning · GitHub</a></li>
+<li><strong>Circuits-LTSpice · GitHub</strong>（案例 / 代码）：大量 LTspice 电路案例合集，含配套说明站点<br><a href="https://github.com/mick001/Circuits-LTSpice" target="_blank" rel="noopener">Circuits-LTSpice · GitHub</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li>
+<li><strong>MIT OpenCourseWare</strong>（课程 / 开放）：电路与电子学公开课的讲义、习题与实验安排<br><a href="https://ocw.mit.edu/" target="_blank" rel="noopener">MIT OpenCourseWare</a></li>
+<li><strong>LTspice_Ecircuit · GitHub</strong>（案例 / 读图）：37 类按主题归档的电路，适合逐张练习读图<br><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=sensor+signal+chain+ltspice+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=sensor+signal+chain+ltspice&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part3/20-design-circuit/index.html'>第 20 章 设计文档模板</a></li>
 <li><a href='../../part3/19-read-circuit/index.html'>第 19 章 十步读图法</a></li>
 <li><a href='https://github.com/TongenShen/electronics-learning' target='_blank' rel='noopener'>GitHub：electronics-learning（同类综合信号链课程）</a></li></ul></section>

@@ -91,6 +91,23 @@ for p in toc_paths:
 for p in index_toc_links:
     if p not in toc_paths:
         err("总目录链接不在 toc.js 中: " + p)
+if index_text.count('class="toc-extra"') < len(toc_paths):
+    err("总目录中有章节缺少「扩展阅读」入口")
+if index_text.count('<span class="badge done">已完稿</span>') < len(toc_paths):
+    err("总目录中有章节状态徽章未更新为已完稿")
+
+# toc.js 的 status 与各章节页徽章必须一致
+label = {"done": "已完稿", "skeleton": "框架待补", "todo": "待建"}
+toc_status = re.findall(r'path:\s*"([^"]+)",\s*status:\s*"([^"]+)"', toc_text)
+if len(toc_status) != len(toc_paths):
+    err("toc.js 中有章节缺少 status 字段")
+for path, status in toc_status:
+    page_file = ROOT / path
+    if not page_file.is_file():
+        continue
+    badge = '<span class="badge ' + status + '">' + label.get(status, "") + "</span>"
+    if badge not in page_file.read_text(encoding="utf-8"):
+        err("章节页状态徽章与 toc.js 不一致: " + path)
 
 # ---------- 2. 内部链接与资源 ----------
 for page in all_pages():
@@ -98,6 +115,11 @@ for page in all_pages():
     rel_page = str(page.relative_to(ROOT))
     if 'class="site-foot"' not in text:
         err("缺少页脚: " + rel_page)
+    if page.parent != ROOT:
+        if 'id="extra-links"' not in text:
+            err("缺少扩展学习小节: " + rel_page)
+        if "扩展学习</th>" not in text:
+            err("知识点地图缺少扩展学习列: " + rel_page)
     for token in ("汪亮", "bertonwang", "47608843@qq.com", "AI 使用说明"):
         if token not in text:
             err("页脚缺少署名信息 [%s]: %s" % (token, rel_page))

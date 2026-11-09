@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 07 章</span>BJT 与三种基本组态</h1>
 <p class="lede">与 MOS 对照着学：控制量从 VGS 变成 VBE，输入电阻从无穷变成有限，其余推理框架完全一样。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,16 +28,52 @@
 <li>能说出共射/共集/共基三种组态的增益与阻抗特征</li>
 <li>能列出 BJT 与 MOS 的对照表</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>放大 / 饱和 / 截止区</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>β 与 Ic-Vbe</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>gm / rπ / ro</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>共射 / 共集 / 共基</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>偏置电路</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>与 MOS 对照表</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>放大 / 饱和 / 截止区</td><td><a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_emitter" target="_blank" rel="noopener">Common emitter（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>β 与 Ic-Vbe</td><td><a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_emitter" target="_blank" rel="noopener">Common emitter（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>gm / rπ / ro</td><td><a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a> · <a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>共射 / 共集 / 共基</td><td><a href="https://en.wikipedia.org/wiki/Common_emitter" target="_blank" rel="noopener">Common emitter（英）</a> · <a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>偏置电路</td><td><a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a> · <a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>与 MOS 对照表</td><td><a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_emitter" target="_blank" rel="noopener">Common emitter（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
+<section id="s7-2"><h2><span class="sec-num">§7.2</span>工作区判据与指数关系</h2>
+<p>BJT 与 MOS 的推理框架完全一样，只是控制量从 <code>V<sub>GS</sub></code> 换成 <code>V<sub>BE</sub></code>、输入从「开路」变成「有电流」：</p>
+<table><thead><tr><th>工作区</th><th>判据（NPN）</th><th>行为</th></tr></thead><tbody>
+<tr><td>截止</td><td>V<sub>BE</sub> 低于约 0.6 V，且 V<sub>BC</sub> 反偏</td><td>I<sub>C</sub> ≈ 0，开关断开</td></tr>
+<tr><td>放大区</td><td>V<sub>BE</sub> ≈ 0.6～0.8 V，且 <code>V<sub>BC</sub></code> 反偏（V<sub>CE</sub> &gt; V<sub>CE,sat</sub>）</td><td><code>I<sub>C</sub> = I<sub>S</sub> e<sup>V<sub>BE</sub>/V<sub>T</sub></sup></code>，<strong>放大器必须在此</strong></td></tr>
+<tr><td>饱和区</td><td>发射结与集电结都正偏</td><td>V<sub>CE</sub> ≈ 0.2 V，开关闭合</td></tr>
+</tbody></table>
+<p>与 MOS 一样，判断顺序是「先假设工作区 → 线性化 → 算电压电流 → 验证结偏置」，即<a href="../05-diode/index.html">第 5 章</a>的假设—验证法。差别在于 BJT 基极<strong>要取电流</strong> <code>I<sub>B</sub> = I<sub>C</sub>/β</code>，因此前级会被加载。</p>
+</section>
+<section id="s7-3"><h2><span class="sec-num">§7.3</span>小信号模型与三种组态</h2>
+<span class="eq">g<sub>m</sub> = I<sub>C</sub>/V<sub>T</sub>，　r<sub>π</sub> = β/g<sub>m</sub>，　r<sub>o</sub> ≈ V<sub>A</sub>/I<sub>C</sub></span>
+<p>室温下 <code>V<sub>T</sub> ≈ 26 mV</code>，所以 <code>I<sub>C</sub> = 1 mA</code> 时 <code>g<sub>m</sub> ≈ 38 mS</code> —— 同样电流下 BJT 的跨导远大于 MOS（<code>g<sub>m</sub> = 2I<sub>D</sub>/V<sub>ov</sub></code>），这是它在低噪声、高精度场合仍被使用的原因。</p>
+<table><thead><tr><th>组态</th><th>电压增益</th><th>输入阻抗</th><th>输出阻抗</th><th>相位</th></tr></thead><tbody>
+<tr><td>共射 CE</td><td>高，<code>−g<sub>m</sub>R<sub>C</sub></code></td><td>≈ r<sub>π</sub>（中）</td><td>≈ R<sub>C</sub></td><td>反相</td></tr>
+<tr><td>共集 CC（射随）</td><td>≈ 1</td><td>高，≈ (β+1)R<sub>E</sub></td><td>低，≈ 1/g<sub>m</sub></td><td>同相</td></tr>
+<tr><td>共基 CB</td><td>高</td><td>低，≈ 1/g<sub>m</sub></td><td>高</td><td>同相</td></tr>
+</tbody></table>
+<p>三者与 MOS 的共源/共漏/共栅一一对应，只需把 <code>r<sub>π</sub></code> 换成「无穷大」、把 <code>V<sub>BE</sub></code> 换成 <code>V<sub>GS</sub></code>。建议把这张表和<a href="../06-mosfet/index.html">第 6 章</a>的表并排抄一次。</p>
+</section>
+<section id="s7-4"><h2><span class="sec-num">§7.4</span>分压偏置：让电路不依赖 β</h2>
+<p>β 随器件、温度、电流可能变化 2～3 倍，所以「一个电阻定基极电流」的偏置不可用。实验 7-1 用的是分压偏置加发射极电阻：</p>
+<span class="eq">V<sub>B</sub> ≈ V<sub>CC</sub>·R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>)，　I<sub>E</sub> ≈ (V<sub>B</sub> − 0.7 V)/R<sub>E</sub></span>
+<p>成立条件是分压电流远大于基极电流（一般取 <code>I<sub>div</sub> ≥ 10 I<sub>B</sub></code>）。<code>R<sub>E</sub></code> 引入直流负反馈：温度上升 → I<sub>C</sub> 上升 → V<sub>E</sub> 上升 → V<sub>BE</sub> 下降 → 抑制 I<sub>C</sub>，从而稳定工作点。交流增益若要恢复，可给 <code>R<sub>E</sub></code> 并联旁路电容，或只旁路一部分（局部退化，见<a href="../../part2/09-single-stage/index.html">第 9 章</a>）。</p>
+<div class="card note"><p style="margin-bottom:0">设计顺序：先定 I<sub>C</sub>（由功耗与 gm 决定）→ 定 V<sub>E</sub>（约 10%～20% V<sub>CC</sub>）→ 算 R<sub>E</sub> → 由 V<sub>B</sub> 选分压比 → 校核分压电流 → 由目标 V<sub>C</sub> 定 R<sub>C</sub> → 最后检查 V<sub>CE</sub> 是否留在放大区。</p></div>
+</section>
+<section id="s7-5"><h2><span class="sec-num">§7.5</span>BJT 与 MOS 对照表</h2>
+<table><thead><tr><th>维度</th><th>BJT</th><th>MOSFET</th></tr></thead><tbody>
+<tr><td>控制量</td><td>V<sub>BE</sub>（指数律）</td><td>V<sub>GS</sub>（平方律）</td></tr>
+<tr><td>输入阻抗</td><td>有限（r<sub>π</sub>），需基极电流</td><td>极高，栅极几乎不取电流</td></tr>
+<tr><td>同电流跨导</td><td>大（I<sub>C</sub>/V<sub>T</sub>）</td><td>较小（2I<sub>D</sub>/V<sub>ov</sub>）</td></tr>
+<tr><td>低频噪声 / 失调</td><td>通常更优</td><td>1/f 噪声较明显</td></tr>
+<tr><td>开关应用</td><td>有饱和压降、需驱动电流</td><td>导通电阻可控、驱动简单</td></tr>
+<tr><td>集成工艺</td><td>双极 / BiCMOS</td><td>主流 CMOS</td></tr>
+</tbody></table>
+<p>没有谁更好，只有谁更适合：传感器前端、精密基准常见 BJT/双极输入；大规模混合信号与开关电路几乎都用 CMOS。读数据手册时先看输入偏置电流与噪声密度，往往就能猜出输入级用的是哪一种。</p>
+</section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 7-1：分压偏置的共射放大器</h3>
 <pre class="spice" data-file="sim/07-common-emitter.cir"><code>* Ch07 Common-emitter amplifier with divider bias
@@ -62,6 +98,13 @@ CIN base in 10u
 <li>把共集（射随器）误认为没有增益就“没用”：它的价值是阻抗变换。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 RE 拆成两半，只旁路一半，推导并仿真验证增益变化。</li>
 <li>把 CIN 改成 100n，用 .ac 观察低频截止点如何上移。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Bipolar junction transistor（英）</strong>（百科 / 器件）：BJT 工作区与电流关系<br><a href="https://en.wikipedia.org/wiki/Bipolar_junction_transistor" target="_blank" rel="noopener">Bipolar junction transistor（英）</a></li>
+<li><strong>Common emitter（英）</strong>（百科 / 放大）：共射放大器分析<br><a href="https://en.wikipedia.org/wiki/Common_emitter" target="_blank" rel="noopener">Common emitter（英）</a></li>
+<li><strong>All About Circuits · Textbook</strong>（教材 / 开放）：免费在线电子学教材，偏工程直觉的补充阅读<br><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li>
+<li><strong>Electronic-simulations-with-LTspice · GitHub</strong>（案例 / 读图）：按主题归档的 .asc 原理图合集，练习打开别人的图先读懂<br><a href="https://github.com/Khannister/Electronic-simulations-with-LTspice" target="_blank" rel="noopener">Electronic-simulations-with-LTspice · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=bjt+common+emitter+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=bjt+common+emitter&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../06-mosfet/index.html'>第 6 章 MOSFET 与两级模型</a></li>
 <li><a href='../../part2/09-single-stage/index.html'>第 9 章 单级放大器</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

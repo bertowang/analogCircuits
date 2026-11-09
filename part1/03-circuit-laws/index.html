@@ -29,13 +29,14 @@
 <li>养成“先直流、后交流”的读图顺序</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>节点与参考地</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>KCL / KVL / 欧姆定律</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>分压与分流、负载效应</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>叠加、戴维南 / 诺顿</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>节点电压法</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>受控源与 .tf</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>节点与参考地</td><td><a href="https://en.wikipedia.org/wiki/Nodal_analysis" target="_blank" rel="noopener">Nodal analysis（英）</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>KCL / KVL / 欧姆定律</td><td><a href="https://en.wikipedia.org/wiki/Kirchhoff%27s_circuit_laws" target="_blank" rel="noopener">Kirchhoff&#x27;s circuit laws（英）</a> · <a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>分压与分流、负载效应</td><td><a href="https://en.wikipedia.org/wiki/Voltage_divider" target="_blank" rel="noopener">Voltage divider（英）</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>叠加、戴维南 / 诺顿</td><td><a href="https://en.wikipedia.org/wiki/Th%C3%A9venin%27s_theorem" target="_blank" rel="noopener">Thévenin&#x27;s theorem（英）</a> · <a href="https://en.wikipedia.org/wiki/Voltage_divider" target="_blank" rel="noopener">Voltage divider（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>节点电压法</td><td><a href="https://en.wikipedia.org/wiki/Nodal_analysis" target="_blank" rel="noopener">Nodal analysis（英）</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>受控源与 .tf</td><td><a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a> · <a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s3-1"><h2><span class="sec-num">§3.1</span>读图第一步：标节点、定参考地</h2>
 <p>电压永远是<strong>两点之间</strong>的差。所谓“某点电压”，默认指它相对参考地（节点 <code>0</code>）的电位。读图时先做三件笨功夫，能消掉一半的错误：</p>
@@ -106,6 +107,13 @@ RL out 0 {RLv}
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>手算 R1=4.7k、R2=10k、RL=2.2k 时的 V(out)，再用实验 3-1 的网表改值核对。</li>
 <li>用 .tf 求实验 3-2 在 RL=100k 时的输出电阻，解释为何与 R1∥R2 有关。</li>
 <li>把 V1 换成 5 V 加一个 1 V 的交流小信号，用叠加法分别算两个源对 V(out) 的贡献。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Voltage divider（英）</strong>（百科 / 基础）：分压公式与负载效应<br><a href="https://en.wikipedia.org/wiki/Voltage_divider" target="_blank" rel="noopener">Voltage divider（英）</a></li>
+<li><strong>Kirchhoff&#x27;s circuit laws（英）</strong>（百科 / 基础）：KCL/KVL 的严格表述<br><a href="https://en.wikipedia.org/wiki/Kirchhoff%27s_circuit_laws" target="_blank" rel="noopener">Kirchhoff&#x27;s circuit laws（英）</a></li>
+<li><strong>Thévenin&#x27;s theorem（英）</strong>（百科 / 基础）：戴维南等效与输出电阻<br><a href="https://en.wikipedia.org/wiki/Th%C3%A9venin%27s_theorem" target="_blank" rel="noopener">Thévenin&#x27;s theorem（英）</a></li>
+<li><strong>All About Circuits · Textbook</strong>（教材 / 开放）：免费在线电子学教材，偏工程直觉的补充阅读<br><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></li>
+<li><strong>LTspice-Basics · GitHub</strong>（练习 / 入门）：MIT 许可的 LTspice 入门练习集<br><a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=voltage+divider+kcl+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=voltage+divider+kcl&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../04-passive-dynamics/index.html'>第 4 章 无源元件、暂态与频域</a></li>
 <li><a href='../../part3/19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路</a></li>
 <li><a href='../../appendix/index.html'>附录 A · 常用公式</a></li></ul></section>

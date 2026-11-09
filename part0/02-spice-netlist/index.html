@@ -29,13 +29,14 @@
 <li>遇到收敛问题有排查顺序</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>元件行 R/C/L/V/I/Q/M/D/E</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>.model 与 .param</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>.step 参数扫描</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>.meas 自动测量</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>.include / .lib / .subckt</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>收敛性与 .options</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>元件行 R/C/L/V/I/Q/M/D/E</td><td><a href="https://en.wikipedia.org/wiki/Netlist" target="_blank" rel="noopener">Netlist（英）</a> · <a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>.model 与 .param</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/ngspice/ngspice" target="_blank" rel="noopener">ngspice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.step 参数扫描</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>.meas 自动测量</td><td><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a> · <a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>.include / .lib / .subckt</td><td><a href="https://en.wikipedia.org/wiki/Netlist" target="_blank" rel="noopener">Netlist（英）</a> · <a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>收敛性与 .options</td><td><a href="https://ez.analog.com/" target="_blank" rel="noopener">ADI EngineerZone</a> · <a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s2-1"><h2><span class="sec-num">§2.1</span>网表的五段结构</h2>
 <p>一个 <code>.cir</code> 文件只有五类内容，顺序固定：</p>
@@ -114,6 +115,13 @@ C1 out 0 100n
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>给实验 2-1 增加 .step param Rtop 的第五个值，并预测 vout。</li>
 <li>把实验 2-2 的 C1 增大 10 倍，用 .meas 验证 fc 下降 10 倍。</li>
 <li>用 .subckt 把分压器封装成模块，再实例化两次。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>ngspice · GitHub</strong>（工具 / 引擎）：开源 SPICE 引擎，可对照哪些是通用语法、哪些是 LTspice 扩展<br><a href="https://github.com/ngspice/ngspice" target="_blank" rel="noopener">ngspice · GitHub</a></li>
+<li><strong>SPICE（英）</strong>（百科 / 仿真）：仿真器历史与语法家族<br><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a></li>
+<li><strong>Netlist（英）</strong>（百科 / 仿真）：网表概念的通用定义<br><a href="https://en.wikipedia.org/wiki/Netlist" target="_blank" rel="noopener">Netlist（英）</a></li>
+<li><strong>PyLTSpice · GitHub</strong>（工具 / 自动化）：用 Python 批量改网表、跑仿真、解析 .raw/.log，含蒙特卡洛工具箱<br><a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a></li>
+<li><strong>ADI EngineerZone</strong>（厂商 / 社区）：收敛问题、模型导入与实际器件应用的厂商问答社区<br><a href="https://ez.analog.com/" target="_blank" rel="noopener">ADI EngineerZone</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=spice+netlist+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=spice+netlist&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../01-ltspice-quickstart/index.html'>第 1 章 LTspice 快速上手</a></li>
 <li><a href='../../part3/21-simulation-method/index.html'>第 21 章 仿真方法论</a></li>
 <li><a href='../../appendix/index.html'>附录 A · SPICE 指令速查</a></li>

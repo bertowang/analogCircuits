@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 04 章</span>无源元件、暂态与频域</h1>
 <p class="lede">从时间常数到波特图：把 R/L/C 的时域行为与频域行为看成同一件事的两种表述。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 4 学时</span>
 <span>2 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,16 +28,53 @@
 <li>理解二阶系统的阻尼、谐振与 Q 值</li>
 <li>能用 .ac 扫频验证手算的零极点</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>实际元件寄生参数</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>时间常数与充放电</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>二阶系统与阻尼</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>阻抗 / 相量 / 复数</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>传递函数与零极点</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>波特图与 -3 dB</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>实际元件寄生参数</td><td><a href="https://en.wikipedia.org/wiki/Printed_circuit_board" target="_blank" rel="noopener">Printed circuit board（英）</a> · <a href="https://en.wikipedia.org/wiki/Electrical_impedance" target="_blank" rel="noopener">Electrical impedance（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>时间常数与充放电</td><td><a href="https://en.wikipedia.org/wiki/RC_circuit" target="_blank" rel="noopener">RC circuit（英）</a> · <a href="https://en.wikipedia.org/wiki/Electrical_impedance" target="_blank" rel="noopener">Electrical impedance（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>二阶系统与阻尼</td><td><a href="https://en.wikipedia.org/wiki/RLC_circuit" target="_blank" rel="noopener">RLC circuit（英）</a> · <a href="https://en.wikipedia.org/wiki/Q_factor" target="_blank" rel="noopener">Q factor（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>阻抗 / 相量 / 复数</td><td><a href="https://en.wikipedia.org/wiki/Electrical_impedance" target="_blank" rel="noopener">Electrical impedance（英）</a> · <a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>传递函数与零极点</td><td><a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a> · <a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>波特图与 -3 dB</td><td><a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a> · <a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
+<section id="s4-2"><h2><span class="sec-num">§4.2</span>一阶电路的三要素法</h2>
+<p>任何只含一个储能元件的线性电路，响应都可以用三个数写出来，不必解微分方程：</p>
+<span class="eq">v(t) = v(∞) + [ v(0⁺) − v(∞) ] · e<sup>−t/τ</sup></span>
+<ul><li><strong>初值 v(0⁺)</strong>：电容电压（或电感电流）不能突变，等于换路前的 v(0⁻)。</li>
+<li><strong>终值 v(∞)</strong>：把电容开路、电感短路，按直流电路求解。</li>
+<li><strong>时间常数 τ</strong>：把独立源置零（电压源短路、电流源开路），从储能元件两端看进去的等效电阻 R<sub>th</sub>，一阶 RC 有 <code>τ = R<sub>th</sub>C</code>，RL 有 <code>τ = L/R<sub>th</sub></code>。</li></ul>
+<p>常用结论：t = τ 时完成 63.2%，t = 3τ 约 95%，t = 5τ 约 99.3%；10%→90% 上升时间 ≈ 2.2τ。实验 4-1 与<a href="../../part3/21-simulation-method/index.html">第 21 章</a>的 <code>.meas</code> 都会用到这些数。</p>
+</section>
+<section id="s4-3"><h2><span class="sec-num">§4.3</span>二阶系统、阻尼与谐振</h2>
+<p>含 L、C 两个储能元件的电路由二阶微分方程描述，标准形式为：</p>
+<span class="eq">H(s) = H<sub>0</sub> ω<sub>0</sub>² / ( s² + (ω<sub>0</sub>/Q)s + ω<sub>0</sub>² )，　ω<sub>0</sub> = 1/√(LC)</span>
+<p>也可以写成 <code>s² + 2ζω<sub>0</sub>s + ω<sub>0</sub>²</code>，其中阻尼比 <code>ζ = 1/(2Q)</code>：</p>
+<table><thead><tr><th>阻尼</th><th>条件</th><th>阶跃响应</th><th>频域</th></tr></thead><tbody>
+<tr><td>过阻尼</td><td>ζ &gt; 1（Q &lt; 0.5）</td><td>缓慢单调上升，无过冲</td><td>无谐振峰</td></tr>
+<tr><td>临界阻尼</td><td>ζ = 1</td><td>最快无过冲</td><td>平坦</td></tr>
+<tr><td>欠阻尼</td><td>ζ &lt; 1（Q &gt; 0.5）</td><td>过冲与振铃</td><td>出现谐振峰，峰值 ≈ Q</td></tr>
+</tbody></table>
+<p>串联 RLC 中 <code>Q = (1/R)√(L/C)</code>：R 越小 Q 越大、峰越尖、振铃越久。这与<a href="../../part2/13-feedback-stability/index.html">第 13 章</a>的相位裕度／阶跃过冲是完全对应的直觉，只是那里的「阻尼」由反馈环路提供。</p>
+</section>
+<section id="s4-4"><h2><span class="sec-num">§4.4</span>阻抗、相量与传递函数</h2>
+<p>正弦稳态下把微分运算换成乘法，是频域分析的全部技巧：</p>
+<table><thead><tr><th>元件</th><th>时域</th><th>s 域阻抗</th><th>正弦稳态</th></tr></thead><tbody>
+<tr><td>电阻</td><td><code>v = Ri</code></td><td><code>R</code></td><td><code>R</code></td></tr>
+<tr><td>电容</td><td><code>i = C dv/dt</code></td><td><code>1/(sC)</code></td><td><code>1/(jωC)</code></td></tr>
+<tr><td>电感</td><td><code>v = L di/dt</code></td><td><code>sL</code></td><td><code>jωL</code></td></tr>
+</tbody></table>
+<p>于是分压公式直接给出 RC 低通的传递函数 <code>H(s) = 1/(1+sRC)</code>，一个实极点 <code>s = −1/RC</code>。画波特图的规则：每个极点从它的转折频率起贡献 −20 dB/dec 与最多 −90° 相移，每个零点贡献 +20 dB/dec 与最多 +90°；多个极零点的作用在对数坐标上直接相加。</p>
+<div class="card tip"><p style="margin-bottom:0">这一节是<a href="../../part2/12-frequency-response/index.html">第 12 章</a>与<a href="../../part2/15-active-filters/index.html">第 15 章</a>的共同前置。能把「一个电容 + 一个电阻」翻译成「一个极点」，后面的多路反馈电路就只是把这句话重复几次。</p></div>
+</section>
+<section id="s4-5"><h2><span class="sec-num">§4.5</span>实际元件的寄生参数</h2>
+<p>仿真与实测的差异，一半来自这里：</p>
+<ul><li><strong>电阻</strong>：引线电感、并联寄生电容、公差（1%/5%）、温度系数 ppm/℃；高阻值电阻在高频已不再是纯电阻。</li>
+<li><strong>电容</strong>：等效串联电阻 ESR、等效串联电感 ESL、漏电流、介质吸收；ESR 决定纹波与整流尖峰，ESL 决定自谐振频率，超过后电容<em>变成电感</em>。</li>
+<li><strong>电感</strong>：绕组直流电阻、匝间电容、磁芯饱和与损耗。</li>
+<li><strong>PCB</strong>：走线约 1 nH/mm、焊盘到地平面几 pF；这些在几十 MHz 以上就会改变频响（见<a href="../../part3/23-lab-debug/index.html">第 23 章</a>）。</li></ul>
+<p>做实验时先跑理想模型确认公式，再逐个加寄生参数看曲线怎么变——这比一上来就用复杂模型更能建立因果直觉。</p>
+</section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 4-1：RC 低通的频响</h3>
 <pre class="spice" data-file="sim/04-rc-lowpass.cir"><code>* Ch04 RC low-pass: transfer function and -3dB point
@@ -67,6 +104,13 @@ C1 out 0 100n
 <li>在 .ac 分析里用 SINE 源 expecting 时域波形：.ac 只看 AC 幅值。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>手算实验 4-1 在 1 kHz 处的相位，再用波形窗口的相位显示核对。</li>
 <li>把实验 4-2 的 R1 依次改为 10 / 100 / 1k，记录峰值与带宽，总结 Q 的规律。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>RC circuit（英）</strong>（百科 / 频域）：一阶充放电与时间常数<br><a href="https://en.wikipedia.org/wiki/RC_circuit" target="_blank" rel="noopener">RC circuit（英）</a></li>
+<li><strong>RLC circuit（英）</strong>（百科 / 频域）：二阶系统、谐振与阻尼<br><a href="https://en.wikipedia.org/wiki/RLC_circuit" target="_blank" rel="noopener">RLC circuit（英）</a></li>
+<li><strong>Bode plot（英）</strong>（百科 / 频域）：幅频/相频图的画法<br><a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li>
+<li><strong>CircuitJS 在线版（Falstad）</strong>（交互仿真 / 在线）：无需安装即可搭电路看电流动画，建立直觉<br><a href="https://www.falstad.com/circuit/" target="_blank" rel="noopener">CircuitJS 在线版（Falstad）</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=rc+filter+ltspice+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=rc+filter+ltspice&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../03-circuit-laws/index.html'>第 3 章 电路定律与读图第一步</a></li>
 <li><a href='../../part2/12-frequency-response/index.html'>第 12 章 频率响应与极点</a></li>
 <li><a href='../../part2/15-active-filters/index.html'>第 15 章 有源滤波器</a></li></ul></section>

@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 12 章</span>频率响应与极点</h1>
 <p class="lede">每个寄生电容都是一个低通。学会找出“哪一个电容说了算”，就抓住了带宽。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>理解主极点近似与增益带宽积</li>
 <li>知道右半平面零点的危害</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>极零点与波特图</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>密勒等效</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>主极点近似</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>GBW</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>右半平面零点</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>.ac 扫频</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>极零点与波特图</td><td><a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a> · <a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>密勒等效</td><td><a href="https://en.wikipedia.org/wiki/Miller_effect" target="_blank" rel="noopener">Miller effect（英）</a> · <a href="https://en.wikipedia.org/wiki/Common_source" target="_blank" rel="noopener">Common source（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>主极点近似</td><td><a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a> · <a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>GBW</td><td><a href="https://en.wikipedia.org/wiki/Miller_effect" target="_blank" rel="noopener">Miller effect（英）</a> · <a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>右半平面零点</td><td><a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a> · <a href="https://en.wikipedia.org/wiki/Miller_effect" target="_blank" rel="noopener">Miller effect（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.ac 扫频</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/nunobrum/PyLTSpice" target="_blank" rel="noopener">PyLTSpice · GitHub</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s12-1"><h2><span class="sec-num">§12.1</span>核心概念速览</h2>
 <ul>
@@ -45,6 +45,29 @@
 <li><strong>主极点近似</strong>：若第一个极点远低于其余极点，可只保留它；此时 <code>GBW ≈ A<sub>0</sub>·f<sub>p1</sub></code>，闭环增益越低、带宽越宽。</li>
 <li><strong>右半平面零点</strong>（如共源级的 C<sub>gd</sub> 前馈通路）：幅度上升而相位继续滞后，恶化相位裕度，密勒补偿必须配合调零电阻。</li>
 <li>节点电阻越大、电容越大，该节点极点越低；<strong>找主极点＝找“高阻 × 大电容”的那个节点</strong>。</li></ul>
+</section>
+<section id="s12-2"><h2><span class="sec-num">§12.2</span>单极点系统的波特图</h2>
+<p>把 <code>H(s) = A<sub>0</sub>/(1+s/ω<sub>p</sub>)</code> 中的 <code>s = jω</code> 代入：</p>
+<span class="eq">|H| = A<sub>0</sub>/√(1+(ω/ω<sub>p</sub>)²)，　φ = −arctan(ω/ω<sub>p</sub>)</span>
+<table><thead><tr><th>频率</th><th>幅度</th><th>相位</th></tr></thead><tbody>
+<tr><td>ω ≪ ω<sub>p</sub></td><td>≈ A<sub>0</sub>（0 dB 平坦）</td><td>≈ 0°</td></tr>
+<tr><td>ω = ω<sub>p</sub></td><td>A<sub>0</sub>/√2（−3 dB）</td><td>−45°</td></tr>
+<tr><td>ω ≫ ω<sub>p</sub></td><td>−20 dB/dec 下降</td><td>→ −90°</td></tr>
+</tbody></table>
+<p>高频段 <code>|H| ≈ A<sub>0</sub>ω<sub>p</sub>/ω</code>，所以 <code>GBW = A<sub>0</sub>·f<sub>p</sub></code> 是常数：闭环增益降一半，带宽就翻倍。这条守恒关系是<a href="../13-feedback-stability/index.html">第 13 章</a>稳定性分析与<a href="../../part3/20-design-circuit/index.html">第 20 章</a>运放选型的核心依据。</p>
+</section>
+<section id="s12-3"><h2><span class="sec-num">§12.3</span>密勒等效的推导</h2>
+<p>设电容 C 跨接在增益为 <code>A<sub>v</sub> = −A</code>（A &gt; 0）的反相级输入 x 与输出 y 之间。流过它的电流：</p>
+<span class="eq">i = sC(v<sub>x</sub> − v<sub>y</sub>) = sC(1+A)v<sub>x</sub>　⇒　Z<sub>in</sub> = 1/[sC(1+A)]</span>
+<p>即<strong>输入端看到一个被放大 (1+A) 倍的电容</strong>；输出端等效约 C/(1+1/A) ≈ C。一个 0.1 pF 的 <code>C<sub>gd</sub></code> 在增益 −4 的共源级里会变成 0.5 pF，若前级是 100 kΩ 高阻节点，主极点立刻降到几百 kHz。</p>
+<p>因此判断主极点的实用口诀是：<strong>找「高节点阻抗 × 大等效电容 × 附近有大增益」的那个节点</strong>，而不是单纯找电容量最大的电容。实验 12-1 用 <code>.step param CGD</code> 把这条结论直接画出来。</p>
+</section>
+<section id="s12-4"><h2><span class="sec-num">§12.4</span>主极点近似、零点与极点分裂</h2>
+<p>多级电路有多个极点，但若最低极点远低于其余（一般差 3 倍以上），可只保留它：</p>
+<span class="eq">H(s) ≈ A<sub>0</sub> / [ (1+s/ω<sub>p1</sub>)(1+s/ω<sub>p2</sub>)… ] ≈ A<sub>0</sub>/(1+s/ω<sub>p1</sub>)</span>
+<p>两条必须记住的例外：</p>
+<ul><li><strong>右半平面零点</strong>（<code>s = +ω<sub>z</sub></code>）：幅度按 +20 dB/dec 上升，相位却像极点一样继续滞后，对稳定性伤害最大。共源级 <code>C<sub>gd</sub></code> 的前馈通路就产生 <code>ω<sub>z</sub> = g<sub>m</sub>/C<sub>gd</sub></code>；密勒补偿常串联调零电阻把它推到左半平面或推到高频。</li>
+<li><strong>极点分裂</strong>：加补偿电容后主极点变低、次极点变高，二者被「推开」，这正是<a href="../13-feedback-stability/index.html">第 13 章</a>改善相位裕度的物理机制。</li></ul>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 12-1：Cgd 变化如何移动主极点</h3>
@@ -68,6 +91,13 @@ CL out 0 5p
 <li>在瞬态仿真里用方波测带宽，却没考虑压摆率限制。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 RD 改成 4k，预测带宽变化并说明两个相反的作用。</li>
 <li>在 CGD1 上串一个电阻，观察零点位置变化。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Bode plot（英）</strong>（百科 / 频域）：幅频/相频图的画法<br><a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></li>
+<li><strong>Miller effect（英）</strong>（百科 / 频响）：密勒等效的推导<br><a href="https://en.wikipedia.org/wiki/Miller_effect" target="_blank" rel="noopener">Miller effect（英）</a></li>
+<li><strong>Transfer function（英）</strong>（百科 / 频域）：传递函数与零极点<br><a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a></li>
+<li><strong>Transconductance（英）</strong>（百科 / 器件）：跨导定义与公式<br><a href="https://en.wikipedia.org/wiki/Transconductance" target="_blank" rel="noopener">Transconductance（英）</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=miller+effect+frequency+response+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=miller+effect+frequency+response&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/04-passive-dynamics/index.html'>第 4 章 暂态与频域基础</a></li>
 <li><a href='../13-feedback-stability/index.html'>第 13 章 反馈与稳定性</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

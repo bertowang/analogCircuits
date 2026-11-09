@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 14 章</span>运算放大器设计</h1>
 <p class="lede">把前面所有模块拼起来：从指标分配开始，落到每一只管子的尺寸与补偿电容。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 5 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>理解摆率、功耗、噪声、失调之间的取舍</li>
 <li>能用一张检查表收尾设计</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>两级结构</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>指标分解与分配</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>补偿电容</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>摆率与功耗</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>失调与 PSRR</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>设计检查表</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>两级结构</td><td><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a> · <a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>指标分解与分配</td><td><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a> · <a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>补偿电容</td><td><a href="https://en.wikipedia.org/wiki/Phase_margin" target="_blank" rel="noopener">Phase margin（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>摆率与功耗</td><td><a href="https://en.wikipedia.org/wiki/Slew_rate" target="_blank" rel="noopener">Slew rate（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>失调与 PSRR</td><td><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a> · <a href="https://en.wikipedia.org/wiki/Differential_amplifier" target="_blank" rel="noopener">Differential amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>设计检查表</td><td><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a> · <a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s14-1"><h2><span class="sec-num">§14.1</span>核心概念速览</h2>
 <ul>
@@ -46,6 +46,46 @@
 <li>输入管取<strong>大 W·L、小过驱动</strong>有利于降低失调与 1/f 噪声；负载管取<strong>大 L</strong> 提高 r<sub>o</sub>。这就是模拟版图里面积与性能的交换。</li>
 <li>设计检查表：所有管子饱和？共模范围？摆幅？SR？相位裕度？PSRR/CMRR？功耗？PVT 角？</li></ul>
 <div class="card stub"><span class="card-label">待补写</span><p style="margin-bottom:0">后续将把下方行为级模型逐步替换为晶体管级电路，并给出一份完整的指标→尺寸手算例题。当前先用行为级模型理解“两级 + 密勒补偿”的骨架。</p></div>
+</section>
+<section id="s14-2"><h2><span class="sec-num">§14.2</span>两级 CMOS 运放的结构</h2>
+<p>经典两级运放由三部分组成，职责非常明确：</p>
+<table><thead><tr><th>模块</th><th>电路</th><th>提供什么</th><th>主要代价</th></tr></thead><tbody>
+<tr><td>第一级</td><td>NMOS 差分对 + PMOS 电流镜负载</td><td>高增益、高 CMRR、双端转单端</td><td>输入共模范围受限</td></tr>
+<tr><td>第二级</td><td>共源放大管 + 电流源负载</td><td>大输出摆幅、驱动能力</td><td>引入第二个低频极点</td></tr>
+<tr><td>补偿</td><td>跨接两级的密勒电容 C<sub>c</sub>（常串 R<sub>z</sub>）</td><td>极点分裂、保证相位裕度</td><td>带宽与压摆率下降</td></tr>
+</tbody></table>
+<p>信号链：差分输入 → 第一级高阻节点 n1 → 第二级 → 输出。<strong>n1 是主极点所在节点，输出是次极点所在节点</strong>；C<sub>c</sub> 跨接这两点，把主极点推向更低频、次极点推向更高频（<a href="../12-frequency-response/index.html">第 12 章</a>）。</p>
+</section>
+<section id="s14-3"><h2><span class="sec-num">§14.3</span>从指标到尺寸：一次手算</h2>
+<p>规格示例：A<sub>0</sub> ≥ 60 dB、GBW = 10 MHz、相位裕度 ≥ 60°、负载 5 pF、电源 3.3 V、功耗 ≤ 1 mW、SR ≥ 10 V/µs。</p>
+<ol><li><strong>补偿电容</strong>：次极点 <code>ω<sub>p2</sub> ≈ g<sub>m2</sub>/C<sub>L</sub></code> 需高于约 2.2 倍 GBW，而 <code>C<sub>c</sub> ≈ g<sub>m1</sub>/(2π·GBW)</code>；先估 g<sub>m1</sub> 得 C<sub>c</sub> 约 1～3 pF。</li>
+<li><strong>尾电流</strong>：由 <code>SR = I<sub>tail</sub>/C<sub>c</sub></code> 反推 <code>I<sub>tail</sub> = SR·C<sub>c</sub></code>，约 20～30 µA，再定差分对每支路电流与 g<sub>m1</sub>。</li>
+<li><strong>增益</strong>：<code>A<sub>0</sub> ≈ (g<sub>m1</sub>r<sub>o1</sub>)(g<sub>m2</sub>r<sub>o2</sub>)</code>；不足则增大管长 L 提高 r<sub>o</sub>，或改用 cascode。</li>
+<li><strong>功耗校核</strong>：各支路电流之和乘 3.3 V 与 1 mW 比较，超了就回头调电流或放宽 SR。</li>
+<li><strong>噪声与失调</strong>：输入管取大 W·L、小 V<sub>ov</sub> 有利于 1/f 噪声与匹配，但寄生电容变大会拉低次极点——又一处取舍。</li></ol>
+<div class="card note"><p style="margin-bottom:0">几乎每一步都与另一步冲突，所以模拟设计不是解方程，而是<strong>反复迭代指标分配</strong>。把每次迭代的理由写进<a href="../../part3/20-design-circuit/index.html">第 20 章</a>的设计文档，比最后那组尺寸值更有价值。</p></div>
+</section>
+<section id="s14-4"><h2><span class="sec-num">§14.4</span>非理想参数一览</h2>
+<table><thead><tr><th>参数</th><th>来源</th><th>影响</th><th>常见对策</th></tr></thead><tbody>
+<tr><td>输入失调 V<sub>OS</sub></td><td>差分对与负载失配</td><td>直流误差、温漂</td><td>增大面积、共质心版图、修调、斩波</td></tr>
+<tr><td>输入偏置电流</td><td>栅漏电 / 基极电流</td><td>高阻源上的误差</td><td>CMOS 输入、补偿电流</td></tr>
+<tr><td>CMRR / PSRR</td><td>尾电流源阻抗有限、电源耦合</td><td>共模与纹波泄漏到输出</td><td>cascode 尾源、预稳压、全差分</td></tr>
+<tr><td>压摆率 SR</td><td>尾电流给补偿电容充放电有限</td><td>大信号失真、建立变慢</td><td>增大尾电流、Class AB 输出级</td></tr>
+<tr><td>噪声</td><td>热噪声 + 1/f</td><td>小信号分辨率</td><td>大输入管、斩波、相关双采样</td></tr>
+<tr><td>共模范围 / 摆幅</td><td>各管饱和条件</td><td>可处理的幅度</td><td>互补差分对、轨到轨输出级</td></tr>
+</tbody></table>
+<p>读数据手册时按这张表逐行查参数，并注意测试条件（电源、温度、负载），否则「典型值」很容易被误用。</p>
+</section>
+<section id="s14-5"><h2><span class="sec-num">§14.5</span>设计检查表</h2>
+<ol><li>各工艺角与温度下所有管子是否都饱和？用 <code>.op</code> 逐个查 <code>Vds ≥ Vov</code>。</li>
+<li>输入共模范围与输出摆幅是否覆盖规格？</li>
+<li>直流增益、GBW、相位裕度是否同时达标？<code>.ac</code> 加返回比分析。</li>
+<li>阶跃过冲、建立时间、SR 是否达标？<code>.tran</code> 加 <code>.meas</code>。</li>
+<li>CMRR / PSRR / 噪声 / 失调是否满足误差预算（<a href="../18-noise-distortion/index.html">第 18 章</a>）？</li>
+<li>静态功耗与面积是否在预算内？</li>
+<li>蒙特卡洛与最坏情况（<a href="../../part3/22-robustness/index.html">第 22 章</a>）是否仍满足规格？</li>
+<li>启动、关断、上电顺序与保护是否考虑？</li></ol>
+<p>把这张表作为设计文档最后一页，每轮迭代重跑一次，是工业界与课程设计共通的做法。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 14-1：两级运放行为模型与密勒补偿</h3>
@@ -72,6 +112,13 @@ CM1 n1 out {CM}
 <li>补偿电容取值只看公式，不看次极点位置。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 CM 固定为 2p，改变第二级增益 E2，观察相位裕度趋势。</li>
 <li>列出把该行为模型替换成晶体管级时需要补全的 6 个参数。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Operational amplifier（英）</strong>（百科 / 运放）：理想模型与非理想参数<br><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></li>
+<li><strong>Slew rate（英）</strong>（百科 / 运放）：压摆率与大信号限制<br><a href="https://en.wikipedia.org/wiki/Slew_rate" target="_blank" rel="noopener">Slew rate（英）</a></li>
+<li><strong>Power supply rejection ratio（英）</strong>（百科 / 运放）：PSRR 定义与测量<br><a href="https://en.wikipedia.org/wiki/Power_supply_rejection_ratio" target="_blank" rel="noopener">Power supply rejection ratio（英）</a></li>
+<li><strong>razavi_cmos_analog · GitHub</strong>（笔记 / 进阶）：Razavi 模拟 CMOS 教材章节笔记与问答<br><a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=two+stage+cmos+opamp+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=two+stage+cmos+opamp&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../11-diff-amp/index.html'>第 11 章 差分放大器</a></li>
 <li><a href='../13-feedback-stability/index.html'>第 13 章 反馈与稳定性</a></li>
 <li><a href='../../part3/22-robustness/index.html'>第 22 章 鲁棒性：PVT 与蒙特卡洛</a></li></ul></section>

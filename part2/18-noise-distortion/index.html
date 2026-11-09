@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 18 章</span>噪声、失真与误差预算</h1>
 <p class="lede">当信号小到一定程度，“对不对”变成“能分辨吗”；当信号大到一定程度，又变成“失真多少”。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>2 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>理解等效输入噪声与噪声带宽</li>
 <li>能把各项误差列成预算表并找出主项</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>热噪声 / 散粒 / 1/f</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>等效输入噪声</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>.noise 分析</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>THD 与 .four</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>PSRR / CMRR</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>误差预算表</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>热噪声 / 散粒 / 1/f</td><td><a href="https://en.wikipedia.org/wiki/Electronic_noise" target="_blank" rel="noopener">Electronic noise（英）</a> · <a href="https://en.wikipedia.org/wiki/Signal-to-noise_ratio" target="_blank" rel="noopener">Signal-to-noise ratio（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>等效输入噪声</td><td><a href="https://en.wikipedia.org/wiki/Electronic_noise" target="_blank" rel="noopener">Electronic noise（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.noise 分析</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://en.wikipedia.org/wiki/Electronic_noise" target="_blank" rel="noopener">Electronic noise（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>THD 与 .four</td><td><a href="https://en.wikipedia.org/wiki/Total_harmonic_distortion" target="_blank" rel="noopener">Total harmonic distortion（英）</a> · <a href="https://en.wikipedia.org/wiki/Signal-to-noise_ratio" target="_blank" rel="noopener">Signal-to-noise ratio（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>PSRR / CMRR</td><td><a href="https://en.wikipedia.org/wiki/Power_supply_rejection_ratio" target="_blank" rel="noopener">Power supply rejection ratio（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>误差预算表</td><td><a href="https://en.wikipedia.org/wiki/Signal-to-noise_ratio" target="_blank" rel="noopener">Signal-to-noise ratio（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s18-1"><h2><span class="sec-num">§18.1</span>核心概念速览</h2>
 <ul>
@@ -44,6 +44,32 @@
 <li>把各级噪声折算到输入端（<strong>等效输入噪声</strong>）才能统一比较；前级增益越高，后级噪声越不重要。</li>
 <li><code>.noise</code> 给噪声密度与积分总噪声；<code>.four</code> 给指定基波的谐波分量与 THD。做频谱分析要关掉波形压缩（<code>.options plotwinsize=0</code>）。</li>
 <li><strong>误差预算表</strong>：把失调、噪声、增益误差、温漂、电源抑制、非线性逐项列出，标注“相关/独立”与 RMS 合成方式，找出最大的一两项去优化——这比盲目换运放有效得多。</li></ul>
+</section>
+<section id="s18-2"><h2><span class="sec-num">§18.2</span>噪声源与等效输入噪声</h2>
+<table><thead><tr><th>类型</th><th>表达式</th><th>特征</th><th>对策</th></tr></thead><tbody>
+<tr><td>电阻热噪声</td><td><code>v<sub>n</sub> = √(4kTR·B)</code></td><td>白噪声，1 kΩ ≈ 4 nV/√Hz</td><td>减小阻值、缩小带宽</td></tr>
+<tr><td>散粒噪声</td><td><code>i<sub>n</sub> = √(2qI·B)</code></td><td>与直流电流成正比</td><td>降低偏置电流</td></tr>
+<tr><td>1/f（闪烁）噪声</td><td><code>∝ 1/f</code></td><td>低频主导，MOS 明显</td><td>增大器件面积、斩波、P 管输入</td></tr>
+</tbody></table>
+<p>把各级噪声都折算到输入端（除以该级之前的增益），得到<strong>等效输入噪声</strong>，才能在同一个尺度上比较。由此得到模拟前端最重要的结论：<strong>第一级的增益与噪声几乎决定整个系统</strong>，后面各级的噪声被前级增益除掉后通常可以忽略。</p>
+<p>带宽要注意：白噪声的积分用的是<strong>噪声带宽</strong>而非 −3 dB 带宽，一阶低通的噪声带宽为 <code>1.57·f<sub>c</sub></code>。实验 18-1 的 <code>.noise</code> 输出里 <code>V(onoise)</code> 是密度、积分曲线是总噪声，二者不要混用。</p>
+</section>
+<section id="s18-3"><h2><span class="sec-num">§18.3</span>失真、谐波与 THD</h2>
+<p>非线性使输出出现输入没有的频率分量。对称削顶（实验 18-2）只产生奇次谐波 3f、5f…，非对称失真还会产生偶次谐波。</p>
+<span class="eq">THD = √(V<sub>2</sub>²+V<sub>3</sub>²+…)/V<sub>1</sub></span>
+<p>用 <code>.four 1k V(out)</code> 得到各次谐波幅值与 THD，前提是：仿真时间足够长以进入稳态、只取整数个周期、关掉波形压缩（<code>.options plotwinsize=0</code>）。否则频谱会出现本不存在的杂散。</p>
+<p>与噪声的区别很关键：噪声与信号幅度<strong>无关</strong>，决定了能分辨的最小信号；失真随信号幅度<strong>急剧增大</strong>，决定了最大不失真信号。两者之间的距离就是动态范围，常用 SNR、SINAD、ENOB 描述（数据转换器接口必查）。</p>
+</section>
+<section id="s18-4"><h2><span class="sec-num">§18.4</span>误差预算表</h2>
+<p>不要凭感觉换运放，先把误差逐项列出来：</p>
+<table><thead><tr><th>误差项</th><th>典型来源</th><th>量级示例</th><th>合成方式</th></tr></thead><tbody>
+<tr><td>增益误差</td><td>电阻公差、有限开环增益</td><td>0.1% + 0.01%</td><td>系统项，按最坏情况相加</td></tr>
+<tr><td>失调与温漂</td><td>V<sub>OS</sub>、dV<sub>OS</sub>/dT</td><td>100 µV + 2 µV/℃</td><td>系统项，按最坏情况相加</td></tr>
+<tr><td>噪声</td><td>热噪声、1/f、电源纹波耦合</td><td>10 µV<sub>rms</sub></td><td>随机项，按均方根合成</td></tr>
+<tr><td>非线性</td><td>摆幅、压摆率、THD</td><td>0.01%</td><td>单独设上限</td></tr>
+<tr><td>PSRR / CMRR</td><td>电源与共模泄漏</td><td>60 dB</td><td>按实际纹波折算</td></tr>
+</tbody></table>
+<p>两类误差不能简单相加：独立的随机项按 <code>√(Σe<sub>i</sub>²)</code> 合成，系统性偏差按最坏情况直接相加。填完表后，找出最大的一两项去优化，收益远高于把所有器件都升级一档。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 18-1：噪声分析</h3>
@@ -71,6 +97,13 @@ B1 out 0 V=max(-0.8,min(0.8,V(in)))
 <li>把各项误差直接相加：独立随机误差应按均方根合成。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把实验 18-1 的 R1 增大 100 倍，验证噪声密度按 √R 增长。</li>
 <li>把削顶电平从 0.8 V 改到 0.5 V，比较 THD。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Electronic noise（英）</strong>（百科 / 噪声）：噪声类型总览<br><a href="https://en.wikipedia.org/wiki/Electronic_noise" target="_blank" rel="noopener">Electronic noise（英）</a></li>
+<li><strong>Flicker noise（英）</strong>（百科 / 噪声）：1/f 噪声的成因<br><a href="https://en.wikipedia.org/wiki/Flicker_noise" target="_blank" rel="noopener">Flicker noise（英）</a></li>
+<li><strong>Total harmonic distortion（英）</strong>（百科 / 噪声）：THD 定义与测量<br><a href="https://en.wikipedia.org/wiki/Total_harmonic_distortion" target="_blank" rel="noopener">Total harmonic distortion（英）</a></li>
+<li><strong>Signal-to-noise ratio（英）</strong>（百科 / 噪声）：SNR 与有效位数<br><a href="https://en.wikipedia.org/wiki/Signal-to-noise_ratio" target="_blank" rel="noopener">Signal-to-noise ratio（英）</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=noise+thd+ltspice+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=noise+thd+ltspice&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part3/22-robustness/index.html'>第 22 章 鲁棒性与误差预算</a></li>
 <li><a href='../../part3/21-simulation-method/index.html'>第 21 章 仿真方法论</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

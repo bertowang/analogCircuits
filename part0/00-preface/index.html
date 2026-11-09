@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 00 章</span>绪论：如何阅读这本教材</h1>
 <p class="lede">先约定语言，再开始读电路：符号、单位、先修知识，以及手算与仿真各自负责什么。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 1 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -27,15 +27,15 @@
 <li>能说清直流、交流小信号、大信号三种视图的区别</li>
 <li>能列出学习一章时固定要问的四个问题</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>教学目标与结构</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>符号约定（大小写、相量、直流/交流/小信号）</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>单位前缀与工程记数法</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>手算与仿真的分工</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>先修数学清单</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>教材与工业界分析范式对照</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>教学目标与结构</td><td><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a> · <a href="https://ocw.mit.edu/" target="_blank" rel="noopener">MIT OpenCourseWare</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>符号约定（大小写、相量、直流/交流/小信号）</td><td><a href="https://en.wikipedia.org/wiki/Electrical_impedance" target="_blank" rel="noopener">Electrical impedance（英）</a> · <a href="https://en.wikipedia.org/wiki/Bode_plot" target="_blank" rel="noopener">Bode plot（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>单位前缀与工程记数法</td><td><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>手算与仿真的分工</td><td><a href="https://github.com/TongenShen/electronics-learning" target="_blank" rel="noopener">electronics-learning · GitHub</a> · <a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>先修数学清单</td><td><a href="https://ocw.mit.edu/" target="_blank" rel="noopener">MIT OpenCourseWare</a> · <a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>教材与工业界分析范式对照</td><td><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a> · <a href="https://ocw.mit.edu/" target="_blank" rel="noopener">MIT OpenCourseWare</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s0-1"><h2><span class="sec-num">§0.1</span>三类变量，三种视图</h2>
 <p>同一张电路图，其实叠了三层信息。读图出错，大多是因为把三层混在一起：</p>
@@ -57,6 +57,34 @@
 <p>仿真是<strong>验证</strong>工具，不是<strong>推导</strong>工具。手算给出数量级和趋势，仿真给出精确数值与非理想效应，两者不一致时先怀疑自己的模型假设，而不是先怀疑软件。</p>
 <div class="card tip"><p style="margin-bottom:0">推荐记录格式：手算预期值 → 仿真实测值 → 偏差百分比 → 偏差原因。写满 20 组这样的记录，读电路的能力会有明显变化。</p></div>
 </section>
+<section id="s0-4"><h2><span class="sec-num">§0.4</span>符号、单位与绘图约定</h2>
+<p>模拟电路的符号混乱是初学者的第一道坎，本书统一如下：</p>
+<table><thead><tr><th>写法</th><th>含义</th><th>例子</th></tr></thead><tbody>
+<tr><td><code>V<sub>GS</sub></code>、<code>I<sub>D</sub></code></td><td>直流总量 / 静态工作点</td><td><code>I<sub>D</sub> = 1 mA</code></td></tr>
+<tr><td><code>v<sub>gs</sub></code>、<code>i<sub>d</sub></code></td><td>交流小信号量</td><td><code>i<sub>d</sub> = g<sub>m</sub>v<sub>gs</sub></code></td></tr>
+<tr><td><code>v<sub>GS</sub>(t)</code></td><td>含直流偏置的瞬时总量</td><td><code>v<sub>GS</sub>(t) = V<sub>GS</sub> + v<sub>gs</sub>(t)</code></td></tr>
+<tr><td><code>V(s)</code>、<code>H(s)</code></td><td>s 域 / 频域复数量</td><td><code>H(s) = 1/(1+sRC)</code></td></tr>
+</tbody></table>
+<p>其他约定：电流箭头默认指<strong>正电荷</strong>方向；算出负值说明实际方向相反，不必改方程。电压下标 <code>V<sub>ab</sub></code> 表示 a 点相对 b 点。参考地符号只表示<strong>人为选定的零电位</strong>，不等同于大地或机壳。工程记数法见<a href="../../appendix/index.html">附录 A.2</a>，特别注意 <code>m</code> 与 <code>Meg</code>。</p>
+<div class="card note"><p style="margin-bottom:0">画图规范：电源在上、地在下，信号从左到右，反馈画出清晰的闭环，节点起有意义的名字。规范不只是好看——它直接决定别人（以及三个月后的你）能不能读懂这张图，参见<a href="../../part3/19-read-circuit/index.html">第 19 章</a>。</p></div>
+</section>
+<section id="s0-5"><h2><span class="sec-num">§0.5</span>先修知识与学习节奏</h2>
+<p>本书只需要四块数学工具，缺哪块补哪块即可，不必先修完一整门课：</p>
+<ol><li><strong>线性方程组</strong>：节点电压法就是列 KCL 方程组（第 3 章）。</li>
+<li><strong>复数与相量</strong>：阻抗 <code>Z = R + jX</code>、幅角与模，用于 <code>.ac</code> 分析（第 4 章）。</li>
+<li><strong>一阶常微分方程</strong>：RC/RL 充放电的指数解 <code>e<sup>−t/τ</sup></code>；会用三要素法就不用每次解微分方程。</li>
+<li><strong>拉普拉斯变换的<em>结论</em></strong>：只要知道「电容 → 1/sC、电感 → sL」以及极零点与波特图的对应关系就够用；严格推导可留到信号与系统课。</li></ol>
+<p>建议节奏：每章 2～3 学时，其中<strong>手算 1/3、仿真 1/3、改参数与记录 1/3</strong>。做完每章的四步闭环（手算 → 仿真 → 改参数 → 写结论）比多看三章但不做实验有效得多。</p>
+</section>
+<section id="s0-6"><h2><span class="sec-num">§0.6</span>教材、数据手册与仿真：三种语言</h2>
+<p>同一个电路，在三种场合有三种写法，学会互相翻译才算入门：</p>
+<table><thead><tr><th>场合</th><th>表达方式</th><th>关注点</th></tr></thead><tbody>
+<tr><td>教材</td><td>小信号等效电路 + 符号推导</td><td>因果、趋势、可迁移的结论</td></tr>
+<tr><td>数据手册 / 应用笔记</td><td>框图、参数表、典型应用电路</td><td>边界条件、裕量、外围元件怎么选</td></tr>
+<tr><td>SPICE 网表</td><td>元件 + 节点 + 模型 + 分析指令</td><td>可执行的精确数值、非理想效应</td></tr>
+</tbody></table>
+<p>工业界的常见顺序是：先用教材公式圈定拓扑，再查数据手册确认边界，最后用仿真验证并留出裕量；反过来「先跑仿真再解释」很容易得出只在该模型下成立的结论。<a href="../../part3/20-design-circuit/index.html">第 20 章</a>与<a href="../../part3/21-simulation-method/index.html">第 21 章</a>会把这个顺序固化成流程。</p>
+</section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>最小完整网表：分压器</h3>
 <pre class="spice" data-file="sim/00-minimal.cir"><code>* Ch00 Minimal netlist: a voltage divider
@@ -72,6 +100,13 @@ R2 out 0 2k
 <li>只看波形不看工作点：偏置错了，波形也可能“看起来有形状”。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 R2 改成 2k 的 1% 公差，估计 V(out) 的变化范围。</li>
 <li>在分压器输出端接 1k 负载，重算 V(out)，再用仿真核对。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>All About Circuits · Textbook</strong>（教材 / 开放）：免费在线电子学教材，偏工程直觉的补充阅读<br><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></li>
+<li><strong>MIT OpenCourseWare</strong>（课程 / 开放）：电路与电子学公开课的讲义、习题与实验安排<br><a href="https://ocw.mit.edu/" target="_blank" rel="noopener">MIT OpenCourseWare</a></li>
+<li><strong>electronics-learning · GitHub</strong>（教程 / 中文）：中文 LTspice 教程，强调先算、再仿真、改参数看趋势<br><a href="https://github.com/TongenShen/electronics-learning" target="_blank" rel="noopener">electronics-learning · GitHub</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li>
+<li><strong>LTspice-Basics · GitHub</strong>（练习 / 入门）：MIT 许可的 LTspice 入门练习集<br><a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=analog+electronics+intro+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=analog+electronics+intro&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../01-ltspice-quickstart/index.html'>第 1 章 LTspice 快速上手</a></li>
 <li><a href='../02-spice-netlist/index.html'>第 2 章 SPICE 网表语法</a></li>
 <li><a href='../../appendix/index.html'>附录 A · 公式与术语速查</a></li></ul></section>

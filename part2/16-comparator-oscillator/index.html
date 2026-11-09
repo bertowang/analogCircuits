@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 16 章</span>比较器、施密特触发与振荡器</h1>
 <p class="lede">正反馈、非线性与自激：从“输出只有高低两态”到“没有输入也能持续振荡”。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>能陈述巴克豪森判据并解释环形振荡器起振条件</li>
 <li>会用 .tran 观察起振过程</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>开环比较器</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>迟滞与噪声容限</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>巴克豪森判据</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>环形振荡器</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>RC / LC 振荡</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>.tran 看起振</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>开环比较器</td><td><a href="https://en.wikipedia.org/wiki/Comparator" target="_blank" rel="noopener">Comparator（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>迟滞与噪声容限</td><td><a href="https://en.wikipedia.org/wiki/Schmitt_trigger" target="_blank" rel="noopener">Schmitt trigger（英）</a> · <a href="https://en.wikipedia.org/wiki/Comparator" target="_blank" rel="noopener">Comparator（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>巴克豪森判据</td><td><a href="https://en.wikipedia.org/wiki/Barkhausen_stability_criterion" target="_blank" rel="noopener">Barkhausen stability criterion（英）</a> · <a href="https://en.wikipedia.org/wiki/Ring_oscillator" target="_blank" rel="noopener">Ring oscillator（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>环形振荡器</td><td><a href="https://en.wikipedia.org/wiki/Ring_oscillator" target="_blank" rel="noopener">Ring oscillator（英）</a> · <a href="https://en.wikipedia.org/wiki/Barkhausen_stability_criterion" target="_blank" rel="noopener">Barkhausen stability criterion（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>RC / LC 振荡</td><td><a href="https://en.wikipedia.org/wiki/RLC_circuit" target="_blank" rel="noopener">RLC circuit（英）</a> · <a href="https://en.wikipedia.org/wiki/Barkhausen_stability_criterion" target="_blank" rel="noopener">Barkhausen stability criterion（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.tran 看起振</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://en.wikipedia.org/wiki/Ring_oscillator" target="_blank" rel="noopener">Ring oscillator（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s16-1"><h2><span class="sec-num">§16.1</span>核心概念速览</h2>
 <ul>
@@ -44,6 +44,29 @@
 <li><strong>施密特触发</strong>：把输出经分压正反馈到输入，产生两个不同的翻转阈值；迟滞宽度即噪声容限，可消除慢边沿引起的多次翻转。</li>
 <li><strong>巴克豪森判据</strong>：环路相移 360°（含反相的 180°）且环路增益 ≥ 1 时，微小扰动被放大成等幅振荡；稳态幅度由非线性限幅决定。</li>
 <li>三级反相环每级约 60° 相移时总相移达 180°，加上反相本身 180°，满足振荡条件；起振需要一个初始扰动（仿真里用 <code>.ic</code> 或噪声）。</li></ul>
+</section>
+<section id="s16-2"><h2><span class="sec-num">§16.2</span>比较器与迟滞阈值推导</h2>
+<p>比较器开环使用，输出只有高低两态，<strong>虚短完全不适用</strong>（<a href="../../part1/08-opamp-basics/index.html">第 8 章</a>）。加正反馈分压得到施密特触发器：设输入经 R<sub>1</sub>、输出经 R<sub>2</sub> 汇到比较器输入节点 v<sub>+</sub>，则</p>
+<span class="eq">v<sub>+</sub> = (R<sub>2</sub>V<sub>in</sub> + R<sub>1</sub>V<sub>out</sub>)/(R<sub>1</sub>+R<sub>2</sub>)，　β = R<sub>1</sub>/(R<sub>1</sub>+R<sub>2</sub>)</span>
+<p>输出为 +V<sub>OH</sub> 时，翻转条件是 <code>V<sub>in</sub> < −βV<sub>OH</sub></code>；输出为 −V<sub>OL</sub> 时，翻转条件是 <code>V<sub>in</sub> > βV<sub>OL</sub></code>。两个阈值之差就是<strong>迟滞宽度</strong>，也就是噪声容限：输入上叠加小于该宽度的噪声不会引起误翻转。</p>
+<div class="card note"><p style="margin-bottom:0">慢边沿信号（如温度传感器、机械开关）若不加迟滞，会在阈值附近反复穿越，输出端出现一串毛刺——这是数字系统里最经典的模拟问题之一。</p></div>
+</section>
+<section id="s16-3"><h2><span class="sec-num">§16.3</span>巴克豪森判据与起振</h2>
+<p>环路增益 <code>T(jω) = A(jω)β(jω)</code>。持续振荡需要同时满足：</p>
+<span class="eq">|T(jω<sub>0</sub>)| ≥ 1　且　∠T(jω<sub>0</sub>) = 0°（或 360° 的整数倍）</span>
+<ul><li>三级反相环：每级反相提供 180°，三级 RC 在 ω<sub>0</sub> 处再提供 180°，合计 360°，满足相位条件；</li>
+<li><code>|T| < 1</code> 时扰动衰减，<code>|T| > 1</code> 时扰动指数增长，最终由<strong>非线性限幅</strong>（供电轨、增益压缩）把幅度稳定下来；</li>
+<li>仿真中电路可能停在零平衡点不动，因为没有初始扰动——用 <code>.ic</code> 或噪声源踢一脚（实验 16-1）。</li></ul>
+<p>振荡频率的粗略估计：N 级环形振荡器 <code>f ≈ 1/(2Nτ·k)</code>，其中 τ 是每级 RC 时间常数、k 为与级数相关的系数；精确值以 <code>.tran</code> 测周期为准。</p>
+</section>
+<section id="s16-4"><h2><span class="sec-num">§16.4</span>四类振荡器对照</h2>
+<table><thead><tr><th>类型</th><th>选频/定时</th><th>频率稳定度</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>RC / 环形</td><td>R·C 或门延时</td><td>低，随 PVT 明显变化</td><td>片上时钟、简单时基</td></tr>
+<tr><td>LC / 谐振</td><td>1/(2π√LC)</td><td>中，取决于 Q</td><td>射频振荡、VCO</td></tr>
+<tr><td>晶体 / MEMS</td><td>机械谐振</td><td>高（ppm 级）</td><td>系统时钟、通信基准</td></tr>
+<tr><td>555 定时器</td><td>外部 R、C 充放电</td><td>中低</td><td>PWM、单稳态、教学</td></tr>
+</tbody></table>
+<p>分析时都问同一组问题：能量从哪里补充（有源器件）、相位条件在哪里满足（选频网络）、幅度靠什么限制（非线性）、起振扰动从哪来。回答完这四问，任何振荡电路都能拆开。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 16-1：三级环形振荡器起振</h3>
@@ -69,6 +92,13 @@ C3 z3 0 10n
 <li>把比较器当运放用，忽略了输出饱和与恢复时间。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 C1～C3 加倍，测量周期变化并解释。</li>
 <li>把反相级改成 5 级，预测频率与相位关系。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Comparator（英）</strong>（百科 / 非线性）：比较器与运放的区别<br><a href="https://en.wikipedia.org/wiki/Comparator" target="_blank" rel="noopener">Comparator（英）</a></li>
+<li><strong>Schmitt trigger（英）</strong>（百科 / 非线性）：迟滞阈值推导<br><a href="https://en.wikipedia.org/wiki/Schmitt_trigger" target="_blank" rel="noopener">Schmitt trigger（英）</a></li>
+<li><strong>Ring oscillator（英）</strong>（百科 / 振荡）：环形振荡器频率与级数<br><a href="https://en.wikipedia.org/wiki/Ring_oscillator" target="_blank" rel="noopener">Ring oscillator（英）</a></li>
+<li><strong>555 timer IC（英）</strong>（百科 / 振荡）：内部结构三种经典接法<br><a href="https://en.wikipedia.org/wiki/555_timer_IC" target="_blank" rel="noopener">555 timer IC（英）</a></li>
+<li><strong>LTspice_Ecircuit · GitHub</strong>（案例 / 读图）：37 类按主题归档的电路，适合逐张练习读图<br><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=schmitt+oscillator+ltspice+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=schmitt+oscillator+ltspice&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/08-opamp-basics/index.html'>第 8 章 虚短的适用边界</a></li>
 <li><a href='../13-feedback-stability/index.html'>第 13 章 反馈与稳定性（正/负反馈对照）</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

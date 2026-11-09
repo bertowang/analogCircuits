@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 10 章</span>电流源、电流镜与基准</h1>
 <p class="lede">模拟电路里的“常量”从哪来：先复制一路电流，再想办法让它不随电源、温度和工艺变化。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 3 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>理解 cascode 电流镜为何能提高输出阻抗</li>
 <li>知道带隙基准的 PTAT/CTAT 组合思想与启动电路的作用</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>基本电流镜</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>沟道长度调制误差</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>cascode 提高输出阻抗</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>PTAT / CTAT</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>带隙基准</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>启动电路</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>基本电流镜</td><td><a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a> · <a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>沟道长度调制误差</td><td><a href="https://en.wikipedia.org/wiki/MOSFET" target="_blank" rel="noopener">MOSFET（英）</a> · <a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>cascode 提高输出阻抗</td><td><a href="https://en.wikipedia.org/wiki/Electrical_impedance" target="_blank" rel="noopener">Electrical impedance（英）</a> · <a href="https://en.wikipedia.org/wiki/Transfer_function" target="_blank" rel="noopener">Transfer function（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>PTAT / CTAT</td><td><a href="https://en.wikipedia.org/wiki/Bandgap_voltage_reference" target="_blank" rel="noopener">Bandgap voltage reference（英）</a> · <a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>带隙基准</td><td><a href="https://en.wikipedia.org/wiki/Bandgap_voltage_reference" target="_blank" rel="noopener">Bandgap voltage reference（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>启动电路</td><td><a href="https://en.wikipedia.org/wiki/Bandgap_voltage_reference" target="_blank" rel="noopener">Bandgap voltage reference（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s10-1"><h2><span class="sec-num">§10.1</span>核心概念速览</h2>
 <ul>
@@ -45,6 +45,29 @@
 <li><strong>cascode</strong>：叠一层管子屏蔽输出电压变化，输出阻抗从 r<sub>o</sub> 提升到约 g<sub>m</sub>r<sub>o</sub>²，代价是损失摆幅。</li>
 <li><strong>带隙基准</strong>：把随温度<em>上升</em>的 PTAT（ΔV<sub>BE</sub>）与随温度<em>下降</em>的 CTAT（V<sub>BE</sub>）按系数相加，得到约 1.2 V 的零温度系数电压。</li>
 <li><strong>启动电路</strong>：基准存在“零电流”这个合法但无用的平衡点，必须加一条只在启动时导通的支路把它推离。</li></ul>
+</section>
+<section id="s10-2"><h2><span class="sec-num">§10.2</span>基本电流镜的定量分析</h2>
+<p>实验 10-1 的电路里，M1 栅漏短接，因此 <code>V<sub>GS</sub></code> 由基准电流唯一决定：</p>
+<span class="eq">V<sub>GS</sub> = V<sub>to</sub> + √( 2I<sub>REF</sub> / (K<sub>p</sub>(W/L)<sub>1</sub>) )，　I<sub>OUT</sub> = I<sub>REF</sub> · (W/L)<sub>2</sub>/(W/L)<sub>1</sub></span>
+<p>三条误差来源按重要性排序：</p>
+<ol><li><strong>沟道长度调制</strong>：两管 V<sub>DS</sub> 不同，<code>I ∝ (1+λV<sub>DS</sub>)</code> 使镜像电流随输出电压漂移；L 取大、λ 取小可缓解。</li>
+<li><strong>阈值与尺寸失配</strong>：工艺偏差使两管不再完全相同，是精密电路的主要误差。</li>
+<li><strong>合规电压</strong>：输出管必须保持饱和，<code>V<sub>out</sub> ≥ V<sub>ov</sub></code>，低于此值电流塌陷。</li></ol>
+<p>用 <code>.dc VOUT 0 5</code> 扫出来的曲线斜率，正是第一条误差的直接测量；把 <code>Lambda</code> 改成 0 再跑一次，曲线会变平。</p>
+</section>
+<section id="s10-3"><h2><span class="sec-num">§10.3</span>cascode 与宽摆幅镜像</h2>
+<p>在输出管上再叠一只共栅管，把它栅极接固定偏置，输出管漏极电压被「钉住」，几乎不随 V<sub>out</sub> 变化：</p>
+<span class="eq">R<sub>out, cascode</sub> ≈ g<sub>m</sub> r<sub>o</sub>²　（比单管 r<sub>o</sub> 高约 g<sub>m</sub>r<sub>o</sub> 倍）</span>
+<p>镜像精度与增益因此大幅提高，代价是<strong>损失摆幅</strong>：输出最低电压从 <code>V<sub>ov</sub></code> 抬高到约 <code>2V<sub>ov</sub> + V<sub>bias</sub> 余量</code>。低电源电压设计里常用「宽摆幅 / 低压 cascode」把偏置电压精确设为 <code>V<sub>ov</sub> + V<sub>to</sub></code>，在保住输出阻抗的同时把摆幅损失压回一个 V<sub>ov</sub>。</p>
+<p>这类「多叠一层管子换性能、再想办法把电压余量找回来」的套路，是<a href="../14-opamp-design/index.html">第 14 章</a>运放设计的主线。</p>
+</section>
+<section id="s10-4"><h2><span class="sec-num">§10.4</span>带隙基准与启动电路</h2>
+<p>目标是一个与温度、电源、工艺都弱相关的电压。把两种相反温度系数的量加权求和：</p>
+<ul><li><strong>CTAT</strong>：双极管的 <code>V<sub>BE</sub></code> 随温度约 −2 mV/℃；</li>
+<li><strong>PTAT</strong>：两个不同电流密度 BJT 的 <code>ΔV<sub>BE</sub> = V<sub>T</sub>ln(n)</code> 随温度<em>正比</em>上升。</li></ul>
+<span class="eq">V<sub>REF</sub> = V<sub>BE</sub> + K·ΔV<sub>BE</sub> ≈ 1.2 V（零温度系数，一阶抵消）</span>
+<p>为什么一定要启动电路？因为「所有支路电流为零」也是这个电路的合法直流解：没有电流就没有 ΔV<sub>BE</sub>，误差放大器毫无理由把电路推离零点。启动支路在上电瞬间注入一股小电流，待基准建立后自动关断，避免影响正常工作。</p>
+<div class="card tip"><p style="margin-bottom:0">读基准电路时，先找 PTAT 支路（不同面积的 BJT + 电阻），再找把 PTAT 与 CTAT 相加的运放，最后找那条「看起来多余」的启动管——这三块认清，图就读懂了（<a href="../../part3/19-read-circuit/index.html">第 19 章</a>）。</p></div>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 10-1：基本电流镜与合规电压</h3>
@@ -66,6 +89,13 @@ VOUT out 0 DC 2
 <li>设计基准时忘记启动电路，仿真可能停在零电流解。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 M2 的 W 改成 20u，验证输出电流是否翻倍。</li>
 <li>把 Lambda 改成 0，比较输出曲线的平坦度。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Current mirror（英）</strong>（百科 / 模块）：镜像结构与误差<br><a href="https://en.wikipedia.org/wiki/Current_mirror" target="_blank" rel="noopener">Current mirror（英）</a></li>
+<li><strong>Bandgap voltage reference（英）</strong>（百科 / 模块）：PTAT/CTAT 组合原理<br><a href="https://en.wikipedia.org/wiki/Bandgap_voltage_reference" target="_blank" rel="noopener">Bandgap voltage reference（英）</a></li>
+<li><strong>Cascode（英）</strong>（百科 / 模块）：输出阻抗提升的机理<br><a href="https://en.wikipedia.org/wiki/Cascode" target="_blank" rel="noopener">Cascode（英）</a></li>
+<li><strong>razavi_cmos_analog · GitHub</strong>（笔记 / 进阶）：Razavi 模拟 CMOS 教材章节笔记与问答<br><a href="https://github.com/gudivadaashok/razavi_cmos_analog" target="_blank" rel="noopener">razavi_cmos_analog · GitHub</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=current+mirror+bandgap+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=current+mirror+bandgap&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../11-diff-amp/index.html'>第 11 章 差分放大器</a></li>
 <li><a href='../../part3/19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路（含基准解剖）</a></li></ul></section>
 <footer class="pager" data-autofill></footer>

@@ -28,13 +28,14 @@
 <li>会用波形窗口、游标和 SPICE Error Log 取数与排错</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>安装与界面</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>.asc 原理图 / .cir 网表</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>.op / .tran / .ac / .dc</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>Add Trace 与游标测量</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>SPICE Error Log 排错</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>常用快捷键</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>安装与界面</td><td><a href="https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html" target="_blank" rel="noopener">ADI · LTspice 官方</a> · <a href="https://github.com/TongenShen/electronics-learning" target="_blank" rel="noopener">electronics-learning · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>.asc 原理图 / .cir 网表</td><td><a href="https://en.wikipedia.org/wiki/Netlist" target="_blank" rel="noopener">Netlist（英）</a> · <a href="https://github.com/mick001/Circuits-LTSpice" target="_blank" rel="noopener">Circuits-LTSpice · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.op / .tran / .ac / .dc</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>Add Trace 与游标测量</td><td><a href="https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html" target="_blank" rel="noopener">ADI · LTspice 官方</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>SPICE Error Log 排错</td><td><a href="https://en.wikipedia.org/wiki/Small-signal_model" target="_blank" rel="noopener">Small-signal model（英）</a> · <a href="https://en.wikipedia.org/wiki/Cascode" target="_blank" rel="noopener">Cascode（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>常用快捷键</td><td><a href="https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html" target="_blank" rel="noopener">ADI · LTspice 官方</a> · <a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s1-1"><h2><span class="sec-num">§1.1</span>为什么是 LTspice</h2>
 <p>LTspice 是 Analog Devices 维护的免费 SPICE 仿真器：启动快、收敛性好、自带大量真实器件模型，工业界与高校都在用。对自学者更关键的一点是——它既能画原理图（<code>.asc</code>），也能直接读纯文本网表（<code>.cir</code> / <code>.net</code>）。</p>
@@ -83,6 +84,13 @@ C1 out 0 100n
 <li>直接把波形截图当结论，没有记下手算预期值。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 C1 改成 220n，先手算 t = 1 ms 时的 V(out)，再仿真核对。</li>
 <li>添加 .meas 测出 V(out) 到达 2.5 V 的时刻，与 0.693τ 比较。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>ADI · LTspice 官方</strong>（厂商 / 官方）：仿真器下载、官方模型库与示例电路<br><a href="https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html" target="_blank" rel="noopener">ADI · LTspice 官方</a></li>
+<li><strong>LTspice-Basics · GitHub</strong>（练习 / 入门）：MIT 许可的 LTspice 入门练习集<br><a href="https://github.com/alfy7/LTspice-Basics" target="_blank" rel="noopener">LTspice-Basics · GitHub</a></li>
+<li><strong>electronics-learning · GitHub</strong>（教程 / 中文）：中文 LTspice 教程，强调先算、再仿真、改参数看趋势<br><a href="https://github.com/TongenShen/electronics-learning" target="_blank" rel="noopener">electronics-learning · GitHub</a></li>
+<li><strong>CircuitJS 在线版（Falstad）</strong>（交互仿真 / 在线）：无需安装即可搭电路看电流动画，建立直觉<br><a href="https://www.falstad.com/circuit/" target="_blank" rel="noopener">CircuitJS 在线版（Falstad）</a></li>
+<li><strong>ADI EngineerZone</strong>（厂商 / 社区）：收敛问题、模型导入与实际器件应用的厂商问答社区<br><a href="https://ez.analog.com/" target="_blank" rel="noopener">ADI EngineerZone</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=ltspice+tutorial+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=ltspice+tutorial&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../02-spice-netlist/index.html'>第 2 章 SPICE 网表语法与仿真指令</a></li>
 <li><a href='../../part1/04-passive-dynamics/index.html'>第 4 章 无源元件、暂态与频域</a></li>
 <li><a href='https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html' target='_blank' rel='noopener'>ADI LTspice 官方下载与文档</a></li></ul></section>

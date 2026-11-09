@@ -22,10 +22,10 @@
   <h1>模拟电路：从读懂到设计</h1>
   <p class="lede">一本写给计算机专业学生的模拟电路教材。全部内容用 HTML 编写：文字、公式、电路示意图（内联 SVG）与 LTspice 网表放在同一页里，浏览器打开即可读，复制代码即可仿真。</p>
   <div class="meta">
-    <span class="badge done">已完稿 <span data-count="done">9</span> 章</span>
-    <span class="badge skeleton">框架待补 <span data-count="skeleton">16</span> 章</span>
-    <span>共 25 章 · 4 篇 · 1 附录</span>
-    <span>版本 v0.1 · 2026-11</span>
+    <span class="badge done">全部 25 章已完稿</span>
+    <span class="badge done">逐条知识点配扩展链接</span>
+    <span>共 25 章 · 4 篇 · 1 附录 · 34 个 LTspice 实验</span>
+    <span>版本 v0.2 · 2026-11</span>
   </div>
 </header>
 
@@ -46,12 +46,15 @@
     <tr><td>仿真实验</td><td>一段完整的 LTspice 网表 + 预期波形 + 该验证哪条公式</td></tr>
     <tr><td>常见误区 / 易错点</td><td>初学者与"仿真看着对其实错"的典型问题</td></tr>
     <tr><td>习题与思考</td><td>先手算，再用仿真核对</td></tr>
+    <tr><td>知识点地图</td><td>逐条列出本章知识点，每条挂 1～2 个扩展学习链接</td></tr>
+    <tr><td>扩展学习</td><td>本章精读资料、GitHub 例程检索入口与全书资源总表</td></tr>
     <tr><td>延伸阅读</td><td>对应教材章节与本书内链</td></tr>
   </tbody>
 </table>
 
 <h3>状态徽章的含义</h3>
-<p><span class="badge done">已完稿</span> 正文与仿真代码齐备；<span class="badge skeleton">框架待补</span> 已列全知识点细目、学习目标与一个可运行的基础网表，正文待逐节补写；<span class="badge todo">待建</span> 仅有标题占位。骨架章同样可以照着做实验——这正是"先搭框架、后续不断完善"的设计。</p>
+<p><span class="badge done">已完稿</span> 正文、知识点地图、扩展学习链接与可运行仿真齐备；<span class="badge skeleton">框架待补</span> 表示仅有知识框架与基础实验、正文待补；<span class="badge todo">待建</span> 只有标题占位。目前 25 章均已完稿，后续仍可按「知识点 → 扩展链接 → 仿真实验」逐节继续细化。</p>
+<p class="code-hint">每章「知识点地图」逐条挂了外部扩展链接，「扩展学习」小节给出本章精读资料与 GitHub 例程检索入口；总目录每条也提供直达该小节的「扩展阅读 →」。全书资源见 <a href="#resources">参考资源</a> 与<a href="appendix/index.html">附录 A.7 链接总表</a>。</p>
 
 <h3>运行 LTspice 网表（30 秒）</h3>
 <ol>
@@ -84,17 +87,17 @@
   <h2><span class="part-id">卷首</span>工具与约定</h2>
   <ul class="toc-list">
     <li>
-      <div class="toc-head"><span class="num">00</span><a class="toc-title" href="part0/00-preface/index.html">绪论：如何阅读这本教材</a><span class="badge skeleton">框架待补</span></div>
+      <div class="toc-head"><span class="num">00</span><a class="toc-title" href="part0/00-preface/index.html">绪论：如何阅读这本教材</a> <a class="toc-extra" href="part0/00-preface/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">本书定位、符号与单位约定、先修知识、教材与工业界常用分析范式的对照。</p>
       <ul class="toc-points"><li>教学目标与结构</li><li>符号约定（大小写、相量、直流/交流/小信号）</li><li>单位前缀与工程记数法</li><li>手算与仿真的分工</li><li>先修数学清单</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">01</span><a class="toc-title" href="part0/01-ltspice-quickstart/index.html">LTspice 快速上手</a><span class="badge done">已完稿</span></div>
+      <div class="toc-head"><span class="num">01</span><a class="toc-title" href="part0/01-ltspice-quickstart/index.html">LTspice 快速上手</a> <a class="toc-extra" href="part0/01-ltspice-quickstart/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">从安装到第一个波形：原理图与网表两种用法、探针、波形窗口、常用快捷键、常见报错。</p>
       <ul class="toc-points"><li>安装与界面</li><li>.asc 原理图 / .cir 网表</li><li>.op / .tran / .ac / .dc</li><li>Add Trace 与游标测量</li><li>SPICE Error Log 排错</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">02</span><a class="toc-title" href="part0/02-spice-netlist/index.html">SPICE 网表语法与仿真指令</a><span class="badge done">已完稿</span></div>
+      <div class="toc-head"><span class="num">02</span><a class="toc-title" href="part0/02-spice-netlist/index.html">SPICE 网表语法与仿真指令</a> <a class="toc-extra" href="part0/02-spice-netlist/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">把网表当作一门语言来学：元件行、节点、模型、点指令、参数化与测量语句。</p>
       <ul class="toc-points"><li>元件行 R/C/L/V/I/Q/M/D/E</li><li>.model 与 .param</li><li>.step 参数扫描</li><li>.meas 自动测量</li><li>.include / .lib / .subckt</li><li>收敛性与 .options</li></ul>
     </li>
@@ -105,32 +108,32 @@
   <h2><span class="part-id">第一篇</span>电路基础与器件</h2>
   <ul class="toc-list">
     <li>
-      <div class="toc-head"><span class="num">03</span><a class="toc-title" href="part1/03-circuit-laws/index.html">电路定律与读图第一步</a><span class="badge done">已完稿</span></div>
+      <div class="toc-head"><span class="num">03</span><a class="toc-title" href="part1/03-circuit-laws/index.html">电路定律与读图第一步</a> <a class="toc-extra" href="part1/03-circuit-laws/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">读图的最低层工具：节点、参考地、KCL/KVL、分压与等效变换；建立"先直流后交流"的习惯。</p>
       <ul class="toc-points"><li>节点与参考地</li><li>KCL / KVL / 欧姆定律</li><li>分压与分流、负载效应</li><li>叠加、戴维南 / 诺顿</li><li>节点电压法</li><li>受控源与 .tf</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">04</span><a class="toc-title" href="part1/04-passive-dynamics/index.html">无源元件、暂态与频域</a><span class="badge skeleton">框架待补</span></div>
+      <div class="toc-head"><span class="num">04</span><a class="toc-title" href="part1/04-passive-dynamics/index.html">无源元件、暂态与频域</a> <a class="toc-extra" href="part1/04-passive-dynamics/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">R/L/C 的实际模型、一阶二阶响应、阻抗、相量与波特图，为后续频响与稳定性打底。</p>
       <ul class="toc-points"><li>实际元件寄生参数</li><li>时间常数与充放电</li><li>二阶系统与阻尼</li><li>阻抗 / 相量 / 复数</li><li>传递函数与零极点</li><li>波特图与 -3 dB</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">05</span><a class="toc-title" href="part1/05-diode/index.html">二极管与整流、限幅电路</a><span class="badge done">已完稿</span></div>
+      <div class="toc-head"><span class="num">05</span><a class="toc-title" href="part1/05-diode/index.html">二极管与整流、限幅电路</a> <a class="toc-extra" href="part1/05-diode/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">第一个非线性器件：从指数 I-V 到分段线性模型，学会判断"导通还是截止"。</p>
       <ul class="toc-points"><li>PN 结与肖克利方程</li><li>恒压降 / 分段线性模型</li><li>半波与全波整流</li><li>限幅与钳位</li><li>稳压二极管</li><li>.dc 扫描 I-V 曲线</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">06</span><a class="toc-title" href="part1/06-mosfet/index.html">MOSFET 与两级模型</a><span class="badge done">已完稿</span></div>
+      <div class="toc-head"><span class="num">06</span><a class="toc-title" href="part1/06-mosfet/index.html">MOSFET 与两级模型</a> <a class="toc-extra" href="part1/06-mosfet/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">现代模拟电路的主角：三个工作区、平方律、跨导、沟道长度调制，以及大信号/小信号两套视图的切换。</p>
       <ul class="toc-points"><li>截止 / 线性 / 饱和</li><li>阈值电压与体效应</li><li>gm / ro / 本征增益</li><li>小信号等效电路</li><li>.model NMOS 参数</li><li>输出特性曲线族</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">07</span><a class="toc-title" href="part1/07-bjt/index.html">BJT 与三种基本组态</a><span class="badge skeleton">框架待补</span></div>
+      <div class="toc-head"><span class="num">07</span><a class="toc-title" href="part1/07-bjt/index.html">BJT 与三种基本组态</a> <a class="toc-extra" href="part1/07-bjt/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">双极型器件与共射/共集/共基；与 MOS 对照记忆，理解低噪声与高精度场合为何仍用 BJT。</p>
       <ul class="toc-points"><li>放大 / 饱和 / 截止区</li><li>β 与 Ic-Vbe</li><li>gm / rπ / ro</li><li>共射 / 共集 / 共基</li><li>偏置电路</li><li>与 MOS 对照表</li></ul>
     </li>
     <li>
-      <div class="toc-head"><span class="num">08</span><a class="toc-title" href="part1/08-opamp-basics/index.html">理想运放与负反馈入门</a><span class="badge done">已完稿</span></div>
+      <div class="toc-head"><span class="num">08</span><a class="toc-title" href="part1/08-opamp-basics/index.html">理想运放与负反馈入门</a> <a class="toc-extra" href="part1/08-opamp-basics/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">把运放当作"带反馈的积木"：虚短虚断的适用条件、四种基本组态、以及理想模型的边界。</p>
       <ul class="toc-points"><li>理想运放三条假设</li><li>虚短 / 虚断的判据</li><li>反相 / 同相 / 跟随 / 差分</li><li>负反馈与闭环增益</li><li>饱和与压摆</li><li>用 E 源自建运放模型</li></ul>
     </li>
@@ -141,34 +144,34 @@
   <h2><span class="part-id">第二篇</span>核心模拟电路模块</h2>
   <p class="toc-desc" style="margin-left:0">这一篇是"电路词汇表"：工业界数据手册、应用笔记和教材里的框图，几乎都由这些模块拼成。每章配一个可运行网表，后续逐章补正文。</p>
   <ul class="toc-list">
-    <li><div class="toc-head"><span class="num">09</span><a class="toc-title" href="part2/09-single-stage/index.html">单级放大器</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">09</span><a class="toc-title" href="part2/09-single-stage/index.html">单级放大器</a> <a class="toc-extra" href="part2/09-single-stage/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">共源 / 共漏 / 共栅与共射 / 共集 / 共基：增益、输入输出阻抗、摆幅、偏置点设计。</p>
       <ul class="toc-points"><li>增益与 gm·R</li><li>输入/输出阻抗</li><li>偏置点与摆幅</li><li>源极退化</li><li>有源负载</li><li>.op 查工作点</li></ul></li>
-    <li><div class="toc-head"><span class="num">10</span><a class="toc-title" href="part2/10-current-mirror/index.html">电流源、电流镜与基准</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">10</span><a class="toc-title" href="part2/10-current-mirror/index.html">电流源、电流镜与基准</a> <a class="toc-extra" href="part2/10-current-mirror/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">模拟电路的"电源与常量"：基本镜像、cascode、Widlar、启动电路、带隙基准入门。</p>
       <ul class="toc-points"><li>基本电流镜</li><li>沟道长度调制误差</li><li>cascode 提高输出阻抗</li><li>PTAT / CTAT</li><li>带隙基准</li><li>启动电路</li></ul></li>
-    <li><div class="toc-head"><span class="num">11</span><a class="toc-title" href="part2/11-diff-amp/index.html">差分放大器</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">11</span><a class="toc-title" href="part2/11-diff-amp/index.html">差分放大器</a> <a class="toc-extra" href="part2/11-diff-amp/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">差分/共模分解、半电路法、CMRR、输入共模范围，运放输入级的起点。</p>
       <ul class="toc-points"><li>差模 / 共模</li><li>半电路等效</li><li>共模抑制比</li><li>电流镜负载</li><li>失调与共模范围</li><li>.dc 传输曲线</li></ul></li>
-    <li><div class="toc-head"><span class="num">12</span><a class="toc-title" href="part2/12-frequency-response/index.html">频率响应与极点</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">12</span><a class="toc-title" href="part2/12-frequency-response/index.html">频率响应与极点</a> <a class="toc-extra" href="part2/12-frequency-response/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">寄生电容如何变成极点：密勒效应、主极点近似、增益带宽积、零点。</p>
       <ul class="toc-points"><li>极零点与波特图</li><li>密勒等效</li><li>主极点近似</li><li>GBW</li><li>右半平面零点</li><li>.ac 扫频</li></ul></li>
-    <li><div class="toc-head"><span class="num">13</span><a class="toc-title" href="part2/13-feedback-stability/index.html">反馈与稳定性</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">13</span><a class="toc-title" href="part2/13-feedback-stability/index.html">反馈与稳定性</a> <a class="toc-extra" href="part2/13-feedback-stability/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">四种反馈拓扑、环路增益、相位裕度、补偿；理解"为什么放大器会自激"。</p>
       <ul class="toc-points"><li>四种反馈拓扑</li><li>环路增益与返回比</li><li>增益/相位裕度</li><li>主极点补偿</li><li>密勒补偿</li><li>稳定性判据</li></ul></li>
-    <li><div class="toc-head"><span class="num">14</span><a class="toc-title" href="part2/14-opamp-design/index.html">运算放大器设计</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">14</span><a class="toc-title" href="part2/14-opamp-design/index.html">运算放大器设计</a> <a class="toc-extra" href="part2/14-opamp-design/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">两级 CMOS 运放从指标到晶体管尺寸；摆率、失调、噪声、PSRR 的取舍。</p>
       <ul class="toc-points"><li>两级结构</li><li>指标分解与分配</li><li>补偿电容</li><li>摆率与功耗</li><li>失调与 PSRR</li><li>设计检查表</li></ul></li>
-    <li><div class="toc-head"><span class="num">15</span><a class="toc-title" href="part2/15-active-filters/index.html">有源滤波器</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">15</span><a class="toc-title" href="part2/15-active-filters/index.html">有源滤波器</a> <a class="toc-extra" href="part2/15-active-filters/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">一阶/二阶传递函数、Butterworth/Bessel/Chebyshev、Sallen-Key 与状态变量实现。</p>
       <ul class="toc-points"><li>低通/高通/带通</li><li>Q 值与极点</li><li>Sallen-Key</li><li>多反馈拓扑</li><li>运放带宽限制</li><li>.ac 验证</li></ul></li>
-    <li><div class="toc-head"><span class="num">16</span><a class="toc-title" href="part2/16-comparator-oscillator/index.html">比较器、施密特触发与振荡器</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">16</span><a class="toc-title" href="part2/16-comparator-oscillator/index.html">比较器、施密特触发与振荡器</a> <a class="toc-extra" href="part2/16-comparator-oscillator/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">正反馈与非线性：迟滞、巴克豪森判据、环形/LC/晶体振荡器、555。</p>
       <ul class="toc-points"><li>开环比较器</li><li>迟滞与噪声容限</li><li>巴克豪森判据</li><li>环形振荡器</li><li>RC / LC 振荡</li><li>.tran 看起振</li></ul></li>
-    <li><div class="toc-head"><span class="num">17</span><a class="toc-title" href="part2/17-power-supply/index.html">电源与功率电路</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">17</span><a class="toc-title" href="part2/17-power-supply/index.html">电源与功率电路</a> <a class="toc-extra" href="part2/17-power-supply/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">整流滤波、线性稳压器、LDO、DC-DC 基础、功放类别与热设计。</p>
       <ul class="toc-points"><li>整流与纹波</li><li>串联稳压 / LDO</li><li>环路与负载瞬态</li><li>Buck 基础</li><li>A/B/D 类功放</li><li>功耗与热阻</li></ul></li>
-    <li><div class="toc-head"><span class="num">18</span><a class="toc-title" href="part2/18-noise-distortion/index.html">噪声、失真与误差预算</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">18</span><a class="toc-title" href="part2/18-noise-distortion/index.html">噪声、失真与误差预算</a> <a class="toc-extra" href="part2/18-noise-distortion/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">热噪声、1/f 噪声、噪声带宽、SNR、THD、PSRR，以及把误差逐项相加的工程方法。</p>
       <ul class="toc-points"><li>热噪声 / 散粒 / 1/f</li><li>等效输入噪声</li><li>.noise 分析</li><li>THD 与 .four</li><li>PSRR / CMRR</li><li>误差预算表</li></ul></li>
   </ul>
@@ -178,19 +181,19 @@
   <h2><span class="part-id">第三篇</span>方法论：从读懂到设计</h2>
   <p class="toc-desc" style="margin-left:0">本书的重点。前两篇给的是"零件"，这一篇给的是"装配与逆向的工序"。</p>
   <ul class="toc-list">
-    <li><div class="toc-head"><span class="num">19</span><a class="toc-title" href="part3/19-read-circuit/index.html">如何读懂一个陌生电路</a><span class="badge done">已完稿</span></div>
+    <li><div class="toc-head"><span class="num">19</span><a class="toc-title" href="part3/19-read-circuit/index.html">如何读懂一个陌生电路</a> <a class="toc-extra" href="part3/19-read-circuit/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">十步拆解法：分块 → 认模块 → 找直流通路 → 找交流通路 → 找反馈环 → 查偏置/启动/保护 → 数值估算 → 仿真验证。附一个完整解剖案例。</p>
       <ul class="toc-points"><li>先找电源与地</li><li>模块识别词汇表</li><li>直流 / 交流两条通路</li><li>反馈环的正负判断</li><li>标注法与节点命名</li><li>数量级估算</li><li>用 .op 反查假设</li><li>完整案例解剖</li></ul></li>
-    <li><div class="toc-head"><span class="num">20</span><a class="toc-title" href="part3/20-design-circuit/index.html">如何从规格设计电路</a><span class="badge done">已完稿</span></div>
+    <li><div class="toc-head"><span class="num">20</span><a class="toc-title" href="part3/20-design-circuit/index.html">如何从规格设计电路</a> <a class="toc-extra" href="part3/20-design-circuit/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">从一份规格书出发：指标分解、拓扑选择、手算定参数、仿真验证、公差与最坏情况、写成设计文档。附完整设计案例。</p>
       <ul class="toc-points"><li>规格澄清与边界条件</li><li>指标分解树</li><li>拓扑选型矩阵</li><li>手算定参数</li><li>.step 参数寻优</li><li>.meas 自动验收</li><li>设计文档模板</li></ul></li>
-    <li><div class="toc-head"><span class="num">21</span><a class="toc-title" href="part3/21-simulation-method/index.html">仿真方法论</a><span class="badge done">已完稿</span></div>
+    <li><div class="toc-head"><span class="num">21</span><a class="toc-title" href="part3/21-simulation-method/index.html">仿真方法论</a> <a class="toc-extra" href="part3/21-simulation-method/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">让仿真回答正确的问题：选对分析类型、建立测试台、避免"看起来对"的假结果、仿真与实测的差异清单。</p>
       <ul class="toc-points"><li>五类分析的选择</li><li>测试台与激励设计</li><li>.meas 断言</li><li>模型可信度</li><li>收敛问题排查</li><li>仿真 ≠ 实测 清单</li></ul></li>
-    <li><div class="toc-head"><span class="num">22</span><a class="toc-title" href="part3/22-robustness/index.html">鲁棒性：PVT、蒙特卡洛与最坏情况</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">22</span><a class="toc-title" href="part3/22-robustness/index.html">鲁棒性：PVT、蒙特卡洛与最坏情况</a> <a class="toc-extra" href="part3/22-robustness/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">工艺角、电源与温度变化、蒙特卡洛统计、灵敏度分析与良率。</p>
       <ul class="toc-points"><li>PVT 与工艺角</li><li>mc() / gauss()</li><li>.step 批量运行</li><li>直方图与 σ</li><li>最坏情况组合</li><li>良率与规格裕量</li></ul></li>
-    <li><div class="toc-head"><span class="num">23</span><a class="toc-title" href="part3/23-lab-debug/index.html">从仿真到实物：PCB、仪器与调试</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">23</span><a class="toc-title" href="part3/23-lab-debug/index.html">从仿真到实物：PCB、仪器与调试</a> <a class="toc-extra" href="part3/23-lab-debug/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">寄生、接地、去耦、探头负载效应；万用表/示波器/信号源的正确用法与故障定位流程。</p>
       <ul class="toc-points"><li>接地与回流路径</li><li>去耦与旁路</li><li>探头 10× 与负载</li><li>测量带宽与噪声</li><li>分模块上电调试</li><li>故障树</li></ul></li>
   </ul>
@@ -199,7 +202,7 @@
 <section class="toc-part">
   <h2><span class="part-id">第四篇</span>综合课程设计</h2>
   <ul class="toc-list">
-    <li><div class="toc-head"><span class="num">24</span><a class="toc-title" href="part4/24-projects/index.html">综合实验与课程设计课题</a><span class="badge skeleton">框架待补</span></div>
+    <li><div class="toc-head"><span class="num">24</span><a class="toc-title" href="part4/24-projects/index.html">综合实验与课程设计课题</a> <a class="toc-extra" href="part4/24-projects/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">三个可独立完成的大作业：传感器信号链、音频放大器、基准与稳压源；每题给出规格、验收方法与仿真测试台。</p>
       <ul class="toc-points"><li>传感器信号链</li><li>音频功率放大器</li><li>带隙基准与 LDO</li><li>规格与验收表</li><li>报告模板</li></ul></li>
   </ul>
@@ -208,7 +211,7 @@
 <section class="toc-part">
   <h2><span class="part-id">附录</span>速查</h2>
   <ul class="toc-list">
-    <li><div class="toc-head"><span class="num">A</span><a class="toc-title" href="appendix/index.html">公式、指令与术语速查</a><span class="badge done">已完稿</span></div>
+    <li><div class="toc-head"><span class="num">A</span><a class="toc-title" href="appendix/index.html">公式、指令与术语速查</a> <a class="toc-extra" href="appendix/index.html#extra-links">扩展阅读 →</a><span class="badge done">已完稿</span></div>
       <p class="toc-desc">公式表、单位前缀、SPICE 元件与点指令速查、常见缩写、中英术语对照、推荐书目。</p>
       <ul class="toc-points"><li>常用公式</li><li>SPICE 指令表</li><li>单位前缀</li><li>术语中英对照</li><li>推荐教材</li><li>如何新增章节</li></ul></li>
   </ul>
@@ -281,7 +284,8 @@
 <table>
   <thead><tr><th>动作</th><th>做法</th></tr></thead>
   <tbody>
-    <tr><td>细化某章</td><td>直接编辑该章 <code>index.html</code>，在对应 <code>&lt;section id="sX-Y"&gt;</code> 里补正文；把状态徽章从 <code>skeleton</code> 改成 <code>done</code>，并同步 <code>assets/toc.js</code> 与本页面。</td></tr>
+    <tr><td>细化某章</td><td>在 <code>tools/book_expansion.py</code> 对应章节的 <code>EXTRA_SECTIONS</code> 里追加小节（再运行 <code>python3 tools/build_book.py --force</code> 重建）；也可以直接编辑该章 <code>index.html</code>，默认生成不会覆盖已有文件。</td></tr>
+    <tr><td>加扩展链接</td><td>在 <code>tools/book_resources.py</code> 的 <code>R</code> 登记资源、<code>TOPIC_RULES</code> 加知识点关键词规则、<code>CHAPTER_RESOURCES</code> 调整该章默认资源，重建后自动出现在知识点地图与扩展学习小节。</td></tr>
     <tr><td>加一个仿真实验</td><td>在页面里新增 <code>&lt;pre class="spice" data-file="sim/xxx.cir"&gt;&lt;code&gt;…&lt;/code&gt;&lt;/pre&gt;</code>，然后运行 <code>python3 tools/extract_netlists.py</code> 自动生成 <code>.cir</code>。</td></tr>
     <tr><td>加一节 / 加一章</td><td>先在本页目录里加链接与知识点标签，再建文件夹与 <code>index.html</code>，最后在 <code>assets/toc.js</code> 追加一项（侧栏、上一章/下一章会自动更新）。</td></tr>
     <tr><td>加入新参考资料</td><td>在上方「参考资源」里按同样格式追加 <code>.resource</code> 卡片，注明仓库用途、许可证与核实时间。</td></tr>

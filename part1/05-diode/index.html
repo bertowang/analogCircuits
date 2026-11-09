@@ -29,13 +29,14 @@
 <li>会用 .dc 扫描得到 I-V 曲线</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>PN 结与肖克利方程</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>恒压降 / 分段线性模型</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>半波与全波整流</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>限幅与钳位</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>稳压二极管</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>.dc 扫描 I-V 曲线</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>PN 结与肖克利方程</td><td><a href="https://en.wikipedia.org/wiki/Diode" target="_blank" rel="noopener">Diode（英）</a> · <a href="https://en.wikipedia.org/wiki/Zener_diode" target="_blank" rel="noopener">Zener diode（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>恒压降 / 分段线性模型</td><td><a href="https://en.wikipedia.org/wiki/Diode" target="_blank" rel="noopener">Diode（英）</a> · <a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>半波与全波整流</td><td><a href="https://en.wikipedia.org/wiki/Rectifier" target="_blank" rel="noopener">Rectifier（英）</a> · <a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>限幅与钳位</td><td><a href="https://en.wikipedia.org/wiki/Diode" target="_blank" rel="noopener">Diode（英）</a> · <a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>稳压二极管</td><td><a href="https://en.wikipedia.org/wiki/Zener_diode" target="_blank" rel="noopener">Zener diode（英）</a> · <a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.dc 扫描 I-V 曲线</td><td><a href="https://en.wikipedia.org/wiki/Diode" target="_blank" rel="noopener">Diode（英）</a> · <a href="https://en.wikipedia.org/wiki/MOSFET" target="_blank" rel="noopener">MOSFET（英）</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s5-1"><h2><span class="sec-num">§5.1</span>指数模型与三个近似层</h2>
 <p>PN 结的直流行为由肖克利方程描述：</p>
@@ -112,6 +113,13 @@ R1 dc_out 0 1k
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把实验 5-2 改成桥式全波整流（4 个二极管），比较纹波频率与幅值。</li>
 <li>用两个二极管搭一个 ±1.4 V 对称限幅器，.tran 验证输出电平。</li>
 <li>改变 .model 里的 Is，观察 I-V 曲线如何平移并解释温度趋势。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Diode（英）</strong>（百科 / 器件）：PN 结与二极管模型<br><a href="https://en.wikipedia.org/wiki/Diode" target="_blank" rel="noopener">Diode（英）</a></li>
+<li><strong>Rectifier（英）</strong>（百科 / 器件）：半波/全波整流拓扑<br><a href="https://en.wikipedia.org/wiki/Rectifier" target="_blank" rel="noopener">Rectifier（英）</a></li>
+<li><strong>Zener diode（英）</strong>（百科 / 器件）：反向击穿与稳压<br><a href="https://en.wikipedia.org/wiki/Zener_diode" target="_blank" rel="noopener">Zener diode（英）</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li>
+<li><strong>LTspice_Ecircuit · GitHub</strong>（案例 / 读图）：37 类按主题归档的电路，适合逐张练习读图<br><a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=diode+rectifier+ltspice+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=diode+rectifier+ltspice&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../06-mosfet/index.html'>第 6 章 MOSFET 与两级模型</a></li>
 <li><a href='../../part2/17-power-supply/index.html'>第 17 章 电源与功率电路</a></li>
 <li><a href='https://www.ecircuitcenter.com/' target='_blank' rel='noopener'>eCircuit Center · Diode circuits</a></li></ul></section>

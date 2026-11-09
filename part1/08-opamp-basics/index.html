@@ -29,13 +29,14 @@
 <li>知道理想模型的四个边界并会用 E 源自建运放模型</li>
 </ul></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>理想运放三条假设</td><td>正文已覆盖</td></tr>
-<tr><td>2</td><td>虚短 / 虚断的判据</td><td>正文已覆盖</td></tr>
-<tr><td>3</td><td>反相 / 同相 / 跟随 / 差分</td><td>正文已覆盖</td></tr>
-<tr><td>4</td><td>负反馈与闭环增益</td><td>正文已覆盖</td></tr>
-<tr><td>5</td><td>饱和与压摆</td><td>正文已覆盖</td></tr>
-<tr><td>6</td><td>用 E 源自建运放模型</td><td>正文已覆盖</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>理想运放三条假设</td><td><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a> · <a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>虚短 / 虚断的判据</td><td><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a> · <a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>反相 / 同相 / 跟随 / 差分</td><td><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a> · <a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>负反馈与闭环增益</td><td><a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>饱和与压摆</td><td><a href="https://en.wikipedia.org/wiki/Slew_rate" target="_blank" rel="noopener">Slew rate（英）</a> · <a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>用 E 源自建运放模型</td><td><a href="https://en.wikipedia.org/wiki/SPICE" target="_blank" rel="noopener">SPICE（英）</a> · <a href="https://github.com/ngspice/ngspice" target="_blank" rel="noopener">ngspice · GitHub</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s8-1"><h2><span class="sec-num">§8.1</span>三条假设与虚短虚断的适用条件</h2>
 <p>理想运放：<strong>开环增益无穷大、输入电阻无穷大、输出电阻为零</strong>。由此得到教科书里的两条捷径：</p>
@@ -117,6 +118,13 @@ C1 oa 0 1u
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 R3 改成 99k，预测闭环增益与带宽，再用 .ac 验证 GBW 近似守恒。</li>
 <li>在实验 8-1 中把 VIN 幅度提到 5 V，观察自建模型为何仍不失真，并说明真实运放会怎样。</li>
 <li>把 C1 增大 10 倍，解释相位裕度与阶跃响应振铃的趋势。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Operational amplifier（英）</strong>（百科 / 运放）：理想模型与非理想参数<br><a href="https://en.wikipedia.org/wiki/Operational_amplifier" target="_blank" rel="noopener">Operational amplifier（英）</a></li>
+<li><strong>Negative feedback（英）</strong>（百科 / 反馈）：反馈的一般理论<br><a href="https://en.wikipedia.org/wiki/Negative_feedback" target="_blank" rel="noopener">Negative feedback（英）</a></li>
+<li><strong>All About Circuits · Textbook</strong>（教材 / 开放）：免费在线电子学教材，偏工程直觉的补充阅读<br><a href="https://www.allaboutcircuits.com/textbook/" target="_blank" rel="noopener">All About Circuits · Textbook</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li>
+<li><strong>eCircuit Center</strong>（教学 / 网站）：按 SPICE 分析类型组织的经典电路讲解，许多 GitHub 合集的源头<br><a href="https://www.ecircuitcenter.com/" target="_blank" rel="noopener">eCircuit Center</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=opamp+negative+feedback+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=opamp+negative+feedback&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part2/13-feedback-stability/index.html'>第 13 章 反馈与稳定性</a></li>
 <li><a href='../../part2/14-opamp-design/index.html'>第 14 章 运算放大器设计</a></li>
 <li><a href='../../part3/20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li></ul></section>

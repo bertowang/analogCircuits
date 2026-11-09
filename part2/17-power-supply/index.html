@@ -17,7 +17,7 @@
 <h1><span class="ch-num">第 17 章</span>电源与功率电路</h1>
 <p class="lede">从交流到稳定直流，再到驱动负载：纹波、环路、压降与热，是这一章反复出现的四个词。</p>
 <div class="meta">
-<span class="badge skeleton">框架待补</span>
+<span class="badge done">已完稿</span>
 <span>建议 4 学时</span>
 <span>1 个 LTspice 实验</span>
 <span>模拟电路：从读懂到设计</span>
@@ -28,15 +28,15 @@
 <li>知道 Buck 变换器的基本能量传递关系</li>
 <li>能说明 A/B/D 类功放的效率与失真取舍</li>
 </ul></div>
-<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
 <section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
-<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
-<tr><td>1</td><td>整流与纹波</td><td>待展开为小节</td></tr>
-<tr><td>2</td><td>串联稳压 / LDO</td><td>待展开为小节</td></tr>
-<tr><td>3</td><td>环路与负载瞬态</td><td>待展开为小节</td></tr>
-<tr><td>4</td><td>Buck 基础</td><td>待展开为小节</td></tr>
-<tr><td>5</td><td>A/B/D 类功放</td><td>待展开为小节</td></tr>
-<tr><td>6</td><td>功耗与热阻</td><td>待展开为小节</td></tr>
+<p class="code-hint">每个知识点都配了 1～2 个扩展学习链接，可直接点开精读；本章的完整资源清单见 <a href="#extra-links">扩展学习</a>。</p>
+<table><thead><tr><th style="width:44px">#</th><th style="width:24%">知识点</th><th>扩展学习</th><th style="width:100px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>整流与纹波</td><td><a href="https://en.wikipedia.org/wiki/Rectifier" target="_blank" rel="noopener">Rectifier（英）</a> · <a href="https://github.com/JesseHardingMurillo/LTspice_Ecircuit" target="_blank" rel="noopener">LTspice_Ecircuit · GitHub</a></td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>串联稳压 / LDO</td><td><a href="https://en.wikipedia.org/wiki/Low-dropout_regulator" target="_blank" rel="noopener">Low-dropout regulator（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>环路与负载瞬态</td><td><a href="https://en.wikipedia.org/wiki/Low-dropout_regulator" target="_blank" rel="noopener">Low-dropout regulator（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>Buck 基础</td><td><a href="https://en.wikipedia.org/wiki/Buck_converter" target="_blank" rel="noopener">Buck converter（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>A/B/D 类功放</td><td><a href="https://en.wikipedia.org/wiki/Class-D_amplifier" target="_blank" rel="noopener">Class-D amplifier（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>功耗与热阻</td><td><a href="https://en.wikipedia.org/wiki/Class-D_amplifier" target="_blank" rel="noopener">Class-D amplifier（英）</a> · <a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></td><td>正文已覆盖</td></tr>
 </tbody></table></section>
 <section id="s17-1"><h2><span class="sec-num">§17.1</span>核心概念速览</h2>
 <ul>
@@ -45,6 +45,30 @@
 <li><strong>Buck</strong>：开关导通时电感储能、关断时经二极管/同步管续流；<code>V<sub>out</sub> ≈ D·V<sub>in</sub></code>，效率远高于线性稳压。</li>
 <li>功放：A 类线性最好效率最低（理论 25%～50%），B/AB 类有交越失真，D 类用 PWM + LC 滤波换取高效率。</li>
 <li>热：结温 = 环境温度 + 功耗 × 热阻；<strong>任何电源设计都必须算一次功耗</strong>。</li></ul>
+</section>
+<section id="s17-2"><h2><span class="sec-num">§17.2</span>整流纹波的定量估算</h2>
+<p>二极管只在输入峰值附近导通给电容充电，其余时间电容独自向负载放电：</p>
+<span class="eq">ΔV<sub>pp</sub> ≈ I<sub>load</sub>/(f·C)（半波），全波桥式约 I<sub>load</sub>/(2f·C)</span>
+<p>推导只用了 <code>ΔQ = IΔt = CΔV</code>：放电时间约一个周期 1/f。因此减小纹波的三条路：加大 C、提高频率（全波/开关电源）、减小负载电流。</p>
+<p>注意两个仿真与实物的差异：二极管只在短时间内导通，充电电流是<strong>窄而高的尖峰</strong>，会带来 EMI 与变压器利用率问题；电容 ESR 会额外叠加 <code>I<sub>peak</sub>·ESR</code> 的纹波，且决定电容寿命。实验 5-2 的 <code>.tran</code> 波形能同时看到这两点。</p>
+</section>
+<section id="s17-3"><h2><span class="sec-num">§17.3</span>LDO 的环路、调整率与瞬态</h2>
+<p>LDO 可拆成四块：基准 V<sub>REF</sub>、误差放大器、调整管、反馈分压。设误差放大器增益 A、分压比 β，则</p>
+<span class="eq">V<sub>out</sub> ≈ V<sub>REF</sub>/β · Aβ/(1+Aβ)　（Aβ 越大，静态误差越小）</span>
+<p>三条常用指标：</p>
+<ul><li><strong>线性调整率</strong>：输入电压变化引起的输出变化，由环路增益与 PSRR 决定。</li>
+<li><strong>负载调整率</strong>：负载电流变化引起的输出变化，等于输出阻抗乘以电流变化；实验 17-1 的 0.5 Ω 输出电阻造成的约 10 mV 压降就是它。</li>
+<li><strong>负载瞬态</strong>：电流阶跃时，先是输出电容 ESR 与容值决定的<em>瞬时下冲</em>，再由环路在有限带宽内把电压拉回；两者时间尺度不同，要分开看。</li></ul>
+<p>输出电容的 ESR 还会在环路中引入一个零点：某些老结构<strong>需要</strong>一定 ESR 才能稳定，换成低 ESR 陶瓷电容反而振荡。这是「照抄应用电路却不能工作」的高频原因。</p>
+</section>
+<section id="s17-4"><h2><span class="sec-num">§17.4</span>DC-DC 与功率放大</h2>
+<p><strong>Buck 变换器</strong>：开关导通时电感储能、关断时经二极管或同步管续流，稳态 <code>V<sub>out</sub> ≈ D·V<sub>in</sub></code>（D 为占空比）。电感电流纹波 <code>ΔI ≈ (V<sub>in</sub>−V<sub>out</sub>)D/(Lf<sub>sw</sub>)</code>，输出纹波由电容与 ESR 决定。效率远高于线性稳压，代价是开关噪声、EMI 与控制环路更复杂。</p>
+<table><thead><tr><th>功放类别</th><th>导通角</th><th>理论效率</th><th>主要问题</th></tr></thead><tbody>
+<tr><td>A 类</td><td>360°</td><td>25%～50%</td><td>静态功耗大</td></tr>
+<tr><td>B / AB 类</td><td>180° / 略大于</td><td>约 70%</td><td>交越失真（AB 缓解）</td></tr>
+<tr><td>D 类</td><td>开关工作</td><td>可超 90%</td><td>PWM 量化噪声、需 LC 滤波</td></tr>
+</tbody></table>
+<p>最后一步永远是热：<code>T<sub>j</sub> = T<sub>a</sub> + P<sub>diss</sub>·R<sub>θJA</sub></code>。线性稳压的压差乘电流、功放的损耗、开关管的导通与开关损耗都要算一遍，再决定散热片与封装。</p>
 </section>
 <section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
 <h3>实验 17-1：LDO 的负载阶跃与调整率</h3>
@@ -69,6 +93,13 @@ ILOAD out 0 PULSE(0 20m 0 1u 1u 2m 4m)
 <li>忽略调整管功耗：压差 × 电流就是热。</li></ul></div></section>
 <section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 E1 增益改成 1000，比较静态误差与瞬态恢复。</li>
 <li>把 COUT 增大 10 倍，观察下冲幅度与恢复时间的变化。</li></ol></section>
+<section id="extra-links"><h2><span class="sec-num">§</span>扩展学习</h2>
+<p>以下链接按本章知识点挑选：前面是可以直接精读的资料，后面是可以拿来动手改的例程。每条知识点在上方「知识点地图」里也有对应的 1～2 个直达链接。</p><ul><li><strong>Low-dropout regulator（英）</strong>（百科 / 电源）：LDO 结构与压差<br><a href="https://en.wikipedia.org/wiki/Low-dropout_regulator" target="_blank" rel="noopener">Low-dropout regulator（英）</a></li>
+<li><strong>Buck converter（英）</strong>（百科 / 电源）：降压变换器工作原理<br><a href="https://en.wikipedia.org/wiki/Buck_converter" target="_blank" rel="noopener">Buck converter（英）</a></li>
+<li><strong>Rectifier（英）</strong>（百科 / 器件）：半波/全波整流拓扑<br><a href="https://en.wikipedia.org/wiki/Rectifier" target="_blank" rel="noopener">Rectifier（英）</a></li>
+<li><strong>Class-D amplifier（英）</strong>（百科 / 电源）：PWM 功放与效率<br><a href="https://en.wikipedia.org/wiki/Class-D_amplifier" target="_blank" rel="noopener">Class-D amplifier（英）</a></li>
+<li><strong>TI · 应用笔记与电路手册</strong>（厂商 / 手册）：Analog Engineer&#x27;s Circuit Cookbook 等，看业界如何选拓扑、留裕量<br><a href="https://www.ti.com/" target="_blank" rel="noopener">TI · 应用笔记与电路手册</a></li></ul><p class="code-hint">继续扩展：<a href="https://github.com/search?q=ldo+buck+ltspice+LTspice&amp;type=repositories" target="_blank" rel="noopener">在 GitHub 检索本章更多例程</a> · <a href="https://github.com/search?q=ldo+buck+ltspice&amp;type=repositories" target="_blank" rel="noopener">按本章主题检索开源项目</a> · <a href="../../index.html#resources">全书参考资源总表</a></p>
+</section>
 <section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/05-diode/index.html'>第 5 章 二极管与整流</a></li>
 <li><a href='../13-feedback-stability/index.html'>第 13 章 反馈与稳定性</a></li></ul></section>
 <footer class="pager" data-autofill></footer>
