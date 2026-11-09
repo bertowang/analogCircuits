@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 19 章 · 如何读懂一个陌生电路 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="19">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第三篇 · 方法论：从读懂到设计</span>
+<h1><span class="ch-num">第 19 章</span>如何读懂一个陌生电路</h1>
+<p class="lede">本书的核心章之一。把“看懂”从玄学变成一套可重复执行、可检查、可用仿真验证的十步流程，并完整解剖一个真实电路。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 4 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能对任意陌生电路独立完成分块、认模块、找通路、找反馈环</li>
+<li>能画出直流通路与交流小信号通路两套等效图</li>
+<li>能用数量级估算快速判断电路是否合理</li>
+<li>会用 .op 反查自己对工作区的假设</li>
+<li>能写出一份可交付的电路阅读笔记</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>先找电源与地</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>模块识别词汇表</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>直流 / 交流两条通路</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>反馈环的正负判断</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>标注法与节点命名</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>数量级估算</td><td>正文已覆盖</td></tr>
+<tr><td>7</td><td>用 .op 反查假设</td><td>正文已覆盖</td></tr>
+<tr><td>8</td><td>完整案例解剖</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s19-1"><h2><span class="sec-num">§19.1</span>为什么“看懂”这么难</h2>
+<p>一张模拟电路图上，至少叠了四层信息，而它们共用同一批线条：</p>
+<ol><li><strong>直流供电与偏置</strong>：谁给谁提供电流，静态工作点在哪；</li>
+<li><strong>信号通路</strong>：输入从哪进来、经过几级增益、从哪出去；</li>
+<li><strong>反馈环路</strong>：哪条线把输出又送回输入，是正还是负；</li>
+<li><strong>辅助与保护</strong>：启动电路、补偿电容、去耦、限流、ESD、关断控制。</li></ol>
+<p>新手常犯的错是“顺着线从头看到尾”，结果在电源线和反馈线之间迷路。<strong>正确做法是按层分块，一次只看一层</strong>。下面十步就是固定的分层顺序。</p>
+</section>
+<section id="s19-2"><h2><span class="sec-num">§19.2</span>十步拆解法</h2>
+<table><thead><tr><th>步</th><th>动作</th><th>要写下的产物</th></tr></thead><tbody>
+<tr><td>1</td><td>圈出所有电源、地、参考电位，标出电源范围</td><td>电源树：VDD / VSS / VREF 各接到哪些模块</td></tr>
+<tr><td>2</td><td>找输入端与输出端（最左/最右、接插件名、芯片引脚名）</td><td>信号流方向的粗箭头</td></tr>
+<tr><td>3</td><td>按“功能块”切图：偏置、输入级、增益级、输出级、反馈网络、保护</td><td>方框草图，每块一句话说明功能</td></tr>
+<tr><td>4</td><td>画<strong>直流通路</strong>：电容开路、电感短路、交流源置零</td><td>直流等效图 + 各节点电位数量级</td></tr>
+<tr><td>5</td><td>画<strong>交流小信号通路</strong>：电源接交流地、大电容短路、器件换小信号模型</td><td>小信号等效图 + 增益表达式</td></tr>
+<tr><td>6</td><td>找所有<strong>环路</strong>，逐个判正负（沿环走一圈数反相次数）</td><td>环路清单：主负反馈 / 局部反馈 / 正反馈 / 启动环</td></tr>
+<tr><td>7</td><td>识别辅助支路：启动、补偿、去耦、限流、保护、修调</td><td>每个“看不懂的元件”给出存在理由</td></tr>
+<tr><td>8</td><td>做数量级估算：电流、gm、增益、带宽、摆幅</td><td>一张手算表（不追求精确，只求量级对）</td></tr>
+<tr><td>9</td><td>用 <code>.op</code> 反查假设：每个管子的工作区、Id、gm、Vov</td><td>假设 vs 实测对照，标出矛盾处</td></tr>
+<tr><td>10</td><td>用 <code>.tran</code> / <code>.ac</code> 回答“它到底做什么"</td><td>功能结论一句话 + 关键波形</td></tr>
+</tbody></table>
+<div class="card tip"><span class="card-label">可打印检查单</span><p style="margin-bottom:0">电源地 → 输入输出 → 分块 → 直流图 → 交流图 → 环路正负 → 辅助支路 → 数量级 → .op 反查 → 波形结论。做完十步仍读不懂，通常不是能力问题，而是<strong>缺前置知识</strong>：回到第一、二篇查对应模块。</p></div>
+</section>
+<section id="s19-3"><h2><span class="sec-num">§19.3</span>模块识别词汇表</h2>
+<table><thead><tr><th>图形特征</th><th>多半是</th><th>为什么存在</th></tr></thead><tbody>
+<tr><td>栅漏短接的 MOS / 集电极基极短接的 BJT</td><td>二极管连接器件，电流镜的“基准支路"</td><td>产生一个可被复制的 VGS / VBE</td></tr>
+<tr><td>两个管子栅极相连、源极共接</td><td>电流镜 或 差分对</td><td>看源极是接地（镜像）还是接尾电流源（差分）</td></tr>
+<tr><td>两个输入管源极共接、下面挂一个电流源</td><td>差分输入级</td><td>放大差模、抑制共模</td></tr>
+<tr><td>PMOS 栅极相连、源极接 VDD，作差分对负载</td><td>电流镜有源负载</td><td>双端转单端，增益翻倍</td></tr>
+<tr><td>跨接在两级之间的一只小电容</td><td>密勒补偿电容</td><td>极点分裂、保证相位裕度</td></tr>
+<tr><td>电源到地之间一串二极管/电阻，且只在启动时导通</td><td>启动电路</td><td>把基准推出零电流平衡点</td></tr>
+<tr><td>一只管子叠在另一只管子上、栅极接固定偏置</td><td>cascode</td><td>提高输出阻抗 / 屏蔽电压变化</td></tr>
+<tr><td>输出经电阻分压回到输入</td><td>负反馈网络</td><td>用增益换稳定与线性</td></tr>
+<tr><td>电源脚附近的小电容</td><td>去耦 / 旁路</td><td>提供瞬态电流、稳住电源</td></tr>
+</tbody></table>
+<p>这份词汇表与<a href="../../index.html#toc">第二篇的章节目录</a>一一对应：认出模块，就知道去哪一章查公式。</p>
+</section>
+<section id="s19-4"><h2><span class="sec-num">§19.4</span>标注法：把图“重写”一遍</h2>
+<p>不要在原图上冥思苦想，动手重画一遍，并用三种标记分层：</p>
+<ul><li>给每个节点<strong>起名字</strong>（<code>bias</code>、<code>tail</code>、<code>dn</code>、<code>dp</code>），名字本身带上功能信息；</li>
+<li>用一种颜色/线型画<strong>直流电流路径</strong>（VDD → 负载 → 管子 → 尾电流源 → VSS），另一种画<strong>信号路径</strong>（输入 → 差分对 → 增益级 → 输出）；</li>
+<li>把<strong>反馈环</strong>单独画成箭头闭环，并在旁边写“负（1 次反相）”或“正”。</li></ul>
+<p>本书所有网表都用功能化节点名，就是为了和这个习惯对齐。读别人的 <code>.asc</code> 原理图时，第一步也应是把 <code>N001</code> 之类改成有意义的标签。</p>
+</section>
+<section id="s19-5"><h2><span class="sec-num">§19.5</span>数量级估算：先粗后细</h2>
+<p>在打开仿真器之前，先做 60 秒估算，能挡掉绝大部分理解错误：</p>
+<ul><li>电源 5 V、电阻 kΩ 级 ⇒ 电流约 mA 级；电流镜 µA 级 ⇒ 电阻一般 MΩ 或管子很小。</li>
+<li>MOS 过驱动 V<sub>ov</sub> 常取 0.1～0.3 V；<code>g<sub>m</sub> = 2I<sub>D</sub>/V<sub>ov</sub></code> ⇒ 100 µA 对应约 1 mS。</li>
+<li>单级增益 <code>g<sub>m</sub>·R<sub>out</sub></code> 常在 5～50；两级 100～10000；主极点常在 kΩ × pF = ns～µs 量级。</li>
+<li>摆幅预算：电源电压减去各管所需的最小 V<sub>DS</sub>，通常每只管子留 0.2～0.3 V。</li></ul>
+<p>估出来的数如果和仿真差 10 倍以上，几乎一定是<strong>工作区假设错了</strong>，而不是模型不准。</p>
+</section>
+<section id="s19-6"><h2><span class="sec-num">§19.6</span>用 .op 反查假设</h2>
+<p><code>.op</code> 的输出里，对每个 MOS 会列出 <code>Id</code>、<code>Vgs</code>、<code>Vds</code>、<code>Vth</code>、<code>Vov</code>、<code>gm</code>、<code>ro</code> 与工作区。检查顺序：</p>
+<ol><li><code>Vov &gt; 0</code> 且 <code>Vds ≥ Vov</code> ⇒ 饱和（放大区）。若不满足，直流假设要重来。</li>
+<li>各支路电流是否满足 KCL？尾电流是否等于两支路之和？镜像比例对不对？</li>
+<li>静态输出电压是否落在预期摆幅中间？给正负信号各留了多少余量？</li>
+<li><code>gm</code> 是否与 <code>2Id/Vov</code> 一致？不一致说明模型比你用的公式复杂（这是好事，记下来）。</li></ol>
+</section>
+<section id="s19-7"><h2><span class="sec-num">§19.7</span>完整案例：五管 OTA 单位增益跟随器</h2>
+<p>下方实验 19-1 是一个“看起来陌生”的电路：2 个电源、1 路偏置、4 只镜子/差分管、1 只输出管，还把输出接回了输入。按十步法走一遍：</p>
+<ol>
+<li><strong>电源/地</strong>：VDD = +2.5 V、VSS = −2.5 V，地是信号参考，不是电源中点。</li>
+<li><strong>输入输出</strong>：VIN 接 <code>inp</code>；输出取 <code>dp</code>；<code>VFB</code>（0 V 源）把 <code>dp</code> 短接到 <code>inn</code>，因此是<strong>单位增益反馈</strong>。</li>
+<li><strong>分块</strong>：<code>IB + MB</code> 是偏置基准；<code>MT</code> 是尾电流镜（W 翻倍 ⇒ 100 µA）；<code>M1/M2</code> 是差分对；<code>M3/M4</code> 是 PMOS 电流镜负载；输出在 <code>dp</code>。</li>
+<li><strong>直流通路</strong>：IB(50 µA) → MB → VSS；MT 复制出 100 µA 尾电流；差分对平衡时各 50 µA；M3 二极管连接产生约 1.68 V 的栅压，M4 复制 50 µA。</li>
+<li><strong>交流通路</strong>：VDD/VSS 是交流地；差分对把 <code>v(inp)−v(inn)</code> 变成漏极电流差，电流镜把两路差合并到 <code>dp</code>，等效跨导约 g<sub>m</sub>；输出阻抗 = r<sub>o2</sub>∥r<sub>o4</sub>。</li>
+<li><strong>环路</strong>：<code>dp</code> → <code>inn</code> 只有一条。沿环走：输入升高 → M1 电流增 → <code>dn</code> 降 → M4 电流增 → <code>dp</code> 升 → <code>inn</code> 升 → M2 电流增，<strong>抵消原变化</strong>，故为负反馈。</li>
+<li><strong>辅助支路</strong>：<code>VFB</code> 是 0 V 源，用于把两根线连起来并顺便测电流，不是放大器；本例未画补偿电容（单级、高输出阻抗，实际集成电路需要）。</li>
+<li><strong>估算</strong>：每支路 50 µA，V<sub>ov</sub> ≈ 0.16 V，g<sub>m</sub> ≈ 0.6 mS，r<sub>o</sub> ≈ 1/(0.02×50µ) = 1 MΩ ⇒ 开环增益约 g<sub>m</sub>(r<sub>o</sub>/2) ≈ 300。闭环增益 ≈ 1。</li>
+<li><strong>.op 反查</strong>：检查 M1～M4 是否都在饱和区、<code>dp</code> 是否接近 0 V、IB/MT 电流比是否 1:2。</li>
+<li><strong>结论</strong>：这是一个<strong>五管 OTA 构成的电压跟随器</strong>，用高开环增益换取精确的单位增益缓冲。</li>
+</ol>
+<div class="card note"><p style="margin-bottom:0">把 <code>VIN</code> 的 DC 改成 0.5 V，输出也会跟到约 0.5 V——这就是“读懂了”之后能做出的预测。能预测，才算真懂。</p></div>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<figure class="circuit"><svg viewBox="0 0 470 220" width="470" role="img" aria-label="五管 OTA 的模块分块示意">
+  <rect class="part" x="20" y="40" width="100" height="50" rx="5"/>
+  <text class="lbl" x="34" y="70">偏置 / 电流镜</text>
+  <rect class="part" x="140" y="40" width="120" height="50" rx="5"/>
+  <text class="lbl" x="154" y="70">差分输入对</text>
+  <rect class="part" x="280" y="40" width="120" height="50" rx="5"/>
+  <text class="lbl" x="294" y="70">有源负载镜像</text>
+  <rect class="part" x="280" y="130" width="120" height="50" rx="5"/>
+  <text class="lbl" x="300" y="160">单端输出</text>
+  <g class="wire"><path d="M120 65 H140 M260 65 H280 M340 90 V130 M400 180 H400 V190 H220 V105 H200 V90"/></g>
+  <path class="arrow" d="M400 180 l-6 -8 l12 0 z"/>
+  <text class="lbl-s" x="228" y="200">负反馈：输出回到另一输入端</text>
+  <text class="lbl-s" x="20" y="115">① 找电源/地</text>
+  <text class="lbl-s" x="140" y="115">② 认模块</text>
+  <text class="lbl-s" x="280" y="115">③ 找信号通路</text>
+</svg><figcaption>电路示意图（内联 SVG，随 HTML 一起阅读、可缩放、可打印）</figcaption></figure>
+<h3>实验 19-1：待解剖的五管 OTA（先别看结论，自己走十步）</h3>
+<pre class="spice" data-file="sim/19-ota-follower.cir"><code>* Ch19 Case study: five-transistor OTA wired as a voltage follower
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+.model PM1 PMOS(Vto=-0.5 Kp=100u Lambda=0.02)
+VDD vdd 0 DC 2.5
+VSS vss 0 DC -2.5
+IB vdd bias 50u
+MB bias bias vss vss NM1 W=10u L=2u
+MT tail bias vss vss NM1 W=20u L=2u
+M1 dn inp tail vss NM1 W=40u L=2u
+M2 dp inn tail vss NM1 W=40u L=2u
+M3 dn dn vdd vdd PM1 W=20u L=2u
+M4 dp dn vdd vdd PM1 W=20u L=2u
+VFB dp inn DC 0
+VIN inp 0 DC 0 AC 0.1 SINE(0 0.1 1k)
+.op
+.tran 0 5m 0 2u
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → View → SPICE Error Log 逐管核对工作区与电流；Add Trace → V(dp) 与 V(inp)。　<strong>预期与判读：</strong>MT 尾电流约 100 µA，差分对每支路 50 µA，M3/M4 镜像 50 µA；V(dp) 跟随 V(inp)，闭环增益约 1。若看到某管 Vds 小于 Vov，说明共模范围被突破。　文件位置：<code>part3/19-read-circuit/sim/19-ota-follower.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>顺着线从头看到尾，没有先分层分块。</li>
+<li>把反馈线当成信号线，或漏掉局部反馈环。</li>
+<li>看到不认识的元件就跳过：启动、补偿、去耦往往正是理解设计意图的钥匙。</li>
+<li>直接跑仿真看波形，跳过手算与 .op，得到“看起来合理”却解释不通的结论。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 VIN 的 DC 改成 0.5 V，先预测 V(dp)，再仿真核对。</li>
+<li>删掉 VFB（把 dp 与 inn 断开并给 inn 接固定 2 V），说明电路变成什么、输出会怎样。</li>
+<li>把 MT 的 W 改成 40u，预测尾电流、gm 与开环增益的变化。</li>
+<li>找一张数据手册里的框图（如运放、LDO），用十步法写一份不超过一页的阅读笔记。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../index.html#toc'>第二篇全部模块章节（词汇表来源）</a></li>
+<li><a href='../20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li>
+<li><a href='https://github.com/JesseHardingMurillo/LTspice_Ecircuit' target='_blank' rel='noopener'>GitHub：LTspice_Ecircuit（37 类现成电路，练读图用）</a></li>
+<li><a href='https://github.com/Khannister/Electronic-simulations-with-LTspice' target='_blank' rel='noopener'>GitHub：Electronic-simulations-with-LTspice（.asc 读图素材）</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

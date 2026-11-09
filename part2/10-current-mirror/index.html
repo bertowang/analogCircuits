@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 10 章 · 电流源、电流镜与基准 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="10">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第二篇 · 核心模拟电路模块</span>
+<h1><span class="ch-num">第 10 章</span>电流源、电流镜与基准</h1>
+<p class="lede">模拟电路里的“常量”从哪来：先复制一路电流，再想办法让它不随电源、温度和工艺变化。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能说明基本电流镜的复制条件与误差来源</li>
+<li>会计算输出阻抗与合规电压范围</li>
+<li>理解 cascode 电流镜为何能提高输出阻抗</li>
+<li>知道带隙基准的 PTAT/CTAT 组合思想与启动电路的作用</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>基本电流镜</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>沟道长度调制误差</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>cascode 提高输出阻抗</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>PTAT / CTAT</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>带隙基准</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>启动电路</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s10-1"><h2><span class="sec-num">§10.1</span>核心概念速览</h2>
+<ul>
+<li><strong>电流镜成立的条件</strong>：两管 V<sub>GS</sub> 相同、工艺相同 → I<sub>D</sub> 按 W/L 成比例复制；误差主要来自沟道长度调制（λ）与阈值失配。</li>
+<li><strong>合规电压（compliance）</strong>：输出管必须保持饱和，V<sub>out</sub> ≥ V<sub>ov</sub>；低于这个值，镜像电流开始塌陷。</li>
+<li><strong>cascode</strong>：叠一层管子屏蔽输出电压变化，输出阻抗从 r<sub>o</sub> 提升到约 g<sub>m</sub>r<sub>o</sub>²，代价是损失摆幅。</li>
+<li><strong>带隙基准</strong>：把随温度<em>上升</em>的 PTAT（ΔV<sub>BE</sub>）与随温度<em>下降</em>的 CTAT（V<sub>BE</sub>）按系数相加，得到约 1.2 V 的零温度系数电压。</li>
+<li><strong>启动电路</strong>：基准存在“零电流”这个合法但无用的平衡点，必须加一条只在启动时导通的支路把它推离。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 10-1：基本电流镜与合规电压</h3>
+<pre class="spice" data-file="sim/10-current-mirror.cir"><code>* Ch10 Basic NMOS current mirror: output compliance
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+IREF vdd ref 100u
+M1 ref ref 0 0 NM1 W=10u L=1u
+M2 out ref 0 0 NM1 W=10u L=1u
+VOUT out 0 DC 2
+.op
+.dc VOUT 0 5 0.05
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → I(VOUT)（或 -I(VOUT)），横坐标是 V(out)。　<strong>预期与判读：</strong>Vref ≈ Vto + Vov ≈ 0.5 + 0.316 = 0.816 V；当 V(out) 大于约 0.32 V 后 M2 进入饱和，电流接近 100 µA；曲线缓慢上翘的斜率正是 λ 造成的误差。　文件位置：<code>part2/10-current-mirror/sim/10-current-mirror.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>以为电流镜在任何输出电压下都成立：合规电压是硬约束。</li>
+<li>忽略 M1 二极管连接支路的压降预算。</li>
+<li>设计基准时忘记启动电路，仿真可能停在零电流解。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 M2 的 W 改成 20u，验证输出电流是否翻倍。</li>
+<li>把 Lambda 改成 0，比较输出曲线的平坦度。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../11-diff-amp/index.html'>第 11 章 差分放大器</a></li>
+<li><a href='../../part3/19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路（含基准解剖）</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

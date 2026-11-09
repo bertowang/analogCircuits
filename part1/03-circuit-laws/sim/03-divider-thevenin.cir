@@ -1,0 +1,8 @@
+* Ch03 Divider with load: verify Thevenin by .tf
+V1 in 0 DC 10
+R1 in out 10k
+R2 out 0 10k
+RL out 0 10k
+.op
+.tf V(out) V1
+.end

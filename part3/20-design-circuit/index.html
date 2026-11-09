@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 20 章 · 如何从规格设计电路 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="20">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第三篇 · 方法论：从读懂到设计</span>
+<h1><span class="ch-num">第 20 章</span>如何从规格设计电路</h1>
+<p class="lede">本书的另一个核心章。把“我要一个放大器”变成一份可验收的规格、一棵指标分解树、一组手算参数和一个自动化的仿真验收脚本。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 4 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能把模糊需求转成可测量的规格条目</li>
+<li>会做指标分解与拓扑选型</li>
+<li>能用闭环流程手算定出元件参数</li>
+<li>会用 .step + .meas 写自动化验收脚本</li>
+<li>能写出一份设计文档</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>规格澄清与边界条件</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>指标分解树</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>拓扑选型矩阵</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>手算定参数</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>.step 参数寻优</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.meas 自动验收</td><td>正文已覆盖</td></tr>
+<tr><td>7</td><td>设计文档模板</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s20-1"><h2><span class="sec-num">§20.1</span>规格先于拓扑</h2>
+<p>新手最先问“用哪个电路”，工程师最先问“要满足什么”。一份可验收的规格至少包含：</p>
+<table><thead><tr><th>类别</th><th>要写清的条目</th><th>例子</th></tr></thead><tbody>
+<tr><td>信号</td><td>源阻抗、幅度范围、频率范围、共模电平</td><td>10 kΩ 源，±0.5 V，10 Hz～100 kHz</td></tr>
+<tr><td>增益 / 精度</td><td>标称增益、误差、线性度、失调</td><td>−10 V/V，误差 ≤ 2%</td></tr>
+<tr><td>频域</td><td>带宽、相位裕度、噪声、滤波要求</td><td>−3 dB ≥ 200 kHz</td></tr>
+<tr><td>负载 / 电源</td><td>负载阻抗、可用电源、功耗上限</td><td>10 kΩ ∥ 10 pF，±5 V，≤ 20 mW</td></tr>
+<tr><td>环境</td><td>温度范围、器件公差、批量一致性</td><td>0～70 ℃，电阻 1%</td></tr>
+<tr><td>验收</td><td>怎么测、测哪几个点、判据</td><td>1 kHz 增益、100 kHz 增益、阶跃过冲</td></tr>
+</tbody></table>
+<p><strong>没有验收方法的规格等于没有规格</strong>。写规格时就要想好后面 <code>.meas</code> 测什么。</p>
+</section>
+<section id="s20-2"><h2><span class="sec-num">§20.2</span>指标分解树与选型矩阵</h2>
+<p>把总指标拆到每个模块头上，让每个模块只承担一两项要求：</p>
+<pre class="spice" data-file="inline"><code>总指标: |Av|=10, BW>=200kHz, 误差<=2%, Rin>=10k
+  ├─ 输入级/电阻网络: Rin, 噪声增益, 电阻比精度
+  ├─ 放大核心: 开环增益 A0, GBW, 相位裕度
+  └─ 输出级: 摆幅, 负载驱动, 功耗</code></pre>
+<p class="code-hint">上面是分解示意（非网表）。</p>
+<table><thead><tr><th>需求</th><th>候选拓扑</th><th>选择理由</th></tr></thead><tbody>
+<tr><td>高输入阻抗、同相</td><td>同相运放 / 仪表放大</td><td>输入不取电流</td></tr>
+<tr><td>增益由电阻比精确决定、可求和</td><td>反相运放</td><td>虚地使增益 ≈ −Rf/Rin</td></tr>
+<tr><td>单电源、微弱差分信号</td><td>仪表放大器 / 差分 ADC 驱动</td><td>共模抑制与电平搬移</td></tr>
+<tr><td>极低功耗、单片集成</td><td>OTA / 两级 CMOS 运放</td><td>可自主分配电流与补偿</td></tr>
+</tbody></table>
+<p>选型的本质是<strong>取舍</strong>：增益、带宽、噪声、功耗、面积、成本不可能同时最优。把选与不选的理由写下来，比选型结果本身更重要。</p>
+</section>
+<section id="s20-3"><h2><span class="sec-num">§20.3</span>手算定参数：一个完整案例</h2>
+<p><strong>规格</strong>：反相放大器，增益 −10 V/V，带宽 ≥ 200 kHz，输入电阻 ≥ 10 kΩ，信号 ±0.5 V，电源 ±5 V（行为级模型）。</p>
+<ol>
+<li><strong>定电阻</strong>：Rin = 10 kΩ ⇒ Rf = 100 kΩ。噪声增益 <code>NG = 1 + Rf/Rin = 11</code>。</li>
+<li><strong>定运放带宽</strong>：闭环带宽 ≈ GBW/NG，故 GBW ≥ 200 k × 11 = 2.2 MHz。自建模型的 <code>A0 = 1e5</code>、主极点 159 Hz ⇒ GBW ≈ 15.9 MHz，裕量充足。</li>
+<li><strong>校核精度</strong>：有限开环增益带来的相对误差 ≈ NG/A0 = 11/1e5 = 0.011%，远小于 2%；主要误差来自电阻公差，用 0.1% 电阻即可。</li>
+<li><strong>校核摆幅</strong>：输出峰值 = 10 × 0.5 = 5 V，正好贴住电源轨 ⇒ <strong>规格冲突</strong>，必须把电源提高到 ±7 V 或把增益需求下调。这一步正是手算的价值：仿真会给你一条“看起来没问题”的波形，而规格审查提前发现了问题。</li>
+<li><strong>定验收点</strong>：1 kHz 增益、100 kHz 增益、1 MHz 增益、阶跃过冲；写成 .meas 断言。</li>
+</ol>
+</section>
+<section id="s20-4"><h2><span class="sec-num">§20.4</span>把验收写成自动化脚本</h2>
+<p>实验 20-1 用 <code>.step param RFv</code> 一次跑三组候选值，用 <code>.meas AC ... FIND mag(V(oa)) AT 频率</code> 把验收结果写成数字。这就是模拟电路里的<strong>回归测试</strong>：以后每次改参数，跑一次脚本，看数字是否仍在规格内。</p>
+<div class="card tip"><p style="margin-bottom:0">把这一步接到 <a href='https://github.com/nunobrum/PyLTSpice' target='_blank' rel='noopener'>PyLTSpice</a> 上，可以用 Python 循环上百组参数、读取 <code>.log</code> 里的 <code>.meas</code> 结果、自动画趋势图。对计算机专业学生，这是最容易发挥既有优势的地方。</p></div>
+</section>
+<section id="s20-5"><h2><span class="sec-num">§20.5</span>公差、裕量与文档</h2>
+<ul><li><strong>公差</strong>：电阻 1%、电容 10%、Vos、温漂；按第 22 章方法做蒙特卡洛。</li>
+<li><strong>裕量</strong>：环路增益留 10 倍、相位裕度留 45°～60°、摆幅留 10%～20%、功耗留 20%。没有裕量的设计只在典型条件下成立。</li>
+<li><strong>设计文档模板</strong>：规格表 → 分解树 → 选型与理由 → 手算过程 → 原理图/网表 → 仿真验收表（目标/实测/通过）→ 公差与最坏情况 → 遗留风险 → 实测计划。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 20-1：候选参数扫描 + 自动验收</h3>
+<pre class="spice" data-file="sim/20-design-verification.cir"><code>* Ch20 Design verification: inverting amplifier, target gain -10
+.param RFv=100k
+VIN in 0 DC 0 AC 1
+RG in minus 10k
+RF oa minus {RFv}
+E1 int 0 0 minus 1e5
+R1 int oa 1k
+C1 oa 0 1u
+.step param RFv list 50k 100k 150k
+.ac dec 20 10 10Meg
+.meas AC gain1k FIND mag(V(oa)) AT 1k
+.meas AC gain100k FIND mag(V(oa)) AT 100k
+.meas AC gain1meg FIND mag(V(oa)) AT 1Meg
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → View → SPICE Error Log，把 3 组 × 3 个频点的结果填进验收表。　<strong>预期与判读：</strong>RFv = 100k 时 1 kHz 增益 ≈ 10（20 dB），100 kHz 仍接近 10，1 MHz 开始滚降（GBW/NG ≈ 1.45 MHz）；RFv = 50k / 150k 分别得到约 5 / 15。只有 100k 满足规格。　文件位置：<code>part3/20-design-circuit/sim/20-design-verification.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>先选电路再补规格，导致做出来不知道算不算成功。</li>
+<li>只验证典型条件，没做公差、温度、电源变化。</li>
+<li>规格之间互相冲突却在最后才发现（例如增益 × 输入幅度超出电源轨）。</li>
+<li>把仿真波形截图当验收证据，没有可复现的数字断言。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把规格改成增益 −5、输入 ±1 V，重新走一遍五步并修改网表。</li>
+<li>给 RG、RF 各加 1% 公差，用 .step 估计增益的最坏偏差。</li>
+<li>补一条 .meas 测量 100 kHz 处的相位，解释它为何影响稳定性。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路</a></li>
+<li><a href='../21-simulation-method/index.html'>第 21 章 仿真方法论</a></li>
+<li><a href='../22-robustness/index.html'>第 22 章 鲁棒性：PVT 与蒙特卡洛</a></li>
+<li><a href='https://www.ti.com/' target='_blank' rel='noopener'>TI · Analog Engineer's Circuit Cookbook（业界选型与裕量惯例）</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

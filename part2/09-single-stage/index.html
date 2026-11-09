@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 09 章 · 单级放大器 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="09">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第二篇 · 核心模拟电路模块</span>
+<h1><span class="ch-num">第 09 章</span>单级放大器</h1>
+<p class="lede">把一只晶体管变成一个有增益、有阻抗、有摆幅边界的模块：三种组态其实是同一模型的三种接法。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能推导共源/共漏/共栅的增益与输入输出阻抗</li>
+<li>能设计并校核静态工作点与输出摆幅</li>
+<li>理解源极退化如何用线性度换增益</li>
+<li>会用 .op 检查所有管子是否在饱和区</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>增益与 gm·R</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>输入/输出阻抗</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>偏置点与摆幅</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>源极退化</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>有源负载</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>.op 查工作点</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s9-1"><h2><span class="sec-num">§9.1</span>核心概念速览</h2>
+<ul>
+<li><strong>共源 / 共射</strong>：电压增益最大（<code>−g<sub>m</sub>·R<sub>D</sub></code>），输出反相，输入阻抗高、输出阻抗由负载决定。</li>
+<li><strong>共漏 / 共集（跟随器）</strong>：增益 ≈ 1，但输入阻抗高、输出阻抗低（≈ 1/g<sub>m</sub>），专职做<strong>阻抗变换</strong>。</li>
+<li><strong>共栅 / 共基</strong>：输入阻抗低（≈ 1/g<sub>m</sub>）、带宽好，常作 cascode 的上管或电流缓冲。</li>
+<li><strong>源极 / 发射极退化</strong>：加一个电阻引入局部负反馈，增益变成约 <code>−R<sub>D</sub>/(R<sub>S</sub>+1/g<sub>m</sub>)</code>，对器件参数不敏感、线性度变好。</li>
+<li>设计顺序恒为：定偏置电流 → 定过驱动电压 → 算 W/L 或电阻 → <strong>校核摆幅与饱和区</strong>。</li></ul>
+<div class="card stub"><span class="card-label">待补写</span><p style="margin-bottom:0">后续将展开：三种组态的完整推导、有源负载共源级、大信号摆幅边界、以及一组“给定增益和功耗反推尺寸”的例题。当前可先按下方实验体会源极退化。</p></div>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 9-1：源极退化如何把增益交给电阻比</h3>
+<pre class="spice" data-file="sim/09-source-degeneration.cir"><code>* Ch09 Source degeneration: gain set by resistor ratio
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+VIN in 0 DC 2.0 AC 0.05 SINE(2.0 0.05 1k)
+RD vdd out 2k
+M1 out in src 0 NM1 W=10u L=1u
+RS src 0 500
+.op
+.ac dec 20 100 10Meg
+.tran 0 5m 0 2u
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 读 Id 与 V(src)；Add Trace 比较 V(in) 与 V(out) 幅度。　<strong>预期与判读：</strong>静态 Id ≈ 1 mA（Vsrc = 0.5 V，VGS = 1.5 V）；gm ≈ 2 mS，1/gm = 500 Ω；增益 ≈ −2k/(500+500) = −2，比无退化时的 −3.85 更稳定、更线性。　文件位置：<code>part2/09-single-stage/sim/09-source-degeneration.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>只算增益不校核 VDS，管子掉进线性区公式全失效。</li>
+<li>把跟随器“增益为 1”理解成没用：它的价值是隔离。</li>
+<li>忽略 RD 上的直流压降，输出静态点过高或过低导致摆幅不对称。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 RS 依次改为 0 / 250 / 1k，记录增益与失真趋势。</li>
+<li>给 RD 并联一个电流源负载，预测增益提高多少。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/06-mosfet/index.html'>第 6 章 MOSFET 与两级模型</a></li>
+<li><a href='../../part3/20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

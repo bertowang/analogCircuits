@@ -1,0 +1,13 @@
+* Ch15 Sallen-Key 2nd-order low-pass (unity-gain follower)
+VIN in 0 DC 0 AC 1
+R1 in n1 1.6k
+R2 n1 n2 1.6k
+C2 n2 0 100n
+C1 n1 out 100n
+E1 oa 0 n2 out 1e5
+Ro oa out 100
+.ac dec 30 10 100k
+.meas AC g10 FIND mag(V(out)) AT 10
+.meas AC g1k FIND mag(V(out)) AT 1k
+.meas AC g10k FIND mag(V(out)) AT 10k
+.end

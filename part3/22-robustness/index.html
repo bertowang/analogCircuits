@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 22 章 · 鲁棒性：PVT、蒙特卡洛与最坏情况 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="22">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第三篇 · 方法论：从读懂到设计</span>
+<h1><span class="ch-num">第 22 章</span>鲁棒性：PVT、蒙特卡洛与最坏情况</h1>
+<p class="lede">典型条件下成立不算设计完成。让电路在工艺、电源、温度与元件公差的全部组合下仍满足规格，才是工程。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能列出 PVT 与工艺角的组合</li>
+<li>会用 mc() / gauss() 与 .step 做蒙特卡洛</li>
+<li>会做灵敏度分析找出主误差项</li>
+<li>理解最坏情况与统计方法的差别</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>PVT 与工艺角</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>mc() / gauss()</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>.step 批量运行</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>直方图与 σ</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>最坏情况组合</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>良率与规格裕量</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s22-1"><h2><span class="sec-num">§22.1</span>核心概念速览</h2>
+<ul>
+<li><strong>PVT</strong>：Process（工艺角 TT/FF/SS/FS/SF）、Voltage（电源 ±10%）、Temperature（−40/25/125 ℃）；集成电路还要角 + 蒙特卡洛两套检查。</li>
+<li>LTspice 内置 <code>mc(x,tol)</code>（均匀随机）、<code>gauss(x)</code>（正态随机），配合 <code>.step param run 1 N 1</code> 让每个元件独立抖动。</li>
+<li><strong>最坏情况</strong>把所有参数同时取极限，保守但组合数爆炸；<strong>蒙特卡洛</strong>给分布与良率，更接近量产。</li>
+<li><strong>灵敏度分析</strong>：一次只改一个参数，找出对输出影响最大的那一两项，把预算花在它们身上。</li>
+<li>规格必须留裕量：典型值居中、公差带内不越界，才算通过。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 22-1：分压器公差的 50 次蒙特卡洛</h3>
+<pre class="spice" data-file="sim/22-monte-carlo.cir"><code>* Ch22 Monte-Carlo of resistor tolerances
+.param run=1
+.param R1v=mc(10k,0.01)
+.param R2v=mc(10k,0.05)
+V1 in 0 DC 5
+R1 in out {R1v}
+R2 out 0 {R2v}
+.step param run 1 50 1
+.op
+.meas OP vout FIND V(out)
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 读出 50 个 vout；把数据粘进表格或 Python 画直方图。　<strong>预期与判读：</strong>标称 2.500 V；R2 的 5% 公差主导输出离散，分布宽度约 ±0.06 V 量级。把 R2 公差改成 1% 再跑一次，对比 σ 的变化。　文件位置：<code>part3/22-robustness/sim/22-monte-carlo.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>只跑一次典型仿真就下结论。</li>
+<li>把 mc() 的结果当成“最坏情况”：统计不等于边界。</li>
+<li>所有元件用同一个随机数，导致误差被错误地相关化。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>给 V1 加 ±5% 公差，观察分布如何平移。</li>
+<li>设计一组最坏情况（R1 最大 / R2 最小等），与蒙特卡洛极值比较。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../21-simulation-method/index.html'>第 21 章 仿真方法论</a></li>
+<li><a href='../../part2/18-noise-distortion/index.html'>第 18 章 误差预算</a></li>
+<li><a href='https://github.com/nunobrum/PyLTSpice' target='_blank' rel='noopener'>PyLTSpice · Montecarlo / WorstCaseAnalysis 工具箱</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

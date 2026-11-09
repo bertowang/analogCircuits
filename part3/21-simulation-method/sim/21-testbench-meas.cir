@@ -1,0 +1,10 @@
+* Ch21 Testbench: parameter sweep with .meas assertions
+.param R=1k
+VIN in 0 PULSE(0 1 0 1n 1n 2m 4m)
+R1 in out {R}
+C1 out 0 100n
+.step param R list 1k 2k 5k
+.tran 0 5m 0 1u
+.meas TRAN trise TRIG V(out) VAL=0.1 RISE=1 TARG V(out) VAL=0.9 RISE=1
+.meas TRAN vfinal FIND V(out) AT 4m
+.end

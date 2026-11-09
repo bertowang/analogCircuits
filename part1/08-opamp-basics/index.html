@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 08 章 · 理想运放与负反馈入门 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="08">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第一篇 · 电路基础与器件</span>
+<h1><span class="ch-num">第 08 章</span>理想运放与负反馈入门</h1>
+<p class="lede">把运放当作一块带反馈的积木，但要清楚“虚短虚断”什么时候才成立。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 3 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能说出理想运放三条假设及虚短虚断的适用条件</li>
+<li>能推导四种基本组态的闭环增益</li>
+<li>会判断一个含运放电路是否存在负反馈</li>
+<li>知道理想模型的四个边界并会用 E 源自建运放模型</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>理想运放三条假设</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>虚短 / 虚断的判据</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>反相 / 同相 / 跟随 / 差分</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>负反馈与闭环增益</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>饱和与压摆</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>用 E 源自建运放模型</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s8-1"><h2><span class="sec-num">§8.1</span>三条假设与虚短虚断的适用条件</h2>
+<p>理想运放：<strong>开环增益无穷大、输入电阻无穷大、输出电阻为零</strong>。由此得到教科书里的两条捷径：</p>
+<ul><li><strong>虚断</strong>：输入端不取电流（i₊ = i₋ = 0）——只要运放未损坏，这条基本总成立。</li>
+<li><strong>虚短</strong>：v₊ = v₋ —— <em>仅在“负反馈 + 线性区”时才成立</em>。</li></ul>
+<div class="card warn"><span class="card-label">最常见的误用</span><p style="margin-bottom:0">比较器工作在开环、输出饱和，此时 v₊ ≠ v₋，虚短完全失效。判断顺序永远是：<strong>先找反馈通路 → 判断正负 → 假设线性区求解 → 再检查输出是否落在电源轨内</strong>；若超出，则改为饱和模型重算。这与第 5 章的“假设—验证”是同一个动作。</p></div>
+</section>
+<section id="s8-2"><h2><span class="sec-num">§8.2</span>四种基本组态</h2>
+<table><thead><tr><th>组态</th><th>闭环增益</th><th>输入电阻</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>电压跟随器</td><td>1</td><td>极高</td><td>缓冲、隔离前后级</td></tr>
+<tr><td>同相放大</td><td>1 + R2/R3</td><td>极高</td><td>传感器信号放大</td></tr>
+<tr><td>反相放大</td><td>−Rf/Rin</td><td>≈ Rin</td><td>求和、跨阻、反相</td></tr>
+<tr><td>差分 / 仪表放大</td><td>R2/R1（匹配时）</td><td>由输入电阻决定</td><td>桥式传感器、抑制共模</td></tr>
+</tbody></table>
+<p>下方实验中 R2 = 1k、R3 = 9k，同相增益 = 1 + 9/1 = 10。注意闭环增益<strong>只由电阻比决定</strong>，与开环增益无关——这正是负反馈用“增益换稳定与线性”的核心思想，第 13 章会展开。</p>
+</section>
+<section id="s8-3"><h2><span class="sec-num">§8.3</span>用 E 源自建一个运放</h2>
+<p>与其调用厂商模型，不如亲手搭一次，把“理想运放”看透。网表里 <code>E1 int 0 in minus 1e5</code> 是一个<strong>压控电压源</strong>：输出 = 1e5 × (v(in) − v(minus))，就是开环增益 1e5。再串一个 R = 1k、C = 1 µF 的低通，得到约 159 Hz 的主极点，于是增益带宽积 ≈ 1e5 × 159 Hz ≈ 16 MHz。</p>
+<p>这个自建模型自带“真实感”：增益有限、带宽有限、会相位滞后，却没有任何黑盒。后续第 13、14、17、20 章的反馈与稳定性实验都用它。</p>
+</section>
+<section id="s8-4"><h2><span class="sec-num">§8.4</span>理想模型的四个边界</h2>
+<ol><li><strong>输出摆幅</strong>：不能超出电源轨；轨到轨运放也只是接近。</li>
+<li><strong>压摆率 SR</strong>：大信号时输出电压变化速率有上限，正弦波会出现三角化失真。</li>
+<li><strong>带宽与相位裕度</strong>：闭环增益越高，可用带宽越窄；反馈过深会振荡。</li>
+<li><strong>非理想输入</strong>：输入失调电压 Vos、输入偏置电流 Ib、共模抑制比 CMRR、噪声，决定了直流精度下限。</li></ol>
+<p>看到数据手册时，按这四类去查参数，就不会被几十页指标淹没。</p>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<figure class="circuit"><svg viewBox="0 0 420 210" width="420" role="img" aria-label="同相放大器电路图">
+  <g class="wire">
+    <path d="M40 110 H120 M120 110 V70 H200 M200 70 V90"/>
+    <path d="M280 110 H350 M350 110 V170 H120 M120 170 V140"/>
+    <path d="M280 110 V40 H200 M200 40 V170 M200 170 H120"/>
+  </g>
+  <path class="part" d="M200 65 L200 155 L280 110 Z"/>
+  <text class="lbl" x="216" y="106">+</text><text class="lbl" x="216" y="140">−</text>
+  <text class="lbl-s" x="228" y="86">E1 / OA</text>
+  <rect class="part" x="234" y="164" width="40" height="12" rx="1"/>
+  <text class="lbl-s" x="236" y="190">R2 1k</text>
+  <rect class="part" x="150" y="164" width="40" height="12" rx="1"/>
+  <text class="lbl-s" x="150" y="190">R3 9k</text>
+  <circle class="part" cx="80" cy="110" r="16"/>
+  <text class="lbl-s" x="56" y="140">VIN</text>
+  <circle class="node" cx="350" cy="110" r="4"/><text class="lbl-s" x="356" y="106">oa</text>
+  <circle class="node" cx="200" cy="170" r="4"/><text class="lbl-s" x="204" y="188">minus (反馈节点)</text>
+</svg><figcaption>电路示意图（内联 SVG，随 HTML 一起阅读、可缩放、可打印）</figcaption></figure>
+<h3>实验 8-1：用 VCVS 搭同相放大器</h3>
+<pre class="spice" data-file="sim/08-noninverting.cir"><code>* Ch08 Non-inverting amplifier from a self-built opamp model
+* E1 = open-loop gain 1e5 ; R1/C1 = dominant pole near 159 Hz
+VIN in 0 DC 0 AC 1 SINE(0 0.5 1k)
+E1 int 0 in minus 1e5
+R1 int oa 1k
+C1 oa 0 1u
+R2 oa minus 1k
+R3 minus 0 9k
+.op
+.tran 0 5m 0 5u
+.ac dec 20 1 10Meg
+.meas AC gain1k FIND mag(V(oa)) AT 1k
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(oa) 与 V(in)；.ac 结果里看闭环增益约 20 dB 的平坦段与高频滚降。　<strong>预期与判读：</strong>闭环增益 1 + 9k/1k = 10（20 dB）；V(in)=0.5 V 峰值时 V(oa)=5 V（模型无电源轨限制）；带宽约 GBW/10 ≈ 1.6 MHz。　文件位置：<code>part1/08-opamp-basics/sim/08-noninverting.cir</code></p>
+<h3>实验 8-2：开环增益与虚短的边界</h3>
+<pre class="spice" data-file="sim/08-openloop.cir"><code>* Ch08 Open-loop opamp: virtual short does NOT hold
+VIN in 0 DC 0 AC 1
+E1 int 0 in 0 1e5
+R1 int oa 1k
+C1 oa 0 1u
+.op
+.ac dec 20 1 10Meg
+.meas AC aol_1k FIND mag(V(oa)) AT 1k
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(oa)；与实验 8-1 的闭环曲线对比。　<strong>预期与判读：</strong>低频开环增益 1e5（100 dB），约 159 Hz 后以 −20 dB/dec 下降；开环时输出极易饱和，虚短不成立。　文件位置：<code>part1/08-opamp-basics/sim/08-openloop.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>对比较器使用虚短：开环、饱和状态下不成立。</li>
+<li>忘记检查输出是否超出电源轨，算出“正确”却不可能实现的电压。</li>
+<li>反馈电阻取到 MΩ 级却忽略输入偏置电流与噪声。</li>
+<li>把 .ac 的 1 V 激励当成实际信号幅度：小信号分析只关心比值。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 R3 改成 99k，预测闭环增益与带宽，再用 .ac 验证 GBW 近似守恒。</li>
+<li>在实验 8-1 中把 VIN 幅度提到 5 V，观察自建模型为何仍不失真，并说明真实运放会怎样。</li>
+<li>把 C1 增大 10 倍，解释相位裕度与阶跃响应振铃的趋势。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part2/13-feedback-stability/index.html'>第 13 章 反馈与稳定性</a></li>
+<li><a href='../../part2/14-opamp-design/index.html'>第 14 章 运算放大器设计</a></li>
+<li><a href='../../part3/20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

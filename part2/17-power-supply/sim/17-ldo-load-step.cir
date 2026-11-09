@@ -1,0 +1,13 @@
+* Ch17 Behavioural LDO: load-step transient and load regulation
+VREF ref 0 DC 2.5
+BERR err 0 V=V(ref)-V(fb)
+E1 eout 0 err 0 100
+RO eout out 0.5
+R1 out fb 10k
+R2 fb 0 10k
+COUT out 0 10u
+ILOAD out 0 PULSE(0 20m 0 1u 1u 2m 4m)
+.tran 0 8m 0 2u
+.meas TRAN v_light FIND V(out) AT 1m
+.meas TRAN v_heavy FIND V(out) AT 3m
+.end

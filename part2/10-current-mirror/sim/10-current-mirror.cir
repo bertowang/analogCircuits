@@ -1,0 +1,10 @@
+* Ch10 Basic NMOS current mirror: output compliance
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+IREF vdd ref 100u
+M1 ref ref 0 0 NM1 W=10u L=1u
+M2 out ref 0 0 NM1 W=10u L=1u
+VOUT out 0 DC 2
+.op
+.dc VOUT 0 5 0.05
+.end

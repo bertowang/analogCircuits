@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 18 章 · 噪声、失真与误差预算 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="18">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第二篇 · 核心模拟电路模块</span>
+<h1><span class="ch-num">第 18 章</span>噪声、失真与误差预算</h1>
+<p class="lede">当信号小到一定程度，“对不对”变成“能分辨吗”；当信号大到一定程度，又变成“失真多少”。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能列出三类主要噪声源并写出热噪声密度</li>
+<li>会用 .noise 与 .four 得到噪声与 THD</li>
+<li>理解等效输入噪声与噪声带宽</li>
+<li>能把各项误差列成预算表并找出主项</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>热噪声 / 散粒 / 1/f</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>等效输入噪声</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>.noise 分析</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>THD 与 .four</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>PSRR / CMRR</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>误差预算表</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s18-1"><h2><span class="sec-num">§18.1</span>核心概念速览</h2>
+<ul>
+<li>电阻热噪声 <code>v<sub>n</sub> = √(4kTR·B)</code>；MOS/BJT 有沟道/散粒噪声；低频还有 1/f 噪声（与工艺、面积强相关）。</li>
+<li>把各级噪声折算到输入端（<strong>等效输入噪声</strong>）才能统一比较；前级增益越高，后级噪声越不重要。</li>
+<li><code>.noise</code> 给噪声密度与积分总噪声；<code>.four</code> 给指定基波的谐波分量与 THD。做频谱分析要关掉波形压缩（<code>.options plotwinsize=0</code>）。</li>
+<li><strong>误差预算表</strong>：把失调、噪声、增益误差、温漂、电源抑制、非线性逐项列出，标注“相关/独立”与 RMS 合成方式，找出最大的一两项去优化——这比盲目换运放有效得多。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 18-1：噪声分析</h3>
+<pre class="spice" data-file="sim/18-noise.cir"><code>* Ch18 Noise analysis of an RC + gain stage
+VIN in 0 DC 0 AC 1
+R1 in n1 1k
+C1 n1 0 100n
+E1 out 0 n1 0 10
+.noise V(out) VIN dec 20 10 1Meg
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(onoise)（输出噪声密度）与 V(inoise)（等效输入噪声）。　<strong>预期与判读：</strong>1 kΩ 电阻在室温下约 4 nV/√Hz；经 10 倍增益后输出噪声密度约 40 nV/√Hz，并在 RC 截止频率后随信号一起滚降。　文件位置：<code>part2/18-noise-distortion/sim/18-noise.cir</code></p>
+<h3>实验 18-2：削顶失真的频谱与 THD</h3>
+<pre class="spice" data-file="sim/18-thd.cir"><code>* Ch18 THD of a hard-clipped sine via .four
+VIN in 0 SINE(0 1 1k)
+B1 out 0 V=max(-0.8,min(0.8,V(in)))
+.tran 0 20m 0 2u
+.four 1k V(out)
+.options plotwinsize=0
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out) 看削顶波形；View → SPICE Error Log 读 Fourier 分析结果与 THD。　<strong>预期与判读：</strong>对称削顶只产生奇次谐波（3f、5f…）；THD 随削顶深度上升。也可在波形窗口右键 → View → FFT 交互查看。　文件位置：<code>part2/18-noise-distortion/sim/18-thd.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>用理想源做噪声分析，得到 0 噪声却以为电路无噪声。</li>
+<li>波形压缩开启时做 FFT，频谱出现不应有的杂散。</li>
+<li>把各项误差直接相加：独立随机误差应按均方根合成。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把实验 18-1 的 R1 增大 100 倍，验证噪声密度按 √R 增长。</li>
+<li>把削顶电平从 0.8 V 改到 0.5 V，比较 THD。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part3/22-robustness/index.html'>第 22 章 鲁棒性与误差预算</a></li>
+<li><a href='../../part3/21-simulation-method/index.html'>第 21 章 仿真方法论</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

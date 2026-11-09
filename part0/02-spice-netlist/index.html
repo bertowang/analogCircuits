@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 02 章 · SPICE 网表语法与仿真指令 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="02">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">卷首 · 工具与约定</span>
+<h1><span class="ch-num">第 02 章</span>SPICE 网表语法与仿真指令</h1>
+<p class="lede">把网表当作一门声明式语言来学：元件是对象，节点是变量，点指令是求解器，.step/.meas 是循环与断言。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 3 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能读懂并手写任意简单电路的网表</li>
+<li>会用 .param / .step / .meas 做参数扫描与自动测量</li>
+<li>知道 .model / .subckt / .include 的组织方式</li>
+<li>遇到收敛问题有排查顺序</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>元件行 R/C/L/V/I/Q/M/D/E</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>.model 与 .param</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.step 参数扫描</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>.meas 自动测量</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>.include / .lib / .subckt</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>收敛性与 .options</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s2-1"><h2><span class="sec-num">§2.1</span>网表的五段结构</h2>
+<p>一个 <code>.cir</code> 文件只有五类内容，顺序固定：</p>
+<ol><li><strong>标题行</strong>：第一行永远是标题，即使写成 <code>*</code> 注释也可以（不要在这里放元件）。</li>
+<li><strong>元件行</strong>：名字 + 节点 + 值/模型。元件名首字母决定类型。</li>
+<li><strong>模型 / 参数</strong>：<code>.model</code>、<code>.param</code>、<code>.func</code>。</li>
+<li><strong>分析与控制</strong>：<code>.op</code>、<code>.tran</code>、<code>.ac</code>、<code>.dc</code>、<code>.step</code>、<code>.meas</code>、<code>.options</code>。</li>
+<li><strong>结束</strong>：<code>.end</code>。</li></ol>
+<p>注释：整行以 <code>*</code> 开头，行内用 <code>;</code>。节点名可以是数字或字符串，<code>0</code>（或 <code>GND</code>）是全局参考地。</p>
+</section>
+<section id="s2-2"><h2><span class="sec-num">§2.2</span>元件行速查</h2>
+<table><thead><tr><th>首字母</th><th>语法</th><th>示例</th></tr></thead><tbody>
+<tr><td>R / C / L</td><td><code>名字 节点+ 节点- 值</code></td><td><code>R1 in out 10k</code></td></tr>
+<tr><td>V / I</td><td><code>名字 节点+ 节点- DC 值 AC 幅值 波形</code></td><td><code>V1 in 0 DC 0 AC 1 SINE(0 1 1k)</code></td></tr>
+<tr><td>D</td><td><code>名字 阳极 阴极 模型名</code></td><td><code>D1 a 0 DGEN</code></td></tr>
+<tr><td>Q</td><td><code>名字 C B E 模型名</code></td><td><code>Q1 out base emit NPN1</code></td></tr>
+<tr><td>M</td><td><code>名字 D G S B 模型名 W= L=</code></td><td><code>M1 d g 0 0 NM1 W=10u L=1u</code></td></tr>
+<tr><td>E / G / F / H</td><td>受控源，<code>E名 输出+ 输出- 输入+ 输入- 增益</code></td><td><code>E1 out 0 inp inn 1e5</code></td></tr>
+<tr><td>B</td><td>行为源，<code>B名 节点+ 节点- V=表达式</code></td><td><code>B1 out 0 V=max(0,V(in))</code></td></tr>
+</tbody></table>
+<p>激励波形：<code>SINE(Voffset Vamp Freq)</code>、<code>PULSE(V1 V2 Tdelay Trise Tfall Ton Tperiod)</code>、<code>EXP</code>、<code>PWL</code>。</p>
+</section>
+<section id="s2-3"><h2><span class="sec-num">§2.3</span>单位：最容易踩的坑</h2>
+<p>SPICE 大小写不敏感，<code>m</code> 是<strong>毫</strong>，<code>Meg</code> 才是<strong>兆</strong>：<code>1m</code> = 10⁻³，<code>1u</code> = 10⁻⁶，<code>1n</code> = 10⁻⁹，<code>1p</code> = 10⁻¹²，<code>1f</code> = 10⁻¹⁵，<code>1k</code> = 10³，<code>1Meg</code> = 10⁶，<code>1G</code> = 10⁹。写 <code>1M</code> 得到的仍是 1 毫。</p>
+<p>网表里不要写单位字母（<code>10k</code> 而不是 <code>10kΩ</code>），不要写千分位逗号。</p>
+</section>
+<section id="s2-4"><h2><span class="sec-num">§2.4</span>参数化：把仿真变成实验</h2>
+<p><code>.param</code> 定义常量，元件值用花括号引用；<code>.step</code> 让同一个网表重复运行；<code>.meas</code> 把结果写成可比较的数字。三者合起来就是“带断言的参数化测试”：</p>
+<pre class="spice" data-file="inline"><code>.param Rtop=3k
+R1 in out {Rtop}
+.step param Rtop list 1k 2k 3k
+.meas OP vout FIND V(out)</code></pre>
+<p class="code-hint">上面这段是语法片段，不是完整网表；完整可运行版本见下方实验 2-1。</p>
+<p><code>.meas</code> 的常用形式：<code>.meas TRAN 名称 FIND V(x) AT 时间</code>、<code>.meas AC 名称 FIND mag(V(x)) AT 频率</code>、<code>.meas TRAN 名称 TRIG ... TARG ...</code>（测延时/上升时间）。结果全部写进 Error Log，可以用脚本解析。</p>
+</section>
+<section id="s2-5"><h2><span class="sec-num">§2.5</span>模型与层次化</h2>
+<p><code>.model 名称 类型(参数...)</code> 定义器件模型，例如 <code>.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)</code>。Level-1 MOS 模型参数少、行为可预测，特别适合教学；真实工艺模型（BSIM）有上百个参数，反而看不清物理含义。</p>
+<p>真实项目里用 <code>.lib 厂商库.lib</code> 引入模型、<code>.subckt / .ends</code> 定义子电路、<code>.include</code> 包含文件、<code>X1 ... 子电路名</code> 实例化。本书为可移植性一律自包含，不用外部库。</p>
+</section>
+<section id="s2-6"><h2><span class="sec-num">§2.6</span>收敛性速查</h2>
+<ol><li>每个节点是否有到地的直流通路（必要时并联 <code>1G</code> 电阻）。</li>
+<li>理想电压源是否被电容直接短路、两个理想电压源是否并联（加小串联电阻）。</li>
+<li><code>PULSE</code> 边沿是否过陡（给有限 <code>Trise/Tfall</code>）。</li>
+<li>先跑 <code>.op</code> 确认工作点，再跑 <code>.tran</code>。</li>
+<li>最后才动 <code>.options</code>（<code>gmin</code>、<code>abstol</code>、<code>reltol</code>、<code>maxstep</code>）——改容差是掩盖问题，不是解决问题。</li></ol>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 2-1：参数化分压器 + 扫描 + 自动测量</h3>
+<pre class="spice" data-file="sim/02-param-divider.cir"><code>* Ch02 Netlist syntax: params, step and automatic measurements
+.param Rtop=3k
+V1 in 0 DC 5
+R1 in out {Rtop}
+R2 out 0 2k
+.step param Rtop list 1k 2k 3k 4k
+.op
+.meas OP vout FIND V(out)
+.meas OP ir1 FIND I(R1)
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → View → SPICE Error Log，找到 4 组 vout / ir1 的测量值。　<strong>预期与判读：</strong>V(out) = 5×2k/(Rtop+2k)：Rtop = 1k/2k/3k/4k 时分别为 3.333 / 2.500 / 2.000 / 1.667 V。　文件位置：<code>part0/02-spice-netlist/sim/02-param-divider.cir</code></p>
+<h3>实验 2-2：同一电路的 AC 与 DC 两种视图</h3>
+<pre class="spice" data-file="sim/02-ac-source.cir"><code>* Ch02 AC source specification and a small-signal sweep
+V1 in 0 DC 0 AC 1
+R1 in out 1k
+C1 out 0 100n
+.ac dec 20 10 100k
+.meas AC g10 FIND mag(V(out)) AT 10
+.meas AC g1k FIND mag(V(out)) AT 1k
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out)，右键纵坐标可切到 dB 显示。　<strong>预期与判读：</strong>低频增益约 1（0 dB）；fc = 1/(2πRC) ≈ 1.59 kHz；1 kHz 处 |H| ≈ 0.846。　文件位置：<code>part0/02-spice-netlist/sim/02-ac-source.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>用 1M 表示 1 兆：实际是 1 毫。</li>
+<li>把 .param 写在元件行之后才引用：LTspice 允许，但为可读性放在前面。</li>
+<li>网表里写中文注释或中文节点名：部分版本会报语法错。</li>
+<li>把原理图 .asc 当成文本网表直接改：.asc 有自己的语法，本书不涉及。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>给实验 2-1 增加 .step param Rtop 的第五个值，并预测 vout。</li>
+<li>把实验 2-2 的 C1 增大 10 倍，用 .meas 验证 fc 下降 10 倍。</li>
+<li>用 .subckt 把分压器封装成模块，再实例化两次。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../01-ltspice-quickstart/index.html'>第 1 章 LTspice 快速上手</a></li>
+<li><a href='../../part3/21-simulation-method/index.html'>第 21 章 仿真方法论</a></li>
+<li><a href='../../appendix/index.html'>附录 A · SPICE 指令速查</a></li>
+<li><a href='https://github.com/nunobrum/PyLTSpice' target='_blank' rel='noopener'>PyLTSpice：用 Python 批量改网表并运行</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

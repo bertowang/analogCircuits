@@ -1,0 +1,7 @@
+* Appendix: minimal netlist template
+* 1 title | 2 sources | 3 components | 4 analysis | 5 end
+V1 in 0 DC 5
+R1 in out 1k
+R2 out 0 1k
+.op
+.end

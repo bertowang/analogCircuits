@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 17 章 · 电源与功率电路 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="17">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第二篇 · 核心模拟电路模块</span>
+<h1><span class="ch-num">第 17 章</span>电源与功率电路</h1>
+<p class="lede">从交流到稳定直流，再到驱动负载：纹波、环路、压降与热，是这一章反复出现的四个词。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 4 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能估算整流滤波后的纹波与电容取值</li>
+<li>理解线性稳压器/LDO 的环路与静态/瞬态调整率</li>
+<li>知道 Buck 变换器的基本能量传递关系</li>
+<li>能说明 A/B/D 类功放的效率与失真取舍</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>整流与纹波</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>串联稳压 / LDO</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>环路与负载瞬态</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>Buck 基础</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>A/B/D 类功放</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>功耗与热阻</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s17-1"><h2><span class="sec-num">§17.1</span>核心概念速览</h2>
+<ul>
+<li>整流 + 电容滤波：<code>ΔV ≈ I<sub>load</sub>/(f·C)</code>；二极管只在峰值附近导通，故导通角小、电流尖峰大。</li>
+<li><strong>LDO</strong> = 基准 + 误差放大器 + 调整管 + 反馈分压；环路增益决定负载调整率，输出电容与 ESR 决定瞬态响应与稳定性。</li>
+<li><strong>Buck</strong>：开关导通时电感储能、关断时经二极管/同步管续流；<code>V<sub>out</sub> ≈ D·V<sub>in</sub></code>，效率远高于线性稳压。</li>
+<li>功放：A 类线性最好效率最低（理论 25%～50%），B/AB 类有交越失真，D 类用 PWM + LC 滤波换取高效率。</li>
+<li>热：结温 = 环境温度 + 功耗 × 热阻；<strong>任何电源设计都必须算一次功耗</strong>。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 17-1：LDO 的负载阶跃与调整率</h3>
+<pre class="spice" data-file="sim/17-ldo-load-step.cir"><code>* Ch17 Behavioural LDO: load-step transient and load regulation
+VREF ref 0 DC 2.5
+BERR err 0 V=V(ref)-V(fb)
+E1 eout 0 err 0 100
+RO eout out 0.5
+R1 out fb 10k
+R2 fb 0 10k
+COUT out 0 10u
+ILOAD out 0 PULSE(0 20m 0 1u 1u 2m 4m)
+.tran 0 8m 0 2u
+.meas TRAN v_light FIND V(out) AT 1m
+.meas TRAN v_heavy FIND V(out) AT 3m
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out) 与 I(ILOAD)；Error Log 读轻/重载两点电压。　<strong>预期与判读：</strong>目标 5 V（2.5 V 基准 × 2），有限环路增益 100 带来约 2% 静态误差，实测约 4.90 V；20 mA 负载阶跃经 0.5 Ω 输出电阻再拉低约 10 mV，随后被环路拉回。　文件位置：<code>part2/17-power-supply/sim/17-ldo-load-step.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>只看稳态输出电压，不看负载阶跃的下冲与恢复时间。</li>
+<li>LDO 输出电容 ESR 不在稳定性范围内（部分老结构反而需要一定 ESR）。</li>
+<li>忽略调整管功耗：压差 × 电流就是热。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 E1 增益改成 1000，比较静态误差与瞬态恢复。</li>
+<li>把 COUT 增大 10 倍，观察下冲幅度与恢复时间的变化。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/05-diode/index.html'>第 5 章 二极管与整流</a></li>
+<li><a href='../13-feedback-stability/index.html'>第 13 章 反馈与稳定性</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

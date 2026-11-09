@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 16 章 · 比较器、施密特触发与振荡器 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="16">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第二篇 · 核心模拟电路模块</span>
+<h1><span class="ch-num">第 16 章</span>比较器、施密特触发与振荡器</h1>
+<p class="lede">正反馈、非线性与自激：从“输出只有高低两态”到“没有输入也能持续振荡”。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能说明比较器与运放闭环使用的区别</li>
+<li>会推导施密特触发器的上下阈值与迟滞宽度</li>
+<li>能陈述巴克豪森判据并解释环形振荡器起振条件</li>
+<li>会用 .tran 观察起振过程</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>开环比较器</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>迟滞与噪声容限</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>巴克豪森判据</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>环形振荡器</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>RC / LC 振荡</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>.tran 看起振</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s16-1"><h2><span class="sec-num">§16.1</span>核心概念速览</h2>
+<ul>
+<li><strong>比较器</strong>：开环使用、输出饱和、追求速度与低失调；<strong>运放</strong>：闭环使用、追求线性与稳定，二者不能随便互换。</li>
+<li><strong>施密特触发</strong>：把输出经分压正反馈到输入，产生两个不同的翻转阈值；迟滞宽度即噪声容限，可消除慢边沿引起的多次翻转。</li>
+<li><strong>巴克豪森判据</strong>：环路相移 360°（含反相的 180°）且环路增益 ≥ 1 时，微小扰动被放大成等幅振荡；稳态幅度由非线性限幅决定。</li>
+<li>三级反相环每级约 60° 相移时总相移达 180°，加上反相本身 180°，满足振荡条件；起振需要一个初始扰动（仿真里用 <code>.ic</code> 或噪声）。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 16-1：三级环形振荡器起振</h3>
+<pre class="spice" data-file="sim/16-ring-oscillator.cir"><code>* Ch16 Three-stage ring oscillator with RC delays
+B1 y1 0 V=5*tanh(-20*V(z3))
+R1 y1 z1 10k
+C1 z1 0 10n
+B2 y2 0 V=5*tanh(-20*V(z1))
+R2 y2 z2 10k
+C2 z2 0 10n
+B3 y3 0 V=5*tanh(-20*V(z2))
+R3 y3 z3 10k
+C3 z3 0 10n
+.ic V(z1)=0.1
+.tran 0 5m 0 1u
+.options plotwinsize=0
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(z1)、V(z2)、V(z3)，观察三级相位差与起振过程。　<strong>预期与判读：</strong>每级 RC 约 100 µs，三级总环路满足振荡条件；约数个时间常数后幅度稳定在 ±5 V 附近，三级波形相差约 120°。删掉 .ic 行可能停在零解不动。　文件位置：<code>part2/16-comparator-oscillator/sim/16-ring-oscillator.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>用 .ac 分析振荡器：小信号线性化看不到限幅后的稳态幅度。</li>
+<li>仿真中电路停在平衡点不起振，其实只缺一个初始扰动。</li>
+<li>把比较器当运放用，忽略了输出饱和与恢复时间。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 C1～C3 加倍，测量周期变化并解释。</li>
+<li>把反相级改成 5 级，预测频率与相位关系。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part1/08-opamp-basics/index.html'>第 8 章 虚短的适用边界</a></li>
+<li><a href='../13-feedback-stability/index.html'>第 13 章 反馈与稳定性（正/负反馈对照）</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

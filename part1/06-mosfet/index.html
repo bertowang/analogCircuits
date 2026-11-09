@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 06 章 · MOSFET 与两级模型 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="06">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第一篇 · 电路基础与器件</span>
+<h1><span class="ch-num">第 06 章</span>MOSFET 与两级模型</h1>
+<p class="lede">现代模拟电路的主角。同一张图要能用“大信号”和“小信号”两套视图各读一遍。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 4 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能由 VGS、VDS、Vto 判断 NMOS 的三个工作区</li>
+<li>会计算 Id、gm、ro 与本征增益</li>
+<li>能画出共源放大器的小信号等效电路并估算增益</li>
+<li>会读 MOS 输出特性曲线族</li>
+<li>知道 Level-1 SPICE 模型各参数的物理含义</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>截止 / 线性 / 饱和</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>阈值电压与体效应</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>gm / ro / 本征增益</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>小信号等效电路</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>.model NMOS 参数</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>输出特性曲线族</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s6-1"><h2><span class="sec-num">§6.1</span>三个工作区与判据</h2>
+<p>以增强型 NMOS 为例（源极接地、体接地），令过驱动电压 <em>V</em><sub>ov</sub> = <em>V</em><sub>GS</sub> − <em>V</em><sub>to</sub>：</p>
+<table><thead><tr><th>工作区</th><th>判据</th><th>电流</th><th>用途</th></tr></thead><tbody>
+<tr><td>截止</td><td>V<sub>GS</sub> &lt; V<sub>to</sub></td><td>I<sub>D</sub> ≈ 0</td><td>开关断开</td></tr>
+<tr><td>线性 / 三极管区</td><td>V<sub>GS</sub> &gt; V<sub>to</sub> 且 V<sub>DS</sub> &lt; V<sub>ov</sub></td><td>I<sub>D</sub> ≈ μ<sub>n</sub>C<sub>ox</sub>(W/L)[V<sub>ov</sub>V<sub>DS</sub> − V<sub>DS</sub>²/2]</td><td>开关闭合、可变电阻</td></tr>
+<tr><td>饱和区</td><td>V<sub>GS</sub> &gt; V<sub>to</sub> 且 V<sub>DS</sub> ≥ V<sub>ov</sub></td><td>I<sub>D</sub> ≈ ½ μ<sub>n</sub>C<sub>ox</sub>(W/L) V<sub>ov</sub>² (1+λV<sub>DS</sub>)</td><td><strong>放大器必须在这里</strong></td></tr>
+</tbody></table>
+<p>在 SPICE Level-1 模型里 <code>Kp = μCox</code>。下方实验用 <code>Kp=200u</code>、<code>W/L=10</code>，于是 <code>½·Kp·(W/L) = 1 mA/V²</code>：V<sub>ov</sub> = 1 V 时 I<sub>D</sub> ≈ 1 mA，很好记。</p>
+</section>
+<section id="s6-2"><h2><span class="sec-num">§6.2</span>小信号模型：把非线性变成线性</h2>
+<p>在静态工作点附近做泰勒展开，只保留一阶项，MOS 就变成三个元件：</p>
+<span class="eq">g<sub>m</sub> = 2I<sub>D</sub>/V<sub>ov</sub> = √(2 K<sub>p</sub>(W/L) I<sub>D</sub>)，　r<sub>o</sub> ≈ 1/(λ I<sub>D</sub>)，　A<sub>0</sub> = g<sub>m</sub>r<sub>o</sub></span>
+<ul><li><strong>压控电流源 g<sub>m</sub>v<sub>gs</sub></strong>：栅压变化引起漏流变化，这是放大的来源。</li>
+<li><strong>输出电阻 r<sub>o</sub></strong>：沟道长度调制（λ）造成；λ 越小、L 越大，r<sub>o</sub> 越大。</li>
+<li><strong>栅极开路</strong>：低频下输入电阻极高，这是 MOS 相对 BJT 的关键优势。</li></ul>
+<p>共源放大器增益 <em>A</em><sub>v</sub> ≈ −g<sub>m</sub>(R<sub>D</sub> ∥ r<sub>o</sub>)。用实验 6-2 的参数：I<sub>D</sub> ≈ 1 mA，g<sub>m</sub> = 2 mA/V，r<sub>o</sub> = 50k，R<sub>D</sub>∥r<sub>o</sub> = 1.92k → 增益 ≈ −3.85，与仿真相符。</p>
+</section>
+<section id="s6-3"><h2><span class="sec-num">§6.3</span>同一张图，两种读法</h2>
+<p><strong>大信号读法</strong>：把电容开路、电感短路、交流源置零，只留直流电源 → 求静态工作点（每个管子在哪个区、V(out) 是多少、摆幅还剩多少）。<strong>小信号读法</strong>：把直流电源置为交流地、把耦合/旁路电容视为短路、把管子换成 g<sub>m</sub>/r<sub>o</sub> 模型 → 求增益、阻抗、带宽。</p>
+<div class="card note"><p style="margin-bottom:0">这两套视图的切换是模拟电路最重要的思维动作，也是<a href="../../part3/19-read-circuit/index.html">第 19 章十步法</a>的第 4、5 步。仿真里对应 <code>.op</code>（大信号）与 <code>.ac</code>（小信号）。</p></div>
+</section>
+<section id="s6-4"><h2><span class="sec-num">§6.4</span>读输出特性曲线族</h2>
+<p>实验 6-1 画出 I<sub>D</sub>–V<sub>DS</sub> 曲线，每条对应一个 V<sub>GS</sub>。读图时看三处：</p>
+<ol><li>左侧陡升段 = 线性区；右侧近似水平段 = 饱和区，两段的分界约在 V<sub>DS</sub> = V<sub>ov</sub>。</li>
+<li>水平段的<strong>斜率</strong> = 1/r<sub>o</sub>（λ 越大越斜）；水平段的<strong>高度</strong>随 V<sub>GS</sub> 按平方律增长。</li>
+<li>把负载电阻的 I–V 关系也画上去（负载线），两线交点就是静态工作点。</li></ol>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<figure class="circuit"><svg viewBox="0 0 400 230" width="400" role="img" aria-label="共源放大器电路图">
+  <g class="wire">
+    <path d="M80 30 H210 M80 30 V70 M210 30 V50"/>
+    <path d="M80 120 V160 M210 90 V200 M80 200 H210"/>
+    <path d="M40 120 H100 M40 120 V160 H100"/>
+    <path d="M290 30 H330 M290 120 H330 M330 30 V120"/>
+  </g>
+  <rect class="part" x="196" y="50" width="28" height="40" rx="2"/>
+  <text class="lbl-s" x="230" y="52">RD 2k</text>
+  <rect class="part" x="130" y="95" width="60" height="70" rx="4"/>
+  <text class="lbl" x="140" y="125">M1</text><text class="lbl-s" x="138" y="148">NMOS</text>
+  <path class="wire" d="M130 115 H100 M130 145 H100 M160 165 V200"/>
+  <circle class="part" cx="70" cy="140" r="18"/>
+  <text class="lbl-s" x="48" y="182">VIN</text>
+  <text class="lbl-s" x="60" y="22">VDD 5V</text>
+  <circle class="node" cx="210" cy="90" r="4"/><text class="lbl-s" x="218" y="92">out</text>
+  <path class="wire" d="M210 90 H290"/>
+  <rect class="part" x="326" y="60" width="16" height="36" rx="1"/>
+  <text class="lbl-s" x="346" y="82">CL</text>
+  <circle class="node" cx="80" cy="200" r="4"/><text class="lbl-s" x="56" y="222">0</text>
+</svg><figcaption>电路示意图（内联 SVG，随 HTML 一起阅读、可缩放、可打印）</figcaption></figure>
+<h3>实验 6-1：NMOS 输出特性曲线族</h3>
+<pre class="spice" data-file="sim/06-mos-iv.cir"><code>* Ch06 NMOS Id-Vds family by VGS stepping
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+.param VGSET=1.5
+VDS d 0 DC 0
+VGS g 0 DC {VGSET}
+M1 d g 0 0 NM1 W=10u L=1u
+.dc VDS 0 3 0.02
+.step param VGSET list 1.0 1.5 2.0 2.5
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → I(M1)（或 Id(M1)），可看到 4 条曲线。　<strong>预期与判读：</strong>VGS=1.5 V 时 Vov=1 V，饱和区 Id ≈ 1 mA；VGS=2.5 V 时 Vov=2 V，Id ≈ 4 mA（平方律）。曲线右端上翘来自 Lambda。　文件位置：<code>part1/06-mosfet/sim/06-mos-iv.cir</code></p>
+<h3>实验 6-2：共源放大的工作点与增益</h3>
+<pre class="spice" data-file="sim/06-common-source.cir"><code>* Ch06 Common-source amplifier: .op, .ac and .tran
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+VIN in 0 DC 1.5 AC 0.01 SINE(1.5 0.01 1k)
+RD vdd out 2k
+M1 out in 0 0 NM1 W=10u L=1u
+.op
+.ac dec 20 100 10Meg
+.tran 0 5m 0 2u
+.meas TRAN vin_pp PP V(in) FROM 2m
+.meas TRAN vout_pp PP V(out) FROM 2m
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 读工作点（Id、gm、Vout）与两条 .meas；Add Trace 看 V(out) 与 V(in) 反相。　<strong>预期与判读：</strong>V(out) ≈ 3 V，Id ≈ 1 mA，gm ≈ 2 mS；增益 ≈ −3.85（输出与输入反相）。把 RD 改成 4k，先检查输出是否仍有足够 VDS 维持饱和，再看增益是否翻倍。　文件位置：<code>part1/06-mosfet/sim/06-common-source.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>把 VDS ≥ Vov 记成 VDS ≥ Vto：饱和判据用的是过驱动电压。</li>
+<li>用 .ac 仿真时忘了给源写 AC 幅值，结果全为 0。</li>
+<li>只看增益不看工作点：RD 太大会把管子推入线性区，公式失效。</li>
+<li>把体（bulk）随便接地：集成电路里 NMOS 体接最低电位，PMOS 体接最高电位；体效应会抬高 Vto。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>在实验 6-2 中加 500 Ω 源极退化电阻，先手算增益再仿真（提示：增益约 −RD/(RS+1/gm)）。</li>
+<li>把 L 从 1u 改成 2u，解释 Id、gm、ro 各自怎么变。</li>
+<li>用 .op 输出确认 M1 处于饱和区，并写出验证所用的两个电压值。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../07-bjt/index.html'>第 7 章 BJT 与三种基本组态（对照记忆）</a></li>
+<li><a href='../../part2/09-single-stage/index.html'>第 9 章 单级放大器</a></li>
+<li><a href='../../part3/19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

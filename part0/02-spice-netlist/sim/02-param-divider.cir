@@ -1,0 +1,10 @@
+* Ch02 Netlist syntax: params, step and automatic measurements
+.param Rtop=3k
+V1 in 0 DC 5
+R1 in out {Rtop}
+R2 out 0 2k
+.step param Rtop list 1k 2k 3k 4k
+.op
+.meas OP vout FIND V(out)
+.meas OP ir1 FIND I(R1)
+.end

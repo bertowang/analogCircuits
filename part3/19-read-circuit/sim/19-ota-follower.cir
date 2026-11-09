@@ -1,0 +1,17 @@
+* Ch19 Case study: five-transistor OTA wired as a voltage follower
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+.model PM1 PMOS(Vto=-0.5 Kp=100u Lambda=0.02)
+VDD vdd 0 DC 2.5
+VSS vss 0 DC -2.5
+IB vdd bias 50u
+MB bias bias vss vss NM1 W=10u L=2u
+MT tail bias vss vss NM1 W=20u L=2u
+M1 dn inp tail vss NM1 W=40u L=2u
+M2 dp inn tail vss NM1 W=40u L=2u
+M3 dn dn vdd vdd PM1 W=20u L=2u
+M4 dp dn vdd vdd PM1 W=20u L=2u
+VFB dp inn DC 0
+VIN inp 0 DC 0 AC 0.1 SINE(0 0.1 1k)
+.op
+.tran 0 5m 0 2u
+.end

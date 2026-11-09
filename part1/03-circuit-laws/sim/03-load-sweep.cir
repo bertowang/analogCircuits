@@ -1,0 +1,10 @@
+* Ch03 Load effect sweep
+.param RLv=10k
+V1 in 0 DC 10
+R1 in out 10k
+R2 out 0 10k
+RL out 0 {RLv}
+.step param RLv list 1k 10k 100k 1Meg
+.op
+.meas OP vout FIND V(out)
+.end

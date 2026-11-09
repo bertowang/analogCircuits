@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 07 章 · BJT 与三种基本组态 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="07">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第一篇 · 电路基础与器件</span>
+<h1><span class="ch-num">第 07 章</span>BJT 与三种基本组态</h1>
+<p class="lede">与 MOS 对照着学：控制量从 VGS 变成 VBE，输入电阻从无穷变成有限，其余推理框架完全一样。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能判断 BJT 的放大/饱和/截止区</li>
+<li>会算 gm、rπ、ro 并画出小信号模型</li>
+<li>能说出共射/共集/共基三种组态的增益与阻抗特征</li>
+<li>能列出 BJT 与 MOS 的对照表</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>放大 / 饱和 / 截止区</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>β 与 Ic-Vbe</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>gm / rπ / ro</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>共射 / 共集 / 共基</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>偏置电路</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>与 MOS 对照表</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 7-1：分压偏置的共射放大器</h3>
+<pre class="spice" data-file="sim/07-common-emitter.cir"><code>* Ch07 Common-emitter amplifier with divider bias
+.model NPN1 NPN(Is=1e-15 Bf=200 Vaf=100)
+VDD vdd 0 DC 12
+R1 vdd base 100k
+R2 base 0 20k
+RC vdd out 4.7k
+RE emit 0 1k
+Q1 out base emit NPN1
+VIN in 0 DC 0 AC 0.01 SINE(0 0.01 1k)
+CIN base in 10u
+.op
+.tran 0 5m 0 2u
+.ac dec 20 10 1Meg
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 读静态工作点；Add Trace 看 V(out) 与 V(in) 的相位关系。　<strong>预期与判读：</strong>基极约 2 V、发射极约 1.3 V、Ie ≈ 1.3 mA、Vc ≈ 5.9 V；增益约 −gm·RC，其中 gm ≈ Ic/26mV ≈ 50 mS，故增益可达上百倍（本例受 RE 影响会小一些）。　文件位置：<code>part1/07-bjt/sim/07-common-emitter.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>把 β 当成设计常量：β 随器件、温度、电流大幅变化，好的偏置电路必须对它不敏感。</li>
+<li>忘记基极电流会加载分压器：分压电流应远大于 Ib。</li>
+<li>把共集（射随器）误认为没有增益就“没用”：它的价值是阻抗变换。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 RE 拆成两半，只旁路一半，推导并仿真验证增益变化。</li>
+<li>把 CIN 改成 100n，用 .ac 观察低频截止点如何上移。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../06-mosfet/index.html'>第 6 章 MOSFET 与两级模型</a></li>
+<li><a href='../../part2/09-single-stage/index.html'>第 9 章 单级放大器</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

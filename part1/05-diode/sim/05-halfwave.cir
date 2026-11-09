@@ -1,0 +1,10 @@
+* Ch05 Half-wave rectifier with smoothing capacitor
+.model DGEN D(Is=1n N=1.7 Rs=0.5)
+V1 ac_in 0 SINE(0 5 50)
+D1 ac_in dc_out DGEN
+C1 dc_out 0 10u
+R1 dc_out 0 1k
+.tran 0 100m 0 100u
+.meas TRAN vmax MAX V(dc_out)
+.meas TRAN vmin MIN V(dc_out) FROM 40m
+.end

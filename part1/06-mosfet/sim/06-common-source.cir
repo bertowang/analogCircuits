@@ -1,0 +1,12 @@
+* Ch06 Common-source amplifier: .op, .ac and .tran
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+VIN in 0 DC 1.5 AC 0.01 SINE(1.5 0.01 1k)
+RD vdd out 2k
+M1 out in 0 0 NM1 W=10u L=1u
+.op
+.ac dec 20 100 10Meg
+.tran 0 5m 0 2u
+.meas TRAN vin_pp PP V(in) FROM 2m
+.meas TRAN vout_pp PP V(out) FROM 2m
+.end

@@ -1,0 +1,11 @@
+* Ch09 Source degeneration: gain set by resistor ratio
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+VIN in 0 DC 2.0 AC 0.05 SINE(2.0 0.05 1k)
+RD vdd out 2k
+M1 out in src 0 NM1 W=10u L=1u
+RS src 0 500
+.op
+.ac dec 20 100 10Meg
+.tran 0 5m 0 2u
+.end

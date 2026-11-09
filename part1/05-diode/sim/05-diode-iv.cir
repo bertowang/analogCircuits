@@ -1,0 +1,6 @@
+* Ch05 Diode I-V curve by DC sweep
+.model DGEN D(Is=1n N=1.7 Rs=0.5)
+V1 a 0 DC 0
+D1 a 0 DGEN
+.dc V1 -0.2 0.8 0.005
+.end

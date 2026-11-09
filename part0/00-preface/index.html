@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 00 章 · 绪论：如何阅读这本教材 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="00">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">卷首 · 工具与约定</span>
+<h1><span class="ch-num">第 00 章</span>绪论：如何阅读这本教材</h1>
+<p class="lede">先约定语言，再开始读电路：符号、单位、先修知识，以及手算与仿真各自负责什么。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 1 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>知道本书四篇之间的关系与两种阅读顺序</li>
+<li>能说清直流、交流小信号、大信号三种视图的区别</li>
+<li>能列出学习一章时固定要问的四个问题</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>教学目标与结构</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>符号约定（大小写、相量、直流/交流/小信号）</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>单位前缀与工程记数法</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>手算与仿真的分工</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>先修数学清单</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>教材与工业界分析范式对照</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s0-1"><h2><span class="sec-num">§0.1</span>三类变量，三种视图</h2>
+<p>同一张电路图，其实叠了三层信息。读图出错，大多是因为把三层混在一起：</p>
+<table><thead><tr><th>视图</th><th>符号习惯</th><th>关心什么</th><th>对应仿真</th></tr></thead><tbody>
+<tr><td>直流 / 静态工作点</td><td>大写大写下标，如 <code>V<sub>GS</sub></code>、<code>I<sub>D</sub></code></td><td>偏置是否成立、器件在哪个工作区</td><td><code>.op</code> / <code>.dc</code></td></tr>
+<tr><td>交流小信号</td><td>小写，如 <code>v<sub>gs</sub></code>、<code>i<sub>d</sub></code></td><td>增益、阻抗、频率响应、噪声</td><td><code>.ac</code> / <code>.noise</code></td></tr>
+<tr><td>大信号 / 瞬态总量</td><td>小写大写下标，如 <code>v<sub>GS</sub>(t)</code></td><td>摆幅、失真、启动、饱和、压摆</td><td><code>.tran</code></td></tr>
+</tbody></table>
+<p><strong>读图口诀</strong>：先用直流视图确认每个器件“活着”（有正确偏置、在正确工作区），再切到小信号视图算增益与阻抗，最后用瞬态视图检查摆幅和失真。</p>
+</section>
+<section id="s0-2"><h2><span class="sec-num">§0.2</span>固定要问的四个问题</h2>
+<p>后面每一章、每一个电路，都问同样四个问题，答案会自然形成笔记：</p>
+<ol><li><strong>直流怎么偏置？</strong>电源到地有没有直流通路？每个节点的静态电压大约多少？</li>
+<li><strong>小信号增益怎么算？</strong>控制量是什么（<code>v<sub>be</sub></code> / <code>v<sub>gs</sub></code>）？跨导 <code>g<sub>m</sub></code> 多大？负载阻抗多大？</li>
+<li><strong>输入、输出阻抗是多少？</strong>前一级会不会被拖垮？后一级会不会成为负载？</li>
+<li><strong>带宽与摆幅边界在哪？</strong>哪个电容形成主极点？输出最高/最低能到多少？</li></ol>
+</section>
+<section id="s0-3"><h2><span class="sec-num">§0.3</span>手算与仿真的分工</h2>
+<p>仿真是<strong>验证</strong>工具，不是<strong>推导</strong>工具。手算给出数量级和趋势，仿真给出精确数值与非理想效应，两者不一致时先怀疑自己的模型假设，而不是先怀疑软件。</p>
+<div class="card tip"><p style="margin-bottom:0">推荐记录格式：手算预期值 → 仿真实测值 → 偏差百分比 → 偏差原因。写满 20 组这样的记录，读电路的能力会有明显变化。</p></div>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>最小完整网表：分压器</h3>
+<pre class="spice" data-file="sim/00-minimal.cir"><code>* Ch00 Minimal netlist: a voltage divider
+V1 in 0 DC 5
+R1 in out 3k
+R2 out 0 2k
+.op
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>保存为 .cir → LTspice 打开 → Run → View → SPICE Error Log 查看 V(out)。　<strong>预期与判读：</strong>手算 V(out) = 5 × 2k/(3k+2k) = 2.000 V，电流 1 mA。　文件位置：<code>part0/00-preface/sim/00-minimal.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>把 m 当成兆：SPICE 里 m = 毫，1Meg = 兆。</li>
+<li>只看波形不看工作点：偏置错了，波形也可能“看起来有形状”。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 R2 改成 2k 的 1% 公差，估计 V(out) 的变化范围。</li>
+<li>在分压器输出端接 1k 负载，重算 V(out)，再用仿真核对。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../01-ltspice-quickstart/index.html'>第 1 章 LTspice 快速上手</a></li>
+<li><a href='../02-spice-netlist/index.html'>第 2 章 SPICE 网表语法</a></li>
+<li><a href='../../appendix/index.html'>附录 A · 公式与术语速查</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 24 章 · 综合实验与课程设计课题 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="24">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第四篇 · 综合课程设计</span>
+<h1><span class="ch-num">第 24 章</span>综合实验与课程设计课题</h1>
+<p class="lede">把全书知识串成一条信号链。三个课题都给出规格、模块划分、验收方法与可运行的测试台。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 8～12 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能把一个系统需求拆成若干模拟模块</li>
+<li>会为每个模块定规格并写验收断言</li>
+<li>能完成从手算、仿真到设计文档的完整流程</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>传感器信号链</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>音频功率放大器</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>带隙基准与 LDO</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>规格与验收表</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>报告模板</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s24-1"><h2><span class="sec-num">§24.1</span>三个课程设计课题</h2>
+<table><thead><tr><th>课题</th><th>规格示例</th><th>用到的章节</th><th>验收方式</th></tr></thead><tbody>
+<tr><td><strong>A. 传感器信号链</strong></td><td>桥式传感器 ±10 mV，输出 0～2 V，带宽 ≤ 100 Hz，共模抑制 ≥ 60 dB</td><td>3、8、11、15、18、21、23</td><td>.ac 增益与截止频率；.tran 阶跃响应；共模注入测 CMRR</td></tr>
+<tr><td><strong>B. 音频放大器</strong></td><td>8 Ω 负载 1 W，20 Hz～20 kHz，THD ≤ 1%</td><td>8、13、16、17、18</td><td>.four 测 THD；.tran 看削顶；功耗与热估算</td></tr>
+<tr><td><strong>C. 基准与 LDO</strong></td><td>输出 3.3 V，负载 0～100 mA，电源抑制 ≥ 40 dB</td><td>5、10、13、17、22</td><td>.dc 扫描输入/负载；温度扫描；蒙特卡洛</td></tr>
+</tbody></table>
+<p>下方测试台是课题 A 的最小可运行版本：传感器等效源 → RC 抗混叠滤波 → 同相放大（增益 10）。按<a href="../../part3/20-design-circuit/index.html">第 20 章</a>的文档模板补齐规格、手算、验收表与公差分析，就是一个完整的大作业。</p>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 24-1：传感器信号链最小系统</h3>
+<pre class="spice" data-file="sim/24-sensor-chain.cir"><code>* Ch24 Project A: sensor + anti-alias filter + gain of 10
+VSENS sens 0 DC 0.1 AC 0.05 SINE(0.1 0.05 10)
+RTH sens n1 1k
+CF n1 0 1u
+E1 int 0 n1 minus 1e5
+R1 int oa 1k
+C1 oa 0 1u
+R2 oa minus 9k
+R3 minus 0 1k
+.op
+.tran 0 500m 0 200u
+.ac dec 20 1 100k
+.meas AC gain10 FIND mag(V(oa)) AT 10
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → .tran 看 10 Hz 信号被放大；.ac 看低频增益约 20 dB、高频被 CF 与运放主极点限制。　<strong>预期与判读：</strong>闭环增益 1 + 9k/1k = 10；CF 与 RTH 形成约 159 Hz 的低通；VSENS 的 50 mV 交流分量在输出约 0.5 V。　文件位置：<code>part4/24-projects/sim/24-sensor-chain.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>课题一开始就画完整电路，没有先分模块定规格。</li>
+<li>只交仿真截图，没有验收表与设计文档。</li>
+<li>忽略模块之间的阻抗与电平匹配。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 CF 改成使 −3 dB 恰好落在 100 Hz，并写 .meas 验证。</li>
+<li>为课题 B 写一份规格表与验收点清单。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part3/20-design-circuit/index.html'>第 20 章 设计文档模板</a></li>
+<li><a href='../../part3/19-read-circuit/index.html'>第 19 章 十步读图法</a></li>
+<li><a href='https://github.com/TongenShen/electronics-learning' target='_blank' rel='noopener'>GitHub：electronics-learning（同类综合信号链课程）</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

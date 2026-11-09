@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>附录 A · 附录 · 公式、指令与术语速查 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/toc.js" defer></script>
+<script src="../assets/app.js" defer></script>
+</head>
+<body data-root="../" data-chapter="A" data-page="appendix">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb"><a href="../index.html">总目录</a> / 附录</nav>
+<header class="chapter-head">
+<span class="kicker">附录</span>
+<h1><span class="ch-num">附录 A</span>附录 · 公式、指令与术语速查</h1>
+<p class="lede">一页查表：常用公式、单位前缀、SPICE 元件与点指令、中英术语，以及本书的维护方式。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 查阅</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能快速查到常用公式与 SPICE 语法</li>
+<li>知道中英术语对应关系，便于读英文资料</li>
+<li>知道如何给本书新增章节与仿真实验</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>常用公式</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>SPICE 指令表</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>单位前缀</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>术语中英对照</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>推荐教材</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>如何新增章节</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="sA-1"><h2><span class="sec-num">§A.1</span>常用公式速查</h2>
+<table><thead><tr><th>主题</th><th>公式</th><th>出处</th></tr></thead><tbody>
+<tr><td>分压 / 戴维南</td><td><code>V<sub>out</sub> = V<sub>in</sub>·R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>)</code>；<code>R<sub>th</sub> = R<sub>1</sub>∥R<sub>2</sub></code></td><td>第 3 章</td></tr>
+<tr><td>RC 时间常数 / 截止频率</td><td><code>τ = RC</code>；<code>f<sub>c</sub> = 1/(2πRC)</code>；10%→90% 上升时间 ≈ 2.2τ</td><td>第 4、21 章</td></tr>
+<tr><td>二极管</td><td><code>I = I<sub>S</sub>(e<sup>V/(nV<sub>T</sub>)</sup>−1)</code>，<code>V<sub>T</sub> ≈ 26 mV</code>，<code>r<sub>d</sub> = nV<sub>T</sub>/I<sub>D</sub></code></td><td>第 5 章</td></tr>
+<tr><td>MOS 饱和区</td><td><code>I<sub>D</sub> = ½K<sub>p</sub>(W/L)V<sub>ov</sub>²(1+λV<sub>DS</sub>)</code></td><td>第 6 章</td></tr>
+<tr><td>MOS 小信号</td><td><code>g<sub>m</sub> = 2I<sub>D</sub>/V<sub>ov</sub></code>；<code>r<sub>o</sub> ≈ 1/(λI<sub>D</sub>)</code>；<code>A<sub>0</sub> = g<sub>m</sub>r<sub>o</sub></code></td><td>第 6 章</td></tr>
+<tr><td>BJT 小信号</td><td><code>g<sub>m</sub> = I<sub>C</sub>/V<sub>T</sub></code>；<code>r<sub>π</sub> = β/g<sub>m</sub></code></td><td>第 7 章</td></tr>
+<tr><td>运放闭环</td><td>同相 <code>1+R<sub>2</sub>/R<sub>3</sub></code>；反相 <code>−R<sub>f</sub>/R<sub>in</sub></code></td><td>第 8 章</td></tr>
+<tr><td>反馈 / 带宽</td><td><code>A<sub>cl</sub> = A/(1+Aβ)</code>；<code>BW<sub>cl</sub> ≈ GBW/NG</code></td><td>第 13、20 章</td></tr>
+<tr><td>密勒等效</td><td>跨接反相增益 −A 两端的 C ⇒ 输入等效 <code>C(1+A)</code></td><td>第 12 章</td></tr>
+<tr><td>热噪声</td><td><code>v<sub>n</sub> = √(4kTR·B)</code>；1 kΩ ≈ 4 nV/√Hz（室温）</td><td>第 18 章</td></tr>
+<tr><td>整流纹波</td><td><code>ΔV ≈ I<sub>load</sub>/(f·C)</code></td><td>第 5、17 章</td></tr>
+</tbody></table>
+</section>
+<section id="sA-2"><h2><span class="sec-num">§A.2</span>单位前缀与记数法</h2>
+<table><thead><tr><th>写法</th><th>倍率</th><th>写法</th><th>倍率</th></tr></thead><tbody>
+<tr><td><code>f</code></td><td>10⁻¹⁵</td><td><code>k</code></td><td>10³</td></tr>
+<tr><td><code>p</code></td><td>10⁻¹²</td><td><code>Meg</code></td><td>10⁶</td></tr>
+<tr><td><code>n</code></td><td>10⁻⁹</td><td><code>G</code></td><td>10⁹</td></tr>
+<tr><td><code>u</code></td><td>10⁻⁶</td><td><code>T</code></td><td>10¹²</td></tr>
+<tr><td><code>m</code></td><td>10⁻³</td><td><code>mil</code></td><td>25.4 µm</td></tr>
+</tbody></table>
+<p><strong>切记</strong>：SPICE 中 <code>m</code> = 毫，<code>Meg</code> = 兆，大小写不敏感，<code>1M</code> 仍是 1 毫。dB 换算：电压 20·log₁₀(倍数)，功率 10·log₁₀(倍数)。</p>
+</section>
+<section id="sA-3"><h2><span class="sec-num">§A.3</span>SPICE 元件与点指令速查</h2>
+<table><thead><tr><th>类别</th><th>语法 / 指令</th><th>说明</th></tr></thead><tbody>
+<tr><td>无源</td><td><code>R/C/L 名 节点+ 节点- 值</code></td><td>可加 <code>ic=</code> 初始条件</td></tr>
+<tr><td>独立源</td><td><code>V/I 名 节点+ 节点- DC 值 AC 幅值 波形</code></td><td><code>SINE()</code> / <code>PULSE()</code> / <code>PWL()</code></td></tr>
+<tr><td>半导体</td><td><code>D/Q/M</code></td><td>M 为 <code>D G S B 模型 W= L=</code></td></tr>
+<tr><td>受控源</td><td><code>E/G/F/H</code>；行为源 <code>B ... V=表达式</code></td><td>E 可自建理想运放</td></tr>
+<tr><td>分析</td><td><code>.op .dc .ac .tran .noise .tf .four</code></td><td>见第 1、21 章</td></tr>
+<tr><td>扫描与测量</td><td><code>.param .step .meas .save</code></td><td>参数化回归测试</td></tr>
+<tr><td>模型</td><td><code>.model .subckt .ends .include .lib</code></td><td>本书全部自包含</td></tr>
+<tr><td>控制</td><td><code>.ic .options .end</code></td><td><code>.options plotwinsize=0</code> 用于 FFT</td></tr>
+</tbody></table>
+<p>最小可用模板（可直接复制改名）：</p>
+</section>
+<section id="sA-4"><h2><span class="sec-num">§A.4</span>中英术语对照</h2>
+<table><thead><tr><th>中文</th><th>English</th><th>中文</th><th>English</th></tr></thead><tbody>
+<tr><td>工作点 / 偏置</td><td>operating point / bias</td><td>过驱动电压</td><td>overdrive voltage</td></tr>
+<tr><td>小信号</td><td>small-signal</td><td>跨导</td><td>transconductance (gm)</td></tr>
+<tr><td>共模 / 差模</td><td>common-mode / differential-mode</td><td>共模抑制比</td><td>CMRR</td></tr>
+<tr><td>负反馈</td><td>negative feedback</td><td>环路增益</td><td>loop gain</td></tr>
+<tr><td>相位裕度</td><td>phase margin</td><td>增益带宽积</td><td>gain-bandwidth product</td></tr>
+<tr><td>主极点 / 补偿</td><td>dominant pole / compensation</td><td>压摆率</td><td>slew rate</td></tr>
+<tr><td>摆幅 / 合规电压</td><td>swing / compliance voltage</td><td>失调</td><td>offset</td></tr>
+<tr><td>电源抑制比</td><td>PSRR</td><td>纹波</td><td>ripple</td></tr>
+<tr><td>工艺角</td><td>process corner</td><td>蒙特卡洛</td><td>Monte Carlo</td></tr>
+<tr><td>去耦 / 旁路</td><td>decoupling / bypass</td><td>网表</td><td>netlist</td></tr>
+</tbody></table>
+</section>
+<section id="sA-5"><h2><span class="sec-num">§A.5</span>推荐书目与资料索引</h2>
+<p>完整清单（含已核实的 GitHub 仓库、厂商资料与教材）见<a href="../index.html#resources">总目录的「参考资源」章节</a>。速记：</p>
+<ul><li>主干教材：Sedra &amp; Smith；康华光；童诗白 / 华成英</li>
+<li>工程直觉：Horowitz &amp; Hill《The Art of Electronics》</li>
+<li>集成电路：Razavi；Gray &amp; Meyer；Allen &amp; Holberg</li>
+<li>仿真与流程：Baker；ADI《Op Amp Applications Handbook》；PyLTSpice 文档</li></ul>
+</section>
+<section id="sA-6"><h2><span class="sec-num">§A.6</span>维护本书</h2>
+<ol><li>补写某章正文：直接编辑对应 <code>index.html</code> 的 <code>&lt;section&gt;</code>，把状态徽章与 <code>assets/toc.js</code> 里的 <code>status</code> 一起改成 <code>done</code>。</li>
+<li>加仿真实验：在页面里加 <code>&lt;pre class="spice" data-file="sim/xxx.cir"&gt;&lt;code&gt;…&lt;/code&gt;&lt;/pre&gt;</code>，运行 <code>python3 tools/extract_netlists.py</code> 生成 <code>.cir</code>。</li>
+<li>加章节：在 <a href="../index.html#toc">总目录</a> 加链接与知识点标签，建文件夹与页面，再在 <code>assets/toc.js</code> 追加一条（侧栏与上下章自动更新）。</li>
+<li>自检：<code>python3 tools/check_book.py</code>。</li>
+<li>批量重建骨架：<code>python3 tools/build_book.py</code>（默认不覆盖已有文件，<code>--force</code> 才覆盖）。</li></ol>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>模板 A-1：最小可用网表</h3>
+<pre class="spice" data-file="sim/A-template.cir"><code>* Appendix: minimal netlist template
+* 1 title | 2 sources | 3 components | 4 analysis | 5 end
+V1 in 0 DC 5
+R1 in out 1k
+R2 out 0 1k
+.op
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>复制保存为任意 .cir，用 LTspice 打开并 Run。　<strong>预期与判读：</strong>V(out) = 2.5 V。所有实验都可以在这个骨架上增删元件与分析指令。　文件位置：<code>appendix/sim/A-template.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>把附录当正文读：它只负责查表，公式的适用条件在对应章节。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>从模板 A-1 出发，改成 RC 低通并加 .ac 分析。</li>
+<li>把 A.1 里任一公式用 .op 或 .ac 验证一次。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../index.html#toc'>返回总目录</a></li>
+<li><a href='../index.html#resources'>参考资源清单</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

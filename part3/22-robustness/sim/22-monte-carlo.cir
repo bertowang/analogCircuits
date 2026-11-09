@@ -1,0 +1,11 @@
+* Ch22 Monte-Carlo of resistor tolerances
+.param run=1
+.param R1v=mc(10k,0.01)
+.param R2v=mc(10k,0.05)
+V1 in 0 DC 5
+R1 in out {R1v}
+R2 out 0 {R2v}
+.step param run 1 50 1
+.op
+.meas OP vout FIND V(out)
+.end

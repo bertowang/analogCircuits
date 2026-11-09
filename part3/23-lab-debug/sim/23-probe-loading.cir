@@ -1,0 +1,10 @@
+* Ch23 Scope probe loading at a high-impedance node
+.param Cprobe=0p
+VIN in 0 DC 0 AC 1
+R1 in out 100k
+C1 out 0 10p
+RPROBE out 0 1Meg
+CPROBE out 0 {Cprobe}
+.step param Cprobe list 0p 10p 100p
+.ac dec 30 1k 100Meg
+.end

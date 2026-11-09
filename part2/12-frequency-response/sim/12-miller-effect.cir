@@ -1,0 +1,12 @@
+* Ch12 Miller effect: Cgd moves the dominant pole
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+.param CGD=1p
+VDD vdd 0 DC 5
+VIN in 0 DC 1.5 AC 0.01 SINE(1.5 0.01 1k)
+RD vdd out 2k
+M1 out in 0 0 NM1 W=10u L=1u
+CGD1 out in {CGD}
+CL out 0 5p
+.step param CGD list 0.1p 1p 5p
+.ac dec 30 1k 100Meg
+.end

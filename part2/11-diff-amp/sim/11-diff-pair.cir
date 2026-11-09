@@ -1,0 +1,12 @@
+* Ch11 NMOS differential pair transfer curve
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+VDD vdd 0 DC 5
+ISS tail 0 200u
+M1 o1 inp tail 0 NM1 W=10u L=1u
+M2 o2 inn tail 0 NM1 W=10u L=1u
+R1 vdd o1 10k
+R2 vdd o2 10k
+VINN inn 0 DC 2
+VINP inp 0 DC 2
+.dc VINP 1.5 2.5 0.01
+.end

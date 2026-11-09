@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 01 章 · LTspice 快速上手 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="01">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">卷首 · 工具与约定</span>
+<h1><span class="ch-num">第 01 章</span>LTspice 快速上手</h1>
+<p class="lede">从安装到第一个波形。理解原理图与网表两种工作流，掌握四类基本分析和排错入口。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 2 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能独立安装 LTspice 并运行一个 .cir 网表</li>
+<li>能区分 .op / .dc / .tran / .ac 各自回答什么问题</li>
+<li>会用波形窗口、游标和 SPICE Error Log 取数与排错</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>安装与界面</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>.asc 原理图 / .cir 网表</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.op / .tran / .ac / .dc</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>Add Trace 与游标测量</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>SPICE Error Log 排错</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>常用快捷键</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s1-1"><h2><span class="sec-num">§1.1</span>为什么是 LTspice</h2>
+<p>LTspice 是 Analog Devices 维护的免费 SPICE 仿真器：启动快、收敛性好、自带大量真实器件模型，工业界与高校都在用。对自学者更关键的一点是——它既能画原理图（<code>.asc</code>），也能直接读纯文本网表（<code>.cir</code> / <code>.net</code>）。</p>
+<p>本书统一使用<strong>网表</strong>：<code>.cir</code> 是纯文本，可以放进 Git、可以 diff、可以由 HTML 代码块自动生成，也更容易把“电路”当代码来读。想看原理图时，LTspice 也能把网表里的元件逐一键入画布。</p>
+</section>
+<section id="s1-2"><h2><span class="sec-num">§1.2</span>四类分析，回答四个问题</h2>
+<table><thead><tr><th>指令</th><th>回答的问题</th><th>典型用法</th></tr></thead><tbody>
+<tr><td><code>.op</code></td><td>静态工作点：各节点电压、各管 Id / gm / 工作区</td><td>确认偏置是否成立（结果在 Error Log，不弹波形）</td></tr>
+<tr><td><code>.dc</code></td><td>某个直流源扫描时，电路怎么变化</td><td>二极管 I-V 曲线、MOS 输出特性、传输曲线</td></tr>
+<tr><td><code>.tran</code></td><td>随时间怎么变化</td><td>充放电、放大波形、失真、启动过程、振荡</td></tr>
+<tr><td><code>.ac</code></td><td>不同频率下增益与相位</td><td>波特图、带宽、相位裕度、滤波器</td></tr>
+</tbody></table>
+<p>另有 <code>.noise</code>（噪声）、<code>.tf</code>（直流小信号传递函数与输入/输出电阻）、<code>.four</code>（频谱 / THD），见<a href="../02-spice-netlist/index.html">第 2 章</a>与<a href="../../part3/21-simulation-method/index.html">第 21 章</a>。</p>
+</section>
+<section id="s1-3"><h2><span class="sec-num">§1.3</span>第一个波形：逐步操作</h2>
+<ol>
+<li>复制下方代码块，保存为 <code>sim/01-rc-charge.cir</code>（或直接打开仓库里的同名文件）。</li>
+<li><code>File → Open</code> 打开它，点工具栏 Run（奔跑小人）。第一次会弹出波形窗口，标题是 <em>Transient Analysis</em>。</li>
+<li>右键波形区 → <code>Add Trace</code> → 选 <code>V(out)</code>；也可以先用 <code>V(in)</code> 看激励。</li>
+<li>把鼠标移到曲线上，游标会显示坐标；按住左键拖一段可测 Δt、ΔV、斜率。</li>
+<li>菜单 <code>View → SPICE Error Log</code>（或 <code>Ctrl+L</code>）里能找到 <code>.meas</code> 的测量结果与警告。</li>
+</ol>
+<div class="card warn"><span class="card-label">常见坑</span><p style="margin-bottom:0">纯网表没有原理图可点，必须手动 <code>Add Trace</code>；只有 <code>.op</code> 时不会弹出波形窗口，别以为仿真没跑。网表注释请用英文 ASCII，中文注释在部分版本会乱码。</p></div>
+</section>
+<section id="s1-4"><h2><span class="sec-num">§1.4</span>报错时先看这三处</h2>
+<ul><li><strong>Floating node / No DC path to ground</strong>：某节点只有电容或理想电流源相连，SPICE 求不出直流解。给它并联一个大电阻（如 <code>1G</code>）或在电容上加初始条件。</li>
+<li><strong>Unknown model / Can't find library</strong>：用了 <code>.model</code> 未定义的器件名，或 <code>.lib</code> 路径不对。本书全部自包含定义模型，不依赖外部库。</li>
+<li><strong>Timestep too small / Convergence failed</strong>：瞬态不收敛。检查是否有理想开关、无串联电阻的电容环路、过陡的 <code>PULSE</code> 边沿；给边沿一个有限上升时间（如 <code>1n</code>），必要时加 <code>.options gmin=1n</code>。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 1-1：RC 充电与时间常数</h3>
+<pre class="spice" data-file="sim/01-rc-charge.cir"><code>* Ch01 RC charging transient - first LTspice run
+V1 in 0 PULSE(0 5 0 1u 1u 5m 10m)
+R1 in out 10k
+C1 out 0 100n
+.tran 0 8m 0 10u
+* tau = R1*C1 = 1ms ; V(out) = 5*(1-exp(-t/tau))
+.meas TRAN v_1m FIND V(out) AT 1m
+.meas TRAN v_5m FIND V(out) AT 5m
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run 后 Add Trace 选 V(out) 与 V(in)；在 Error Log 里读两条 .meas 结果。　<strong>预期与判读：</strong>τ = 10k × 100n = 1 ms；t = 1 ms 时 V(out) ≈ 5(1−e⁻¹) = 3.16 V；t = 5τ = 5 ms 时约 4.97 V。把 R1 改成 20k，τ 翻倍，曲线变缓。　文件位置：<code>part0/01-ltspice-quickstart/sim/01-rc-charge.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>以为 .op 会弹波形：它只写 Error Log。</li>
+<li>PULSE 上升时间写 0 导致仿真警告或步长过小，给 1u 这类有限值即可。</li>
+<li>直接把波形截图当结论，没有记下手算预期值。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 C1 改成 220n，先手算 t = 1 ms 时的 V(out)，再仿真核对。</li>
+<li>添加 .meas 测出 V(out) 到达 2.5 V 的时刻，与 0.693τ 比较。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../02-spice-netlist/index.html'>第 2 章 SPICE 网表语法与仿真指令</a></li>
+<li><a href='../../part1/04-passive-dynamics/index.html'>第 4 章 无源元件、暂态与频域</a></li>
+<li><a href='https://www.analog.com/en/resources/design-tools-and-calculators/ltspice-simulator.html' target='_blank' rel='noopener'>ADI LTspice 官方下载与文档</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 13 章 · 反馈与稳定性 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="13">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第二篇 · 核心模拟电路模块</span>
+<h1><span class="ch-num">第 13 章</span>反馈与稳定性</h1>
+<p class="lede">负反馈用增益换线性、带宽与可控性；但反馈太深或相位滞后太多，负反馈会变成正反馈。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 4 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能识别四种反馈拓扑并写出闭环增益</li>
+<li>理解环路增益与相位裕度的判据</li>
+<li>会用主极点/密勒补偿改善稳定性</li>
+<li>能从阶跃响应判断振铃与相位裕度</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>四种反馈拓扑</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>环路增益与返回比</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>增益/相位裕度</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>主极点补偿</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>密勒补偿</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>稳定性判据</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s13-1"><h2><span class="sec-num">§13.1</span>核心概念速览</h2>
+<ul>
+<li>四种拓扑按“采样输出的是电压还是电流、输入端是串联还是并联混合”分类：电压串联（同相放大）、电压并联（反相放大）、电流串联、电流并联。</li>
+<li>闭环 <code>A<sub>cl</sub> = A/(1+Aβ)</code>；当 <code>Aβ ≫ 1</code> 时 <code>A<sub>cl</sub> ≈ 1/β</code>，与开环增益无关——这就是“用增益换稳定”。</li>
+<li><strong>稳定性判据</strong>：在环路增益 |Aβ| = 1 的频率处，相位滞后必须小于 180°；差值就是<strong>相位裕度</strong>，工程上一般留 45°～60°。</li>
+<li>两级放大器有两个低频极点，容易裕度不足；<strong>密勒补偿</strong>把主极点推低、次极点推高（极点分裂），用带宽换稳定。</li>
+<li>时域征兆：阶跃响应过冲大、长时间振铃 ≈ 相位裕度不足；持续等幅振荡 ≈ 已失稳。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 13-1：补偿电容与阶跃振铃</h3>
+<pre class="spice" data-file="sim/13-loop-stability.cir"><code>* Ch13 Feedback loop: ringing vs dominant-pole compensation
+.param CC=100p
+VIN in 0 DC 0 PULSE(0 0.1 0 1u 1u 1m 2m)
+BERR err 0 V=V(in)-V(out)/10
+E1 a 0 err 0 10
+R1 a b 10k
+C1 b 0 1n
+E2 c 0 b 0 10
+R2 c out 10k
+C2 out 0 {CC}
+.step param CC list 10p 100p 1n
+.tran 0 2m 0 200n
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out)，比较三条阶跃响应的过冲与振铃。　<strong>预期与判读：</strong>CC 增大把第二级极点推低，两个极点靠得更近，相位裕度下降，过冲与振铃加剧；把 BERR 中的反馈系数从 1/10 改成 1/100，环路增益变大，也会更接近失稳。　文件位置：<code>part2/13-feedback-stability/sim/13-loop-stability.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>只看直流闭环增益正确就认为电路稳定。</li>
+<li>把“负反馈”当成永远负：高频相移会让它变号。</li>
+<li>补偿电容越大越好：它同时牺牲带宽与压摆率。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 CC 设为 1n 并把反馈系数改成 1/100，观察是否出现持续振荡。</li>
+<li>在 C2 上串一个小电阻引入零点，观察振铃是否改善。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../12-frequency-response/index.html'>第 12 章 频率响应与极点</a></li>
+<li><a href='../14-opamp-design/index.html'>第 14 章 运算放大器设计</a></li>
+<li><a href='../../part3/20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

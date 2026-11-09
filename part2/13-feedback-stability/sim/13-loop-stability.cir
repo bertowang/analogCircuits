@@ -1,0 +1,13 @@
+* Ch13 Feedback loop: ringing vs dominant-pole compensation
+.param CC=100p
+VIN in 0 DC 0 PULSE(0 0.1 0 1u 1u 1m 2m)
+BERR err 0 V=V(in)-V(out)/10
+E1 a 0 err 0 10
+R1 a b 10k
+C1 b 0 1n
+E2 c 0 b 0 10
+R2 c out 10k
+C2 out 0 {CC}
+.step param CC list 10p 100p 1n
+.tran 0 2m 0 200n
+.end

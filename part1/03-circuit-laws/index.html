@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 03 章 · 电路定律与读图第一步 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="03">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第一篇 · 电路基础与器件</span>
+<h1><span class="ch-num">第 03 章</span>电路定律与读图第一步</h1>
+<p class="lede">所有复杂电路都从这一步开始：标节点、定参考地、写 KCL，先求直流，再看信号。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 3 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能对任意电阻网络标出节点、写出节点电压方程</li>
+<li>能识别分压器的负载效应并用戴维南等效解释</li>
+<li>会用 .op / .tf 验证手算的增益、输入电阻与输出电阻</li>
+<li>养成“先直流、后交流”的读图顺序</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>节点与参考地</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>KCL / KVL / 欧姆定律</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>分压与分流、负载效应</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>叠加、戴维南 / 诺顿</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>节点电压法</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>受控源与 .tf</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s3-1"><h2><span class="sec-num">§3.1</span>读图第一步：标节点、定参考地</h2>
+<p>电压永远是<strong>两点之间</strong>的差。所谓“某点电压”，默认指它相对参考地（节点 <code>0</code>）的电位。读图时先做三件笨功夫，能消掉一半的错误：</p>
+<ol><li>把所有由理想导线直连的点圈成同一个节点，给每个节点起名字（<code>in</code>、<code>out</code>、<code>bias</code>…），别用自动生成的 <code>N001</code>。</li>
+<li>找出参考地，以及电源正负端；画一条从电源正端经器件到地的直流通路。</li>
+<li>在图上标出你猜的电位高低（<code>+</code> / <code>−</code>）和电流方向。猜错没关系，算出负值就说明方向反了。</li></ol>
+<p>本书所有网表都用有意义的节点名，正是为了训练这个习惯。<a href="../../part3/19-read-circuit/index.html">第 19 章</a>会把它扩展成完整的十步法。</p>
+</section>
+<section id="s3-2"><h2><span class="sec-num">§3.2</span>KCL / KVL 与节点电压法</h2>
+<p>KCL：任一节点流入电流之和等于流出之和（本质是电荷守恒）。KVL：沿任一闭合回路电压降之和为零（本质是能量守恒）。实际手算时，<strong>节点电压法</strong>最不容易出错：以地为参考，对每个未知节点写一条“流出电流总和 = 0"，得到线性方程组。</p>
+<span class="eq">V<sub>out</sub> = V<sub>1</sub> · (R<sub>2</sub> ∥ R<sub>L</sub>) / [ R<sub>1</sub> + (R<sub>2</sub> ∥ R<sub>L</sub>) ]</span>
+<p>上式就是下方电路的手算结果：R₂∥R_L = 5k，所以 V(out) = 10 × 5/(10+5) = 3.333 V，而不是“想当然”的 5 V。</p>
+</section>
+<section id="s3-3"><h2><span class="sec-num">§3.3</span>负载效应与戴维南等效</h2>
+<p>把分压器从 <code>out</code> 看进去：开路电压 <em>V</em><sub>th</sub> = 5 V（R₁=R₂ 时），等效内阻 <em>R</em><sub>th</sub> = R₁∥R₂ = 5k。接上 R_L = 10k 后，输出变成 5 × 10k/(5k+10k) = 3.333 V。<strong>戴维南等效是“读懂前后级相互影响”的核心工具</strong>：前一级是源，后一级是负载，两者用 V<sub>th</sub> 和 R<sub>th</sub> 对话。</p>
+<div class="card note"><p style="margin-bottom:0">工程判据：若希望分压比不被后级明显改变，一般要求 R<sub>th</sub> ≤ R<sub>L</sub>/10（即分压电流约为负载电流的 10 倍）。代价是功耗增大——模拟设计里到处都是这种取舍。</p></div>
+</section>
+<section id="s3-4"><h2><span class="sec-num">§3.4</span>叠加、受控源与 .tf</h2>
+<p>线性电路中多个独立源的贡献可以分别计算再相加（叠加）；关掉电压源＝短路，关掉电流源＝开路。含<strong>受控源</strong>（晶体管小信号模型、运放模型）时叠加仍可用，但受控源不能关掉。</p>
+<p><code>.tf V(out) V1</code> 让 SPICE 直接给出三件事：直流小信号增益 <code>V(out)/V1</code>、从 V1 看进去的输入电阻、从 <code>out</code> 看进去的输出电阻。它是验证戴维南手算最快的工具。</p>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<figure class="circuit"><svg viewBox="0 0 430 210" width="430" role="img" aria-label="带负载的分压器电路图">
+  <g class="wire">
+    <path d="M60 40 H210 M60 40 V160 H210 M270 40 H370 M270 160 H370 M370 40 V160"/>
+    <path d="M210 40 V60 M210 130 V160 M270 40 V60 M270 130 V160"/>
+  </g>
+  <rect class="part" x="200" y="60" width="20" height="70" rx="2"/>
+  <rect class="part" x="260" y="60" width="20" height="70" rx="2"/>
+  <rect class="part" x="360" y="85" width="20" height="50" rx="2"/>
+  <circle class="part" cx="60" cy="100" r="18"/>
+  <text class="lbl" x="50" y="106">+</text><text class="lbl" x="92" y="106">V1</text>
+  <text class="lbl" x="48" y="130">10 V</text>
+  <text class="lbl" x="226" y="100">R1</text><text class="lbl-s" x="226" y="118">10k</text>
+  <text class="lbl" x="286" y="100">R2</text><text class="lbl-s" x="286" y="118">10k</text>
+  <text class="lbl" x="388" y="115">RL</text><text class="lbl-s" x="388" y="133">10k</text>
+  <circle class="node" cx="240" cy="40" r="4"/><text class="lbl-s" x="230" y="30">out</text>
+  <circle class="node" cx="60" cy="160" r="4"/><text class="lbl-s" x="30" y="182">0 (GND)</text>
+  <text class="lbl-s" x="120" y="182">R2 与 RL 并联 → 分压比被改变</text>
+</svg><figcaption>电路示意图（内联 SVG，随 HTML 一起阅读、可缩放、可打印）</figcaption></figure>
+<h3>实验 3-1：分压器、负载效应与 .tf 验证</h3>
+<pre class="spice" data-file="sim/03-divider-thevenin.cir"><code>* Ch03 Divider with load: verify Thevenin by .tf
+V1 in 0 DC 10
+R1 in out 10k
+R2 out 0 10k
+RL out 0 10k
+.op
+.tf V(out) V1
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → View → SPICE Error Log，读 V(out)、transfer function、input / output impedance。　<strong>预期与判读：</strong>V(out) = 3.333 V；V(out)/V1 = 0.3333；从 V1 看进去 R_in = R1 + (R2∥RL) = 15k；从 out 看进去 R_out = R1∥R2 = 5k。　文件位置：<code>part1/03-circuit-laws/sim/03-divider-thevenin.cir</code></p>
+<h3>实验 3-2：负载从 1k 扫到 1Meg</h3>
+<pre class="spice" data-file="sim/03-load-sweep.cir"><code>* Ch03 Load effect sweep
+.param RLv=10k
+V1 in 0 DC 10
+R1 in out 10k
+R2 out 0 10k
+RL out 0 {RLv}
+.step param RLv list 1k 10k 100k 1Meg
+.op
+.meas OP vout FIND V(out)
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 里比较 4 个 vout；或把 V(out) 加到波形窗口看随 step 的变化。　<strong>预期与判读：</strong>RL = 1k / 10k / 100k / 1Meg 时 V(out) ≈ 0.909 / 3.333 / 4.762 / 4.975 V，逐渐逼近开路值 5 V。　文件位置：<code>part1/03-circuit-laws/sim/03-load-sweep.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>忘了后级输入阻抗也是负载，把分压器当理想电压源。</li>
+<li>把参考地当成“真实的地”：它只是人为选定的零电位参考点。</li>
+<li>KCL 方程里电流方向随意混用，导致符号错误；先统一假设方向再写。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>手算 R1=4.7k、R2=10k、RL=2.2k 时的 V(out)，再用实验 3-1 的网表改值核对。</li>
+<li>用 .tf 求实验 3-2 在 RL=100k 时的输出电阻，解释为何与 R1∥R2 有关。</li>
+<li>把 V1 换成 5 V 加一个 1 V 的交流小信号，用叠加法分别算两个源对 V(out) 的贡献。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../04-passive-dynamics/index.html'>第 4 章 无源元件、暂态与频域</a></li>
+<li><a href='../../part3/19-read-circuit/index.html'>第 19 章 如何读懂一个陌生电路</a></li>
+<li><a href='../../appendix/index.html'>附录 A · 常用公式</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

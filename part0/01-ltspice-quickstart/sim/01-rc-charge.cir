@@ -1,0 +1,9 @@
+* Ch01 RC charging transient - first LTspice run
+V1 in 0 PULSE(0 5 0 1u 1u 5m 10m)
+R1 in out 10k
+C1 out 0 100n
+.tran 0 8m 0 10u
+* tau = R1*C1 = 1ms ; V(out) = 5*(1-exp(-t/tau))
+.meas TRAN v_1m FIND V(out) AT 1m
+.meas TRAN v_5m FIND V(out) AT 5m
+.end

@@ -1,0 +1,14 @@
+* Ch24 Project A: sensor + anti-alias filter + gain of 10
+VSENS sens 0 DC 0.1 AC 0.05 SINE(0.1 0.05 10)
+RTH sens n1 1k
+CF n1 0 1u
+E1 int 0 n1 minus 1e5
+R1 int oa 1k
+C1 oa 0 1u
+R2 oa minus 9k
+R3 minus 0 1k
+.op
+.tran 0 500m 0 200u
+.ac dec 20 1 100k
+.meas AC gain10 FIND mag(V(oa)) AT 10
+.end

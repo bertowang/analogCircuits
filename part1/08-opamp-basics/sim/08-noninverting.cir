@@ -1,0 +1,13 @@
+* Ch08 Non-inverting amplifier from a self-built opamp model
+* E1 = open-loop gain 1e5 ; R1/C1 = dominant pole near 159 Hz
+VIN in 0 DC 0 AC 1 SINE(0 0.5 1k)
+E1 int 0 in minus 1e5
+R1 int oa 1k
+C1 oa 0 1u
+R2 oa minus 1k
+R3 minus 0 9k
+.op
+.tran 0 5m 0 5u
+.ac dec 20 1 10Meg
+.meas AC gain1k FIND mag(V(oa)) AT 1k
+.end

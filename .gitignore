@@ -1,0 +1,14 @@
+# Python 工具缓存
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# LTspice 运行产物（保留 .cir 源网表，不提交仿真输出）
+*.raw
+*.log
+*.net
+*.op
+*.plt
+*.tmp

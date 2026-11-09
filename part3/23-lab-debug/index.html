@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 23 章 · 从仿真到实物：PCB、仪器与调试 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="23">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第三篇 · 方法论：从读懂到设计</span>
+<h1><span class="ch-num">第 23 章</span>从仿真到实物：PCB、仪器与调试</h1>
+<p class="lede">仿真里没有焊点、探头和走线。这一章把“纸面正确”过渡到“上电也正确”。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 3 学时</span>
+<span>1 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能说明接地、回流路径与去耦的基本原则</li>
+<li>知道探头 10× 档的负载效应</li>
+<li>会按分模块上电、先直流后信号的顺序调试</li>
+<li>能把实测差异映射回仿真模型</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>接地与回流路径</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>去耦与旁路</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>探头 10× 与负载</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>测量带宽与噪声</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>分模块上电调试</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>故障树</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="s23-1"><h2><span class="sec-num">§23.1</span>核心概念速览</h2>
+<ul>
+<li>电流永远走<strong>闭合回路</strong>，“地”不是无底洞；高频回流路径紧贴信号走线下方，地平面被切开会造出天线。</li>
+<li>去耦电容提供瞬态电流，位置比容量更重要；容量越大往往自谐振频率越低，常见做法是大小电容并联。</li>
+<li>示波器 10× 探头约 10 MΩ ∥ 10～15 pF：在 1 MHz 时容抗仅约 10 kΩ，足以改变高阻节点的频响（见下方实验）。</li>
+<li>调试顺序：目视/连通性 → 上电前测短路 → 限流上电 → 只查电源电压 → 查每级静态工作点 → 注入小信号逐级跟波形。</li>
+<li>实测与仿真不符时，先补寄生与仪器模型，再怀疑原理图，最后才怀疑器件损坏。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 23-1：探头电容如何改变被测电路</h3>
+<pre class="spice" data-file="sim/23-probe-loading.cir"><code>* Ch23 Scope probe loading at a high-impedance node
+.param Cprobe=0p
+VIN in 0 DC 0 AC 1
+R1 in out 100k
+C1 out 0 10p
+RPROBE out 0 1Meg
+CPROBE out 0 {Cprobe}
+.step param Cprobe list 0p 10p 100p
+.ac dec 30 1k 100Meg
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out)，比较 3 条频响曲线。　<strong>预期与判读：</strong>无探头时 fc ≈ 1/(2π·100k·10p) ≈ 159 kHz；接入 10 pF 探头后带宽约减半，100 pF 时降到约 14 kHz——“测到的带宽“其实是探头与电路共同的结果。　文件位置：<code>part3/23-lab-debug/sim/23-probe-loading.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>用长接地线探头测高速信号，引入振铃。</li>
+<li>忽略万用表/信号源的内阻与 50 Ω 端接。</li>
+<li>一次性焊完整板上电，故障时无法定位。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把 R1 降到 1k，重跑实验 23-1，解释为何探头影响变小。</li>
+<li>列出一份分模块上电调试的检查表。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../21-simulation-method/index.html'>第 21 章 仿真 ≠ 实测 清单</a></li>
+<li><a href='https://www.ti.com/' target='_blank' rel='noopener'>TI 应用笔记（去耦、接地与测量）</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

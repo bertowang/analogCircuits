@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 05 章 · 二极管与整流、限幅电路 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="05">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第一篇 · 电路基础与器件</span>
+<h1><span class="ch-num">第 05 章</span>二极管与整流、限幅电路</h1>
+<p class="lede">第一个非线性器件。重点不是背公式，而是学会“假设导通/截止 → 验证”这一读图动作。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 3 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>会用指数模型、恒压降模型、理想开关模型分别估算二极管电路</li>
+<li>能用假设-验证法判断二极管导通状态</li>
+<li>能分析整流、滤波、限幅与钳位电路的波形</li>
+<li>会用 .dc 扫描得到 I-V 曲线</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>PN 结与肖克利方程</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>恒压降 / 分段线性模型</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>半波与全波整流</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>限幅与钳位</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>稳压二极管</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>.dc 扫描 I-V 曲线</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s5-1"><h2><span class="sec-num">§5.1</span>指数模型与三个近似层</h2>
+<p>PN 结的直流行为由肖克利方程描述：</p>
+<span class="eq">I<sub>D</sub> = I<sub>S</sub> ( e<sup>V<sub>D</sub>/(n V<sub>T</sub>)</sup> − 1 )，　V<sub>T</sub> = kT/q ≈ 26 mV（室温）</span>
+<p>手算时按精度需求选一层近似，<strong>这一步选择本身就是读图能力</strong>：</p>
+<table><thead><tr><th>模型</th><th>假设</th><th>适用</th></tr></thead><tbody>
+<tr><td>理想开关</td><td>正偏短路、反偏开路</td><td>判断整流电路“哪条路通”，做逻辑级分析</td></tr>
+<tr><td>恒压降</td><td>导通后 V<sub>D</sub> ≈ 0.7 V（硅）</td><td>手算输出电压、限幅电平</td></tr>
+<tr><td>分段线性</td><td>0.7 V + 小电阻 r<sub>d</sub></td><td>估算纹波、导通压降随电流变化</td></tr>
+<tr><td>指数 / SPICE</td><td>完整方程 + 结电容 + 反向恢复</td><td>仿真、小信号电阻 r<sub>d</sub> = nV<sub>T</sub>/I<sub>D</sub>、温度特性</td></tr>
+</tbody></table>
+</section>
+<section id="s5-2"><h2><span class="sec-num">§5.2</span>假设—验证法：读二极管电路的通用动作</h2>
+<ol><li>先假设每个二极管的状态（导通 / 截止），把导通的换成 0.7 V 电压源，截止的换成开路。</li>
+<li>在这个<strong>线性化</strong>的电路里求各节点电压与二极管电流。</li>
+<li>逐条验证：假设导通的，电流方向是否为正？假设截止的，阳极电位是否真的低于阴极 + 0.7 V？</li>
+<li>若有矛盾，改假设重算。两个以上二极管时，从最“确定”的那个开始（例如接最高电位的那一路）。</li></ol>
+<div class="card tip"><span class="card-label">迁移价值</span><p style="margin-bottom:0">同样的动作会反复出现在第 6 章判断 MOS 工作区、第 7 章判断 BJT 放大/饱和、第 16 章判断比较器状态。<strong>先假设、再线性化、后验证</strong>，是所有非线性电路的统一读法。</p></div>
+</section>
+<section id="s5-3"><h2><span class="sec-num">§5.3</span>整流、滤波与纹波</h2>
+<p>半波整流只让正半周通过；加滤波电容后，电容在峰值附近被充电、在其余时间向负载放电，输出变成带纹波的直流。纹波峰峰值近似：</p>
+<span class="eq">ΔV ≈ I<sub>load</sub> / (f · C)　（半波，f 为电网频率）</span>
+<p>电流越大、频率越低、电容越小，纹波越大。全波（桥式）整流的等效充电频率是 2f，纹波减半。仿真里用 <code>.tran</code> 能看到真实的充放电尖峰，这是 <code>.ac</code> 做不到的——非线性电路必须用瞬态分析。</p>
+</section>
+<section id="s5-4"><h2><span class="sec-num">§5.4</span>限幅、钳位与稳压</h2>
+<ul><li><strong>限幅（clip / limiter）</strong>：用二极管把电压钉在某个电平上，常用于保护 ADC 输入。串一个电阻限流是必须的。</li>
+<li><strong>钳位（clamp）</strong>：电容 + 二极管把整个波形的直流电平搬移，波形形状不变、“底座”变了。</li>
+<li><strong>稳压二极管</strong>：工作在反向击穿区（SPICE 模型里用 <code>Bv</code> / <code>Ibv</code> 指定），需串联限流电阻，并校核功耗。</li></ul>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<figure class="circuit"><svg viewBox="0 0 460 200" width="460" role="img" aria-label="半波整流与电容滤波电路">
+  <g class="wire">
+    <path d="M50 60 H130 M170 60 H260 M260 60 V150 H50 M400 60 V150 M260 150 H400"/>
+    <path d="M300 60 V80 M300 120 V150 M360 60 V80 M360 120 V150"/>
+  </g>
+  <circle class="part" cx="80" cy="60" r="18"/>
+  <text class="lbl" x="68" y="66">~</text><text class="lbl-s" x="60" y="92">V1 50Hz</text>
+  <path class="part" d="M130 45 L170 60 L130 75 Z"/>
+  <path class="wire" d="M170 45 V75"/>
+  <text class="lbl-s" x="130" y="34">D1</text>
+  <path class="wire" d="M300 80 H320 M320 80 H340 M340 80 H360"/>
+  <path class="wire" d="M318 80 V96 M342 80 V96"/>
+  <rect class="part" x="292" y="100" width="16" height="20" rx="1"/>
+  <rect class="part" x="352" y="100" width="16" height="20" rx="1"/>
+  <text class="lbl-s" x="292" y="140">C1</text><text class="lbl-s" x="352" y="140">R1</text>
+  <circle class="node" cx="260" cy="60" r="4"/><text class="lbl-s" x="248" y="48">dc_out</text>
+  <circle class="node" cx="260" cy="150" r="4"/><text class="lbl-s" x="240" y="172">0</text>
+</svg><figcaption>电路示意图（内联 SVG，随 HTML 一起阅读、可缩放、可打印）</figcaption></figure>
+<h3>实验 5-1：二极管的 I-V 曲线</h3>
+<pre class="spice" data-file="sim/05-diode-iv.cir"><code>* Ch05 Diode I-V curve by DC sweep
+.model DGEN D(Is=1n N=1.7 Rs=0.5)
+V1 a 0 DC 0
+D1 a 0 DGEN
+.dc V1 -0.2 0.8 0.005
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → I(D1)；横坐标是 V(a)。　<strong>预期与判读：</strong>正向约 0.6～0.7 V 开始明显导通，电流随电压指数上升；反向只有极小的漏电流。　文件位置：<code>part1/05-diode/sim/05-diode-iv.cir</code></p>
+<h3>实验 5-2：半波整流与电容滤波</h3>
+<pre class="spice" data-file="sim/05-halfwave.cir"><code>* Ch05 Half-wave rectifier with smoothing capacitor
+.model DGEN D(Is=1n N=1.7 Rs=0.5)
+V1 ac_in 0 SINE(0 5 50)
+D1 ac_in dc_out DGEN
+C1 dc_out 0 10u
+R1 dc_out 0 1k
+.tran 0 100m 0 100u
+.meas TRAN vmax MAX V(dc_out)
+.meas TRAN vmin MIN V(dc_out) FROM 40m
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(ac_in) 与 V(dc_out)；Error Log 读 vmax / vmin 估算纹波。　<strong>预期与判读：</strong>峰值约 4.3～4.5 V（扣掉二极管压降）；纹波 ΔV ≈ I/(fC) ≈ 4.3 mA/(50·10µ) ≈ 8.6 V 的估值在轻载下偏大，实际由放电时间常数 10 ms 决定——正好说明近似式的适用边界。把 C1 改成 100u，纹波明显变小。　文件位置：<code>part1/05-diode/sim/05-halfwave.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>用 .ac 分析整流器：非线性电路的小信号线性化会给出完全错误的结果。</li>
+<li>二极管直接并在理想电压源上：电流无穷大，仿真必不收敛，必须串限流电阻。</li>
+<li>忘记二极管的反向恢复与结电容，高频开关电路里仿真会过于“干净”。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>把实验 5-2 改成桥式全波整流（4 个二极管），比较纹波频率与幅值。</li>
+<li>用两个二极管搭一个 ±1.4 V 对称限幅器，.tran 验证输出电平。</li>
+<li>改变 .model 里的 Is，观察 I-V 曲线如何平移并解释温度趋势。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../06-mosfet/index.html'>第 6 章 MOSFET 与两级模型</a></li>
+<li><a href='../../part2/17-power-supply/index.html'>第 17 章 电源与功率电路</a></li>
+<li><a href='https://www.ecircuitcenter.com/' target='_blank' rel='noopener'>eCircuit Center · Diode circuits</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

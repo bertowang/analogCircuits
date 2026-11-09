@@ -1,0 +1,15 @@
+* Ch14 Two-stage opamp (behavioural) as unity-gain buffer
+.param CM=2p
+VIN inp 0 DC 0 AC 1 PULSE(0 0.1 0 1u 1u 100u 200u)
+BERR err 0 V=V(inp)-V(out)
+E1 a 0 err 0 1e3
+R1 a n1 100k
+C1 n1 0 1p
+E2 b 0 n1 0 100
+R2 b out 10k
+C2 out 0 1p
+CM1 n1 out {CM}
+.step param CM list 0.2p 2p 20p
+.tran 0 200u 0 20n
+.ac dec 20 1k 100Meg
+.end

@@ -1,0 +1,14 @@
+* Ch16 Three-stage ring oscillator with RC delays
+B1 y1 0 V=5*tanh(-20*V(z3))
+R1 y1 z1 10k
+C1 z1 0 10n
+B2 y2 0 V=5*tanh(-20*V(z1))
+R2 y2 z2 10k
+C2 z2 0 10n
+B3 y3 0 V=5*tanh(-20*V(z2))
+R3 y3 z3 10k
+C3 z3 0 10n
+.ic V(z1)=0.1
+.tran 0 5m 0 1u
+.options plotwinsize=0
+.end

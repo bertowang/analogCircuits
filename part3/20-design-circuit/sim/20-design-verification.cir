@@ -1,0 +1,14 @@
+* Ch20 Design verification: inverting amplifier, target gain -10
+.param RFv=100k
+VIN in 0 DC 0 AC 1
+RG in minus 10k
+RF oa minus {RFv}
+E1 int 0 0 minus 1e5
+R1 int oa 1k
+C1 oa 0 1u
+.step param RFv list 50k 100k 150k
+.ac dec 20 10 10Meg
+.meas AC gain1k FIND mag(V(oa)) AT 1k
+.meas AC gain100k FIND mag(V(oa)) AT 100k
+.meas AC gain1meg FIND mag(V(oa)) AT 1Meg
+.end

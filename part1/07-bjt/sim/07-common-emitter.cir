@@ -1,0 +1,14 @@
+* Ch07 Common-emitter amplifier with divider bias
+.model NPN1 NPN(Is=1e-15 Bf=200 Vaf=100)
+VDD vdd 0 DC 12
+R1 vdd base 100k
+R2 base 0 20k
+RC vdd out 4.7k
+RE emit 0 1k
+Q1 out base emit NPN1
+VIN in 0 DC 0 AC 0.01 SINE(0 0.01 1k)
+CIN base in 10u
+.op
+.tran 0 5m 0 2u
+.ac dec 20 10 1Meg
+.end

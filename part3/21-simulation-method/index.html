@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 21 章 · 仿真方法论 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="21">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第三篇 · 方法论：从读懂到设计</span>
+<h1><span class="ch-num">第 21 章</span>仿真方法论</h1>
+<p class="lede">仿真器永远会给你一条曲线。本章解决更难的问题：这条曲线是否回答了你真正想问的问题。</p>
+<div class="meta">
+<span class="badge done">已完稿</span>
+<span>建议 3 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能为不同问题选对分析类型</li>
+<li>会搭建带激励、负载、探针与隔离的测试台</li>
+<li>会用 .meas 写自动断言</li>
+<li>能识别仿真“看起来对其实错”的典型陷阱</li>
+<li>知道仿真与实测必然存在的差异清单</li>
+</ul></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>五类分析的选择</td><td>正文已覆盖</td></tr>
+<tr><td>2</td><td>测试台与激励设计</td><td>正文已覆盖</td></tr>
+<tr><td>3</td><td>.meas 断言</td><td>正文已覆盖</td></tr>
+<tr><td>4</td><td>模型可信度</td><td>正文已覆盖</td></tr>
+<tr><td>5</td><td>收敛问题排查</td><td>正文已覆盖</td></tr>
+<tr><td>6</td><td>仿真 ≠ 实测 清单</td><td>正文已覆盖</td></tr>
+</tbody></table></section>
+<section id="s21-1"><h2><span class="sec-num">§21.1</span>先问问题，再选分析</h2>
+<table><thead><tr><th>我想知道</th><th>用</th><th>别误用</th></tr></thead><tbody>
+<tr><td>偏置对不对、管子在哪个区</td><td><code>.op</code></td><td>不要靠 .tran 的起始段猜</td></tr>
+<tr><td>输入变化时的非线性传输关系</td><td><code>.dc</code></td><td>不要用于含电容的动态过程</td></tr>
+<tr><td>增益、带宽、相位、阻抗随频率</td><td><code>.ac</code></td><td>不能看失真、饱和、压摆</td></tr>
+<tr><td>波形、摆幅、失真、启动、振荡</td><td><code>.tran</code></td><td>不能用小信号线性化替代</td></tr>
+<tr><td>噪声、THD、稳定性</td><td><code>.noise</code> / <code>.four</code> + 环路分析</td><td>THD 需要足够长且稳定的时间窗</td></tr>
+</tbody></table>
+</section>
+<section id="s21-2"><h2><span class="sec-num">§21.2</span>测试台：把被测电路和测量仪器分开</h2>
+<ol><li><strong>激励</strong>：小信号用 <code>AC 1</code>，瞬态用 <code>PULSE/SINE</code> 并给有限边沿；源阻抗要显式写出（理想源常被误当成零阻抗）。</li>
+<li><strong>负载</strong>：把后级输入阻抗、探头电容都画进去（见第 23 章）。</li>
+<li><strong>隔离</strong>：用跟随器或大电阻把“测量”与“被测”隔开，避免测试电路改变工作点。</li>
+<li><strong>探针</strong>：给关键节点起名字，只保存需要的量（<code>.save</code>）可大幅缩小 .raw。</li>
+<li><strong>基准</strong>：先用最简单的理想电路跑一遍，确认测试台本身没写错，再换成真实模型。</li></ol>
+</section>
+<section id="s21-3"><h2><span class="sec-num">§21.3</span>.meas 就是断言</h2>
+<p>把“眼睛看曲线”换成“数字过阈值”：增益、−3 dB 频率、上升时间、过冲、功耗、静态误差都能写成 <code>.meas</code>，结果进 Error Log，可被脚本解析。配合 <code>.step</code> 就是参数化的回归测试。</p>
+<pre class="spice" data-file="inline"><code>.meas TRAN trise TRIG V(out) VAL=0.1 RISE=1 TARG V(out) VAL=0.9 RISE=1
+.meas TRAN vfinal FIND V(out) AT 4m
+.meas AC gain1k FIND mag(V(out)) AT 1k</code></pre>
+<p class="code-hint">语法片段（非完整网表），可直接粘进实验 21-1。</p>
+</section>
+<section id="s21-4"><h2><span class="sec-num">§21.4</span>八个“看起来对其实错”的陷阱</h2>
+<ol>
+<li><strong>用理想源</strong>：没有内阻、没有噪声、没有寄生，结果天生过于漂亮。</li>
+<li><strong>忘了模型边界</strong>：Level-1 MOS 不含短沟道效应；运放宏模型可能不含压摆或输入共模限制。</li>
+<li><strong>AC 分析掩盖非线性</strong>：<code>.ac</code> 把电路在工作点线性化，饱和、削顶、交越失真一律看不见。</li>
+<li><strong>波形压缩</strong>：默认压缩会让 FFT 出现虚假杂散，做频谱前写 <code>.options plotwinsize=0</code>。</li>
+<li><strong>时间窗太短 / 步长太大</strong>：THD、启动过程、慢极点都需要足够长的稳态窗口。</li>
+<li><strong>初始条件</strong>：振荡器或双稳态电路可能停在零解，需要 <code>.ic</code> 或噪声扰动（见第 16 章）。</li>
+<li><strong>收敛失败被“修好"</strong>：把容差放宽到能跑，往往是掩盖了悬浮节点或理想开关。</li>
+<li><strong>单位与量纲</strong>：<code>m</code> 与 <code>Meg</code>、dB 与倍数、峰值与 RMS，每年都坑人。</li>
+</ol>
+</section>
+<section id="s21-5"><h2><span class="sec-num">§21.5</span>仿真 ≠ 实测：差异清单</h2>
+<table><thead><tr><th>仿真里没有（或过于理想）</th><th>实测中会出现</th><th>对策</th></tr></thead><tbody>
+<tr><td>PCB 走线电阻/电感、过孔、寄生电容</td><td>高频增益偏差、振铃</td><td>加估计寄生参数再仿真</td></tr>
+<tr><td>元件公差与温漂</td><td>批量个体差异</td><td>蒙特卡洛 / 最坏情况（第 22 章）</td></tr>
+<tr><td>电源内阻、地线阻抗、去耦不足</td><td>低频振荡、串扰</td><td>显式建电源与地网络</td></tr>
+<tr><td>探头负载、仪器带宽</td><td>被测点被探头改变</td><td>把探头模型放进测试台（第 23 章）</td></tr>
+<tr><td>器件老化、ESD 损伤、焊接问题</td><td>无法复现的异常</td><td>分模块上电、故障树排除</td></tr>
+</tbody></table>
+<p>结论应当是<strong>条件式</strong>的：“在这些模型与假设下，增益为 10、带宽 1.4 MHz"，而不是无条件的“增益就是 10”。</p>
+</section>
+<section id="s21-6"><h2><span class="sec-num">§21.6</span>实验记录模板</h2>
+<p>每次仿真写六行：目的 / 测试台（激励·负载·模型） / 手算预期 / 仿真实测 / 偏差原因 / 下一步改哪个参数。积累起来的记录，比任何一张波形截图都值钱。</p>
+</section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 21-1：带自动测量的 RC 测试台</h3>
+<pre class="spice" data-file="sim/21-testbench-meas.cir"><code>* Ch21 Testbench: parameter sweep with .meas assertions
+.param R=1k
+VIN in 0 PULSE(0 1 0 1n 1n 2m 4m)
+R1 in out {R}
+C1 out 0 100n
+.step param R list 1k 2k 5k
+.tran 0 5m 0 1u
+.meas TRAN trise TRIG V(out) VAL=0.1 RISE=1 TARG V(out) VAL=0.9 RISE=1
+.meas TRAN vfinal FIND V(out) AT 4m
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 读 3 组 trise / vfinal；把结果与 2.2·R·C 手算值对照。　<strong>预期与判读：</strong>10%→90% 上升时间 = 2.2RC：R=1k/2k/5k 时约 220 µs / 440 µs / 1.1 ms；终值均为 1 V。　文件位置：<code>part3/21-simulation-method/sim/21-testbench-meas.cir</code></p>
+<h3>实验 21-2：正确的频谱分析设置</h3>
+<pre class="spice" data-file="sim/21-fft-setup.cir"><code>* Ch21 FFT setup: disable waveform compression
+VIN in 0 SINE(0 1 1k)
+R1 in out 1k
+C1 out 0 100n
+.tran 0 20m 0 2u
+.four 1k V(out)
+.options plotwinsize=0
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Error Log 读 Fourier 结果；波形窗口右键 → View → FFT 交互查看。　<strong>预期与判读：</strong>1 kHz 基波被 RC 低通衰减约 0.85 倍并相移；删掉 .options 行后再做 FFT，可观察到压缩对频谱底噪的影响。　文件位置：<code>part3/21-simulation-method/sim/21-fft-setup.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>只会用 .tran 一种分析看所有问题。</li>
+<li>测试台里的理想电压源直接并到电容上，导致不收敛或 unrealistic 结果。</li>
+<li>仿真结果和手算差 10 倍仍照单全收。</li>
+<li>把仿真结论写成无条件事实，没有标注模型与假设。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>给实验 21-1 增加 .meas 测过冲，并解释为何 RC 电路没有过冲。</li>
+<li>把实验 21-2 的 .tran 时长改成 2m，比较 THD 数值的稳定性。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../../part0/02-spice-netlist/index.html'>第 2 章 SPICE 网表语法与仿真指令</a></li>
+<li><a href='../20-design-circuit/index.html'>第 20 章 如何从规格设计电路</a></li>
+<li><a href='../22-robustness/index.html'>第 22 章 鲁棒性：PVT 与蒙特卡洛</a></li>
+<li><a href='https://github.com/nunobrum/PyLTSpice' target='_blank' rel='noopener'>PyLTSpice：批量仿真与 .log 结果解析</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>

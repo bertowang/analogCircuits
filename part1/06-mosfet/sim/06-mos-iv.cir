@@ -1,0 +1,9 @@
+* Ch06 NMOS Id-Vds family by VGS stepping
+.model NM1 NMOS(Vto=0.5 Kp=200u Lambda=0.02)
+.param VGSET=1.5
+VDS d 0 DC 0
+VGS g 0 DC {VGSET}
+M1 d g 0 0 NM1 W=10u L=1u
+.dc VDS 0 3 0.02
+.step param VGSET list 1.0 1.5 2.0 2.5
+.end

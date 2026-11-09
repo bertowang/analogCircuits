@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 04 章 · 无源元件、暂态与频域 | 模拟电路：从读懂到设计</title>
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/toc.js" defer></script>
+<script src="../../assets/app.js" defer></script>
+</head>
+<body data-root="../../" data-chapter="04">
+<aside id="sidebar"></aside>
+<main class="book-page">
+<nav class="breadcrumb" data-autofill>总目录</nav>
+<header class="chapter-head">
+<span class="kicker">第一篇 · 电路基础与器件</span>
+<h1><span class="ch-num">第 04 章</span>无源元件、暂态与频域</h1>
+<p class="lede">从时间常数到波特图：把 R/L/C 的时域行为与频域行为看成同一件事的两种表述。</p>
+<div class="meta">
+<span class="badge skeleton">框架待补</span>
+<span>建议 4 学时</span>
+<span>2 个 LTspice 实验</span>
+<span>模拟电路：从读懂到设计</span>
+</div></header>
+<div class="card objectives"><span class="card-label">学习目标</span><ul>
+<li>能求一阶电路的时间常数并画出充放电曲线</li>
+<li>能写出 RC 低通的传递函数并指出 -3 dB 频率</li>
+<li>理解二阶系统的阻尼、谐振与 Q 值</li>
+<li>能用 .ac 扫频验证手算的零极点</li>
+</ul></div>
+<div class="card stub"><span class="card-label">本章状态</span><p style="margin-bottom:0">知识框架、知识点细目、学习目标与可运行的 LTspice 实验已经就位，正文正在逐节补写。你可以直接按下方实验做“先手算 → 再仿真 → 改参数”的练习，并按 <a href="../../index.html#contribute">总目录的维护约定</a>补充内容。</p></div>
+<section id="map"><h2><span class="sec-num">§</span>知识点地图</h2>
+<table><thead><tr><th style="width:52px">#</th><th>知识点</th><th style="width:150px">状态</th></tr></thead><tbody>
+<tr><td>1</td><td>实际元件寄生参数</td><td>待展开为小节</td></tr>
+<tr><td>2</td><td>时间常数与充放电</td><td>待展开为小节</td></tr>
+<tr><td>3</td><td>二阶系统与阻尼</td><td>待展开为小节</td></tr>
+<tr><td>4</td><td>阻抗 / 相量 / 复数</td><td>待展开为小节</td></tr>
+<tr><td>5</td><td>传递函数与零极点</td><td>待展开为小节</td></tr>
+<tr><td>6</td><td>波特图与 -3 dB</td><td>待展开为小节</td></tr>
+</tbody></table></section>
+<section id="lab"><h2><span class="sec-num">§</span>仿真实验</h2>
+<h3>实验 4-1：RC 低通的频响</h3>
+<pre class="spice" data-file="sim/04-rc-lowpass.cir"><code>* Ch04 RC low-pass: transfer function and -3dB point
+V1 in 0 DC 0 AC 1
+R1 in out 1k
+C1 out 0 100n
+.ac dec 30 10 100k
+.meas AC g10 FIND mag(V(out)) AT 10
+.meas AC g1k FIND mag(V(out)) AT 1k
+.meas AC g10k FIND mag(V(out)) AT 10k
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out)；纵坐标右键切 dB；Error Log 读三条 .meas。　<strong>预期与判读：</strong>fc = 1/(2πRC) ≈ 1.59 kHz；10 Hz 处增益 ≈ 1；1 kHz 处 ≈ 0.846；10 kHz 处 ≈ 0.157。　文件位置：<code>part1/04-passive-dynamics/sim/04-rc-lowpass.cir</code></p>
+<h3>实验 4-2：RLC 串联谐振</h3>
+<pre class="spice" data-file="sim/04-rlc-resonance.cir"><code>* Ch04 RLC series resonance (voltage across C)
+V1 in 0 DC 0 AC 1
+R1 in n1 10
+L1 n1 out 10m
+C1 out 0 100n
+.ac dec 40 100 100k
+.meas AC peak MAX mag(V(out))
+.end</code></pre>
+<p class="code-hint"><strong>操作：</strong>Run → Add Trace → V(out)，观察谐振峰；把 R1 改成 100 再看峰高变化。　<strong>预期与判读：</strong>f0 = 1/(2π√(LC)) ≈ 5.03 kHz；电容上的峰值电压约等于 Q ≈ (1/R)·√(L/C) ≈ 31.6 倍输入。　文件位置：<code>part1/04-passive-dynamics/sim/04-rlc-resonance.cir</code></p>
+<div class="card note"><p style="margin-bottom:0">代码块右上角可一键复制；本仓库 <code>sim/*.cir</code> 由 <code>tools/extract_netlists.py</code> 从这些代码块自动抽取，因此页面与可运行网表永远一致。网表注释统一使用 ASCII 英文。</p></div>
+</section>
+<section id="pitfalls"><h2><span class="sec-num">§</span>常见误区</h2><div class="card warn"><ul><li>把 -3 dB 当成“幅度降为 0.3”：其实是 1/√2 ≈ 0.707。</li>
+<li>忽略电容的 ESR，导致高频段仿真与实测不符。</li>
+<li>在 .ac 分析里用 SINE 源 expecting 时域波形：.ac 只看 AC 幅值。</li></ul></div></section>
+<section id="exercises"><h2><span class="sec-num">§</span>习题与思考</h2><ol><li>手算实验 4-1 在 1 kHz 处的相位，再用波形窗口的相位显示核对。</li>
+<li>把实验 4-2 的 R1 依次改为 10 / 100 / 1k，记录峰值与带宽，总结 Q 的规律。</li></ol></section>
+<section id="further"><h2><span class="sec-num">§</span>延伸阅读与内链</h2><ul><li><a href='../03-circuit-laws/index.html'>第 3 章 电路定律与读图第一步</a></li>
+<li><a href='../../part2/12-frequency-response/index.html'>第 12 章 频率响应与极点</a></li>
+<li><a href='../../part2/15-active-filters/index.html'>第 15 章 有源滤波器</a></li></ul></section>
+<footer class="pager" data-autofill></footer>
+<footer class="site-foot">
+<p class="credits"><strong>作者</strong>：汪亮（bertonwang）　<strong>联系邮箱</strong>：<a href="mailto:47608843@qq.com">47608843@qq.com</a></p>
+<p class="ai-note"><strong>AI 使用说明</strong>：本教材的知识框架、正文与 LTspice 示例代码在 AI 辅助下整理生成，并经人工校订与静态自检。公式、数值与仿真结论请以 LTspice 实际运行结果及权威教材为准；发现错漏欢迎通过上方邮箱勘误。</p>
+<p class="imprint">模拟电路：从读懂到设计 · 每章一个文件夹：index.html 讲知识，sim/*.cir 供 LTspice 直接运行 · LTspice 为 Analog Devices 的免费仿真工具，本书与之无从属关系。</p>
+</footer>
+</main>
+</body>
+</html>
